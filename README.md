@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# moli_ai_box
-=======
 # moli_ai_box
 
 A new Flutter project.
@@ -17,4 +14,8 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
->>>>>>> 794112d (init project)
+
+## TODO
+
+[ ] 模型选择菜单  
+[ ] http 调用  

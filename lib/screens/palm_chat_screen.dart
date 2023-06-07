@@ -72,6 +72,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                 child: Row(
                   children: [
                     Expanded(
+                      // 支持换行
                       child: TextField(
                         style: const TextStyle(color: Colors.white),
                         controller: textEditingController,
