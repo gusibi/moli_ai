@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../constants/constants.dart';
 import '../services/assets_manager.dart';
+import '../services/services.dart';
 import '../widgets/chat_widget.dart';
+import '../widgets/text_widget.dart';
 
 class PalmChatScreen extends StatefulWidget {
   const PalmChatScreen({super.key});
@@ -39,7 +41,9 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
         title: const Text("Palm Chat"),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              Services.showModalSheet(context);
+            },
             icon: const Icon(Icons.more_vert, color: Colors.white),
           ),
         ],
