@@ -18,6 +18,7 @@ class Services {
           return Padding(
             padding: const EdgeInsets.all(18.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
                 Flexible(
                   child: TextWidget(
@@ -25,7 +26,6 @@ class Services {
                     fontSize: 16,
                   ),
                 ),
-                Spacer(), // 占位
                 Flexible(
                   flex: 2,
                   child: ModelsDrowDownWidget(),

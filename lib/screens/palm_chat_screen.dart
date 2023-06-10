@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:moli_ai_box/services/palm_api_service.dart';
 import '../constants/constants.dart';
 import '../services/assets_manager.dart';
 import '../services/services.dart';
@@ -90,7 +91,14 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                       ),
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          try {
+                            await PalmApiService.getTextReponse(
+                                "text-bison-001", textEditingController.text);
+                          } catch (error) {
+                            print("error $error");
+                          }
+                        },
                         icon: const Icon(Icons.send, color: Colors.white)),
                   ],
                 ),
