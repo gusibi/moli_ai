@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 
 import "package:http/http.dart" as http;
 
+import '../constants/api_constants.dart';
 import '../constants/constants.dart';
 
 class PalmApiService {
-  // static Future<void> getModels() async {
-  //   try {
-  //     return modelsList;
-  //   } catch (error) {
-  //     print("error $error");
-  //   }
-  // }
+  static List<String> getModels() {
+    try {
+      return modelsList;
+    } catch (error) {
+      print("error, $error");
+      throw HttpException("$error");
+    }
+  }
 
   static Future<void> getTextReponse(String model, String prompt) async {
     try {
@@ -40,10 +43,15 @@ class PalmApiService {
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
-
-      print("send");
-      Map jsonResponse = jsonDecode(await response.stream.bytesToString());
-      print("jsonResponse $jsonResponse");
+      if (response.statusCode == 200) {
+        var message = await response.stream.bytesToString();
+        print("send $message");
+        Map jsonResponse = jsonDecode(message);
+        print("jsonResponse $jsonResponse");
+      } else {
+        var message = response.reasonPhrase;
+        throw HttpException(message!);
+      }
     } catch (error) {
       print("error, $error");
     }

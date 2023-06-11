@@ -10,20 +10,6 @@ List<String> modelsList = [
   "text-bison-001",
 ];
 
-List<DropdownMenuItem<String>>? get getModelsItem {
-  List<DropdownMenuItem<String>>? items =
-      List<DropdownMenuItem<String>>.generate(
-          modelsList.length,
-          (index) => DropdownMenuItem(
-                value: modelsList[index],
-                child: TextWidget(
-                  message: modelsList[index],
-                  fontSize: 15,
-                ),
-              ));
-  return items;
-}
-
 final testChatMessages = [
   {
     "message": "hello, guys",
@@ -43,6 +29,3 @@ final testChatMessages = [
     "chatIndex": 1,
   },
 ];
-
-String BASE_URL = "https://generativelanguage.googleapis.com/v1beta2";
-String API_KEY = "your api key";
