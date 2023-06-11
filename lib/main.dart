@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moli_ai_box/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:moli_ai_box/constants/constants.dart';
@@ -10,8 +11,26 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    PalmChatScreen(),
+    SettingScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -19,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => PalmModelsProvider(),
+          create: (context) => PalmSettingProvider(),
         )
       ],
       child: MaterialApp(
@@ -32,7 +51,24 @@ class MyApp extends StatelessWidget {
             color: cardColor,
           ),
         ),
-        home: const PalmChatScreen(),
+        home: Scaffold(
+          // appBar: AppBar(
+          //   title: Text("Moli AI"),
+          // ),
+          body: Center(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: "Setting"),
+            ],
+            backgroundColor: cardColor,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
+        ),
       ),
     );
   }

@@ -35,7 +35,7 @@ class _ModelsDrowDownWidgetState extends State<ModelsDrowDownWidget> {
   @override
   Widget build(BuildContext context) {
     final modelsProvider =
-        Provider.of<PalmModelsProvider>(context, listen: false);
+        Provider.of<PalmSettingProvider>(context, listen: false);
     currentModel = modelsProvider.getCurrentModel;
     return DropdownButton(
         dropdownColor: scaffoldBackgroundColor,
@@ -48,5 +48,53 @@ class _ModelsDrowDownWidgetState extends State<ModelsDrowDownWidget> {
           });
           modelsProvider.setCurrentModel(value.toString());
         });
+  }
+}
+
+class ModelsDropdownFormWidget extends StatefulWidget {
+  const ModelsDropdownFormWidget({super.key});
+
+  @override
+  State<ModelsDropdownFormWidget> createState() =>
+      _ModelsDropdownFormWidgetState();
+}
+
+class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final modelsProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var currentModel = modelsProvider.getCurrentModel;
+    return DropdownButtonFormField<String>(
+      value: currentModel,
+      items: modelsProvider
+          .getAllPalmModels()
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          currentModel = value.toString();
+        });
+        modelsProvider.setCurrentModel(value.toString());
+      },
+      decoration: const InputDecoration(
+        labelText: 'Select an option',
+      ),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select an option';
+        }
+        return null;
+      },
+      onSaved: (value) {
+        currentModel = value.toString();
+        modelsProvider.setCurrentModel(value.toString());
+        print("currentModel: $currentModel");
+      },
+    );
   }
 }

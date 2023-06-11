@@ -34,20 +34,12 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(AssetsManager.palmLogo),
-        ),
+        // elevation: 2,
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: Image.asset(AssetsManager.palmLogo),
+        // ),
         title: const Text("Palm Chat"),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              Services.showModalSheet(context);
-            },
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-          ),
-        ],
       ),
       body: SafeArea(
           child: Column(
@@ -94,7 +86,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         onPressed: () async {
                           try {
                             await PalmApiService.getTextReponse(
-                                "text-bison-001", textEditingController.text);
+                                context, textEditingController.text);
                           } catch (error) {
                             print("error $error");
                           }

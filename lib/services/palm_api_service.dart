@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
+import 'package:provider/provider.dart';
 
-import '../constants/api_constants.dart';
 import '../constants/constants.dart';
+import '../providers/palm_priovider.dart';
 
 class PalmApiService {
   static List<String> getModels() {
@@ -16,13 +18,20 @@ class PalmApiService {
     }
   }
 
-  static Future<void> getTextReponse(String model, String prompt) async {
+  static Future<void> getTextReponse(
+      BuildContext context, String prompt) async {
+    final palmSettingProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var currentModel = palmSettingProvider.getCurrentModel;
+    var baseURL = palmSettingProvider.getBaseURL;
+    var apiKey = palmSettingProvider.getApiKey;
     try {
-      print("start, model: $model, prompt: $prompt");
-      print(Uri.parse("$BASE_URL/models/$model:generateText?key=$API_KEY"));
+      print("start, model: $currentModel, prompt: $prompt");
+      print(
+          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request('POST',
-          Uri.parse("$BASE_URL/models/$model:generateText?key=$API_KEY"));
+          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
       request.body = json.encode({
         "prompt": {"text": prompt},
         "temperature": 0.7,
