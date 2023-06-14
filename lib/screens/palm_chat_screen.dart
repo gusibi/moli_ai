@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai_box/services/palm_api_service.dart';
 import '../constants/constants.dart';
+import '../models/palm_text_model.dart';
 import '../services/assets_manager.dart';
 import '../services/services.dart';
 import '../widgets/chat_widget.dart';
@@ -15,7 +18,8 @@ class PalmChatScreen extends StatefulWidget {
 }
 
 class _PalmChatScreenState extends State<PalmChatScreen> {
-  final bool _isTyping = true;
+  bool _isTyping = false;
+  List<TextChatModel> chatList = [];
   late TextEditingController textEditingController;
 
   @override
@@ -46,12 +50,11 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
         children: [
           Flexible(
             child: ListView.builder(
-              itemCount: testChatMessages.length,
+              itemCount: chatList.length,
               itemBuilder: (context, index) {
                 return ChatWidget(
-                  message: testChatMessages[index]["message"].toString(),
-                  chatIndex: int.parse(
-                      testChatMessages[index]["chatIndex"].toString()),
+                  message: chatList[index].msg,
+                  chatIndex: chatList[index].chatIndex,
                 );
               },
             ),
@@ -61,42 +64,54 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
               color: Colors.white,
               size: 18,
             ),
-            SizedBox(height: 15),
-            Material(
-              color: cardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      // 支持换行
-                      child: TextField(
-                        style: const TextStyle(color: Colors.white),
-                        controller: textEditingController,
-                        onSubmitted: (value) {
-                          // TODO send message
-                        },
-                        decoration: const InputDecoration.collapsed(
-                          hintText: "How can I help you",
-                          hintStyle: TextStyle(color: Colors.red),
-                        ),
+          ],
+          SizedBox(height: 15),
+          Material(
+            color: cardColor,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    // 支持换行
+                    child: TextField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: textEditingController,
+                      onSubmitted: (value) {},
+                      decoration: const InputDecoration.collapsed(
+                        hintText: "How can I help you",
+                        hintStyle: TextStyle(color: Colors.white),
                       ),
                     ),
-                    IconButton(
-                        onPressed: () async {
-                          try {
-                            await PalmApiService.getTextReponse(
-                                context, textEditingController.text);
-                          } catch (error) {
-                            print("error $error");
-                          }
-                        },
-                        icon: const Icon(Icons.send, color: Colors.white)),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                      onPressed: () async {
+                        try {
+                          setState(() {
+                            chatList.add(TextChatModel(
+                                msg: textEditingController.text, chatIndex: 0));
+                          });
+                          setState(() {
+                            _isTyping = true;
+                          });
+                          final list = await PalmApiService.getTextReponse(
+                              context, textEditingController.text);
+                          setState(() {
+                            chatList.add(list[0]);
+                          });
+                        } catch (error) {
+                          log("error $error");
+                        } finally {
+                          setState(() {
+                            _isTyping = false;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.send, color: Colors.white)),
+                ],
               ),
             ),
-          ],
+          ),
         ],
       )),
     );

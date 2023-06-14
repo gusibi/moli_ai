@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import "package:http/http.dart" as http;
 import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
+import '../models/palm_text_model.dart';
 import '../providers/palm_priovider.dart';
 
 class PalmApiService {
@@ -18,7 +20,7 @@ class PalmApiService {
     }
   }
 
-  static Future<void> getTextReponse(
+  static Future<List<TextChatModel>> getTextReponse(
       BuildContext context, String prompt) async {
     final palmSettingProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
@@ -26,9 +28,9 @@ class PalmApiService {
     var baseURL = palmSettingProvider.getBaseURL;
     var apiKey = palmSettingProvider.getApiKey;
     try {
-      print("start, model: $currentModel, prompt: $prompt");
-      print(
-          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
+      log("start, model: $currentModel, prompt: $prompt");
+      // log(Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey")
+      //     as String);
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request('POST',
           Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
@@ -51,18 +53,25 @@ class PalmApiService {
       });
       request.headers.addAll(headers);
 
+      List<TextChatModel> chatList = [];
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
         var message = await response.stream.bytesToString();
-        print("send $message");
+        log("send $message");
         Map jsonResponse = jsonDecode(message);
-        print("jsonResponse $jsonResponse");
+        log("jsonResponse $jsonResponse");
+        chatList = List.generate(
+            jsonResponse["candidates"].length,
+            (index) => TextChatModel(
+                msg: jsonResponse["candidates"][0]["output"], chatIndex: 1));
       } else {
         var message = response.reasonPhrase;
         throw HttpException(message!);
       }
+      return chatList;
     } catch (error) {
-      print("error, $error");
+      log("error, $error");
+      rethrow;
     }
   }
 }

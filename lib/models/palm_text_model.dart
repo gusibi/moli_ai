@@ -49,3 +49,10 @@ class TextModel {
         'candidates': candidates?.map((e) => e.toJson()).toList(),
       };
 }
+
+class TextChatModel {
+  final String msg;
+  final int chatIndex;
+
+  TextChatModel({required this.msg, required this.chatIndex});
+}
