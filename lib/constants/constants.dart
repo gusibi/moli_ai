@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/chat_list_model.dart';
 import '../widgets/text_widget.dart';
 
 Color scaffoldBackgroundColor = Colors.blueGrey;
@@ -28,4 +29,19 @@ final testChatMessages = [
         "Sorry, but I can't. I don't have a physical body. I'm a large language model, also known as a conversational AI or chatbot. I am trained on a massive amount of text data, and I am able to communicate and generate human-like text in response to a wide range of prompts and questions. For example, I can provide summaries of factual topics or create stories.",
     "chatIndex": 1,
   },
+];
+
+final List<ChatCardModel> chats = [
+  ChatCardModel(
+    title: "随便聊聊",
+    prompt: "Hi, how are you?",
+    modelName: "chat-bison-001",
+    icon: Icons.chat,
+  ),
+  ChatCardModel(
+    title: "随便聊聊1",
+    prompt: "Hi, how are you?",
+    modelName: "chat-bison-001",
+    icon: Icons.chat,
+  ),
 ];

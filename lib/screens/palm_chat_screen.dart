@@ -3,12 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai_box/services/palm_api_service.dart';
-import '../constants/constants.dart';
 import '../models/palm_text_model.dart';
-import '../services/assets_manager.dart';
-import '../services/services.dart';
 import '../widgets/chat_widget.dart';
-import '../widgets/text_widget.dart';
 
 class PalmChatScreen extends StatefulWidget {
   const PalmChatScreen({super.key});
@@ -20,6 +16,10 @@ class PalmChatScreen extends StatefulWidget {
 class _PalmChatScreenState extends State<PalmChatScreen> {
   bool _isTyping = false;
   List<TextChatModel> chatList = [];
+  late final _colorScheme = Theme.of(context).colorScheme;
+  late final _backgroundColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+
   late TextEditingController textEditingController;
 
   @override
@@ -38,63 +38,61 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // elevation: 2,
-        // leading: Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: Image.asset(AssetsManager.palmLogo),
-        // ),
         title: const Text("Palm Chat"),
       ),
-      body: SafeArea(
-          child: Column(
-        children: [
-          Flexible(
-            child: ListView.builder(
-              itemCount: chatList.length,
-              itemBuilder: (context, index) {
-                return ChatWidget(
-                  message: chatList[index].msg,
-                  chatIndex: chatList[index].chatIndex,
-                );
-              },
-            ),
-          ),
-          if (_isTyping) ...[
-            const SpinKitThreeBounce(
-              color: Colors.white,
-              size: 18,
-            ),
-          ],
-          SizedBox(height: 15),
-          Material(
-            color: cardColor,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    // 支持换行
-                    child: TextField(
-                      style: const TextStyle(color: Colors.white),
-                      controller: textEditingController,
-                      onSubmitted: (value) {},
-                      decoration: const InputDecoration.collapsed(
-                        hintText: "How can I help you",
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        sendMessageFCT(context);
-                      },
-                      icon: const Icon(Icons.send, color: Colors.white)),
-                ],
+      body: Container(
+        color: _backgroundColor,
+        child: SafeArea(
+            child: Column(
+          children: [
+            Flexible(
+              child: ListView.builder(
+                itemCount: chatList.length,
+                itemBuilder: (context, index) {
+                  return ChatWidget(
+                    message: chatList[index].msg,
+                    chatIndex: chatList[index].chatIndex,
+                  );
+                },
               ),
             ),
-          ),
-        ],
-      )),
+            if (_isTyping) ...[
+              const SpinKitThreeBounce(
+                color: Colors.white,
+                size: 18,
+              ),
+            ],
+            SizedBox(height: 15),
+            Material(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      // 支持换行
+                      child: TextField(
+                        style: const TextStyle(color: Colors.white),
+                        controller: textEditingController,
+                        onSubmitted: (value) {},
+                        decoration: const InputDecoration.collapsed(
+                          hintText: "How can I help you",
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          sendMessageFCT(context);
+                        },
+                        icon: const Icon(Icons.send, color: Colors.white)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        )),
+      ),
     );
   }
 

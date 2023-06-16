@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
 import '../widgets/drop_down.dart';
 import '../widgets/form_widget.dart';
 
@@ -13,8 +12,6 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? _baseUrl;
-  String? _apiKey;
 
   @override
   Widget build(BuildContext context) {
