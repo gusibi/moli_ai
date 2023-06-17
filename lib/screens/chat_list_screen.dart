@@ -30,6 +30,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             selectedIndex: 0,
           )),
       floatingActionButton: FloatingActionButton(
+        heroTag: "newChat",
         backgroundColor: _colorScheme.tertiaryContainer,
         foregroundColor: _colorScheme.onTertiaryContainer,
         onPressed: () {},
@@ -72,6 +73,7 @@ class ChatListView extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: ChatCardWidget(
                   title: chats[index].title,
+                  index: index,
                   prompt: chats[index].prompt,
                   icon: chats[index].icon,
                   modelName: chats[index].modelName,

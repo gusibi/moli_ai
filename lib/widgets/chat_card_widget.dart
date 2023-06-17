@@ -10,6 +10,7 @@ class ChatCardWidget extends StatefulWidget {
     super.key,
     required this.title,
     this.isPreview = true,
+    this.index = 0,
     this.prompt,
     this.modelName,
     this.icon,
@@ -17,6 +18,7 @@ class ChatCardWidget extends StatefulWidget {
   });
 
   final String title;
+  final int index;
   final String? prompt;
   final String? modelName;
   final IconData? icon;
@@ -65,6 +67,7 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ChatCardHeadline(
+                  index: widget.index,
                   chatInfo: ChatCardModel(
                     icon: widget.icon,
                     title: widget.title,
@@ -83,12 +86,14 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
 class ChatCardHeadline extends StatefulWidget {
   const ChatCardHeadline({
     super.key,
+    required this.index,
     required this.chatInfo,
     required this.isSelected,
   });
 
   final ChatCardModel chatInfo;
   final bool isSelected;
+  final int index;
 
   @override
   State<ChatCardHeadline> createState() => _ChatCardHeadlineState();
@@ -101,7 +106,7 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Container(
+      return SizedBox(
         height: 84,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 12, 12, 12),
@@ -109,7 +114,7 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(widget.chatInfo.icon),
+              CircleAvatar(child: Icon(widget.chatInfo.icon)),
               const Padding(padding: EdgeInsets.only(right: 8.0)),
               Expanded(
                 child: Column(
@@ -137,14 +142,11 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
               // expected to overflow.
               if (constraints.maxWidth - 200 > 0) ...[
                 const Padding(padding: EdgeInsets.only(right: 8.0)),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                   width: 40,
-                  child: FloatingActionButton(
-                    onPressed: () {},
-                    elevation: 0,
-                    backgroundColor: _colorScheme.surface,
-                    child: const Icon(Icons.more_vert),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
                   ),
                 ),
               ]

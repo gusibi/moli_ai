@@ -55,7 +55,6 @@ class _MyAppState extends State<MyApp> {
                   icon: Icon(Icons.settings), label: "Setting"),
             ],
             backgroundColor: Colors.white,
-            // backgroundColor: cardColor,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
           ),
