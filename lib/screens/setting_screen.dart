@@ -11,6 +11,10 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  late final _colorScheme = Theme.of(context).colorScheme;
+  late final _backgroundColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -19,30 +23,33 @@ class _SettingScreenState extends State<SettingScreen> {
       appBar: AppBar(
         title: const Text("Setting"),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-              key: _formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const BaseURLFormWidget(),
-                    const ApiKeyFormWidget(),
-                    const ModelsDropdownFormWidget(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            // do something with _baseUrl and _apiKey
-                          }
-                        },
-                        child: const Text('Submit'),
+      body: Container(
+        color: _backgroundColor,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+                key: _formKey,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const BaseURLFormWidget(),
+                      const ApiKeyFormWidget(),
+                      const ModelsDropdownFormWidget(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              // do something with _baseUrl and _apiKey
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
                       ),
-                    ),
-                  ])),
+                    ])),
+          ),
         ),
       ),
     );

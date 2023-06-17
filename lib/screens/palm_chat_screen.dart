@@ -19,6 +19,8 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+  late final _buttonColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   late TextEditingController textEditingController;
 
@@ -62,7 +64,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                 size: 18,
               ),
             ],
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Material(
               color: Colors.white,
               child: Padding(
@@ -85,7 +87,9 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         onPressed: () {
                           sendMessageFCT(context);
                         },
-                        icon: const Icon(Icons.send, color: Colors.white)),
+                        icon: const Icon(
+                          Icons.send,
+                        )),
                   ],
                 ),
               ),
