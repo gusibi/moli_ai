@@ -3,11 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai_box/services/palm_api_service.dart';
+import 'package:provider/provider.dart';
 import '../models/palm_text_model.dart';
+import '../providers/palm_priovider.dart';
 import '../widgets/chat_widget.dart';
 
 class PalmChatScreen extends StatefulWidget {
-  const PalmChatScreen({super.key});
+  const PalmChatScreen({
+    super.key,
+  });
 
   @override
   State<PalmChatScreen> createState() => _PalmChatScreenState();
@@ -38,9 +42,13 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    String chatTitle = palmProvider.getChatInfo.title;
+    log("title: $chatTitle");
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Palm Chat"),
+        title: Text(chatTitle),
       ),
       body: Container(
         color: _backgroundColor,

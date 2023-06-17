@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
 import '../models/chat_list_model.dart';
+import '../providers/palm_priovider.dart';
 import '../widgets/chat_card_widget.dart';
 import 'palm_chat_screen.dart';
 
@@ -25,24 +27,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    List<ChatCardModel> chatList = palmProvider.getChatList;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: ListView(
         children: [
           const SizedBox(height: 8),
           ...List.generate(
-            chats.length,
+            chatList.length,
             (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: ChatCardWidget(
-                  title: chats[index].title,
+                  chatInfo: chatList[index],
+                  id: chatList[index].id,
                   index: index,
-                  prompt: chats[index].prompt,
-                  icon: chats[index].icon,
-                  modelName: chats[index].modelName,
                   onSelected: () {
-                    _navigateToChatDetailPage(chats[index]);
+                    _navigateToChatDetailPage(chatList[index]);
                   },
                 ),
               );
@@ -54,6 +57,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   void _navigateToChatDetailPage(ChatCardModel chat) {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    palmProvider.setChatInfo(chat);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const PalmChatScreen(),

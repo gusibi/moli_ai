@@ -17,13 +17,18 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
         Provider.of<PalmSettingProvider>(context, listen: false);
     var baseURL = palmProvider.getBaseURL;
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Base URL"),
+      decoration: const InputDecoration(
+        labelText: "Base URL",
+        border: OutlineInputBorder(),
+      ),
+
       validator: (value) {
         if (value!.isEmpty) {
           return 'Please enter base URL';
         }
         return null;
       },
+      // style: TextStyle(),
       initialValue: baseURL,
       onChanged: (value) {
         setState(() {
@@ -54,7 +59,10 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
         Provider.of<PalmSettingProvider>(context, listen: false);
     var apiKey = palmProvider.getApiKey;
     return TextFormField(
-      decoration: const InputDecoration(labelText: "API Key"),
+      decoration: const InputDecoration(
+        labelText: "API Key",
+        border: OutlineInputBorder(),
+      ),
       validator: (value) {
         if (value!.isEmpty) {
           return 'Please enter API Key';

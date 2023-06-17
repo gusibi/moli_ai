@@ -8,20 +8,16 @@ import '../models/chat_list_model.dart';
 class ChatCardWidget extends StatefulWidget {
   const ChatCardWidget({
     super.key,
-    required this.title,
+    required this.chatInfo,
     this.isPreview = true,
     this.index = 0,
-    this.prompt,
-    this.modelName,
-    this.icon,
+    this.id = 0,
     this.onSelected,
   });
 
-  final String title;
   final int index;
-  final String? prompt;
-  final String? modelName;
-  final IconData? icon;
+  final ChatCardModel chatInfo;
+  final int id;
   final bool isPreview;
   final void Function()? onSelected;
 
@@ -68,12 +64,7 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
             children: [
               ChatCardHeadline(
                   index: widget.index,
-                  chatInfo: ChatCardModel(
-                    icon: widget.icon,
-                    title: widget.title,
-                    prompt: widget.prompt,
-                    modelName: widget.modelName,
-                  ),
+                  chatInfo: widget.chatInfo,
                   isSelected: _isSelected)
             ],
           ),

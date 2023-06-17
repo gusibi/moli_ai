@@ -31,17 +31,10 @@ final testChatMessages = [
   },
 ];
 
-final List<ChatCardModel> chats = [
-  ChatCardModel(
-    title: "随便聊聊",
-    prompt: "Hi, how are you?",
-    modelName: "chat-bison-001",
-    icon: Icons.chat,
-  ),
-  ChatCardModel(
-    title: "随便聊聊1",
-    prompt: "Hi, how are you?",
-    modelName: "chat-bison-001",
-    icon: Icons.chat,
-  ),
-];
+final ChatCardModel defaultChat = ChatCardModel(
+  id: 0,
+  icon: Icons.chat,
+  title: "随便聊聊",
+  prompt: "Hi, how are you?",
+  modelName: "text-bison-001",
+);
