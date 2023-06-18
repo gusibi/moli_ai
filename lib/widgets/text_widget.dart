@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ChatMessageWidget extends StatelessWidget {
-  const ChatMessageWidget({
+class ChatMessageReplyWidget extends StatelessWidget {
+  const ChatMessageReplyWidget({
     Key? key,
     required this.message,
-    this.fontSize = 18,
+    this.fontSize = 14,
     this.color,
     this.fontWeight,
   }) : super(key: key);
@@ -17,6 +17,7 @@ class ChatMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       message,
+      // textAlign: TextAlign.right,
       style: TextStyle(
         color: color ?? Colors.white,
         fontSize: fontSize,

@@ -20,8 +20,8 @@ samples, guidance on mobile development, and a full API reference.
 - [x] 模型选择菜单  
 - [x] 菜单/侧边菜单
 - [x] http 调用  
+- [x] Android 网络权限
 - [ ] iOS 网络权限
-- [ ] Android 网络权限
 - [ ] + 创建新的会话
 - [ ] 会话记录保存
 - [ ] 会话单独设置

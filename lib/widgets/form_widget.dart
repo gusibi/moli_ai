@@ -84,3 +84,51 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
     );
   }
 }
+
+class ChatInputFormWidget extends StatelessWidget {
+  const ChatInputFormWidget({
+    super.key,
+    required this.textController,
+    required this.onPressed,
+  });
+  final TextEditingController textController;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      // height: 60,
+      child: Container(
+        decoration: const BoxDecoration(color: Colors.white),
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const CircleAvatar(child: Icon(Icons.cleaning_services_outlined)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                maxLines: 2,
+                style: const TextStyle(color: Colors.black, fontSize: 14),
+                controller: textController,
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  hintText: "Type your message",
+                  hintStyle: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+                child: IconButton(
+              onPressed: onPressed,
+              icon: const Icon(Icons.send),
+            )),
+            // const CircleAvatar(child: Icon(Icons.send)),
+          ],
+        ),
+      ),
+    );
+  }
+}

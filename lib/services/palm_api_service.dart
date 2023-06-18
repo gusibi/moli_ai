@@ -15,7 +15,7 @@ class PalmApiService {
     try {
       return modelsList;
     } catch (error) {
-      print("error, $error");
+      log("error, $error");
       throw HttpException("$error");
     }
   }
@@ -56,9 +56,9 @@ class PalmApiService {
       List<TextChatModel> chatList = [];
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
-        var message = await response.stream.bytesToString();
-        log("send $message");
-        Map jsonResponse = jsonDecode(message);
+        var resp = await response.stream.bytesToString();
+        log("resp $resp");
+        Map jsonResponse = jsonDecode(resp);
         log("jsonResponse $jsonResponse");
         chatList = List.generate(
             jsonResponse["candidates"].length,

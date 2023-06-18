@@ -4,7 +4,6 @@ import '../models/chat_list_model.dart';
 import '../widgets/text_widget.dart';
 
 Color scaffoldBackgroundColor = Colors.blueGrey;
-Color cardColor = const Color(0xFF444654);
 
 List<String> modelsList = [
   "chat-bison-001",

@@ -28,7 +28,7 @@ class ChatCardWidget extends StatefulWidget {
 class _ChatCardWidgetState extends State<ChatCardWidget> {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late Color unselectedColor = Color.alphaBlend(
-    _colorScheme.primary.withOpacity(0.08),
+    _colorScheme.primary.withOpacity(0.38),
     _colorScheme.surface,
   );
   bool _isSelected = false;
@@ -55,7 +55,8 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
       child: GestureDetector(
         onTap: widget.onSelected,
         child: Card(
-          elevation: 0,
+          elevation: 4,
+          shadowColor: Colors.white,
           color: _surfaceColor,
           clipBehavior: Clip.hardEdge,
           child: Column(
