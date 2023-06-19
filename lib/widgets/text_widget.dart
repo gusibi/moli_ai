@@ -19,7 +19,7 @@ class ChatMessageReplyWidget extends StatelessWidget {
       message,
       // textAlign: TextAlign.right,
       style: TextStyle(
-        color: color ?? Colors.white,
+        color: color ?? Colors.red,
         fontSize: fontSize,
         fontWeight: fontWeight ?? FontWeight.normal,
       ),
@@ -45,7 +45,7 @@ class TextWidget extends StatelessWidget {
     return Text(
       message,
       style: TextStyle(
-        color: color ?? Colors.white,
+        color: color ?? Colors.blue,
         fontSize: fontSize,
         fontWeight: fontWeight ?? FontWeight.normal,
       ),

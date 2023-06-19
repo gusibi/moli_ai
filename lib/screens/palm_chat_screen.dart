@@ -23,6 +23,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
   bool _isTyping = false;
   List<TextChatModel> chatList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
+
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
@@ -53,9 +54,10 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
     log("title: $chatTitle");
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
+        elevation: 4,
         automaticallyImplyLeading: false,
         backgroundColor: _colorScheme.primary,
+        shadowColor: Colors.white,
         flexibleSpace: SafeArea(
           child: Container(
             padding: const EdgeInsets.only(right: 16),
@@ -113,37 +115,38 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
         onTap: () => _hideKeyboard(context),
         child: Container(
           color: _backgroundColor,
-          child: SafeArea(
+          child: Align(
+              alignment: Alignment.bottomLeft,
               child: Column(
-            children: [
-              Flexible(
-                child: ListView.builder(
-                  itemCount: chatList.length,
-                  itemBuilder: (context, index) {
-                    return ChatMessageWidget(chatInfo: chatList[index]);
-                  },
-                ),
-              ),
-              if (_isTyping) ...[
-                const SpinKitThreeBounce(
-                  color: Colors.white,
-                  size: 18,
-                ),
-              ],
-              const SizedBox(height: 15),
-              // ChatInputFormWidget(),
-              ChatInputFormWidget(
-                  textController: textEditingController,
-                  onPressed: () {
-                    if (_isTyping) {
-                      log("asking");
-                    } else {
-                      _hideKeyboard(context);
-                      sendMessageFCT(context);
-                    }
-                  }),
-            ],
-          )),
+                children: [
+                  Flexible(
+                    child: ListView.builder(
+                      itemCount: chatList.length,
+                      itemBuilder: (context, index) {
+                        return ChatMessageWidget(chatInfo: chatList[index]);
+                      },
+                    ),
+                  ),
+                  if (_isTyping) ...[
+                    const SpinKitThreeBounce(
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ],
+                  const SizedBox(height: 15),
+                  // ChatInputFormWidget(),
+                  ChatInputFormWidget(
+                      textController: textEditingController,
+                      onPressed: () {
+                        if (_isTyping) {
+                          log("asking");
+                        } else {
+                          _hideKeyboard(context);
+                          sendMessageFCT(context);
+                        }
+                      }),
+                ],
+              )),
         ),
       ),
     );

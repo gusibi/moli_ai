@@ -13,6 +13,7 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
+
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
@@ -38,6 +39,8 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         centerTitle: true,
         backgroundColor: _colorScheme.primary,
+        shadowColor: Colors.white,
+        elevation: 4,
       ),
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),

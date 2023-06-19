@@ -21,9 +21,9 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  late final _colorScheme = Theme.of(context).colorScheme;
-  late final _backgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+  // late final _colorScheme = Theme.of(context).colorScheme;
+  // late final _backgroundColor = Color.alphaBlend(
+  //     _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   @override
   Widget build(BuildContext context) {

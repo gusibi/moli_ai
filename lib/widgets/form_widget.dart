@@ -100,7 +100,7 @@ class ChatInputFormWidget extends StatelessWidget {
       // height: 60,
       child: Container(
         decoration: const BoxDecoration(color: Colors.white),
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

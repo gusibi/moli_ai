@@ -33,7 +33,11 @@ class _MyAppState extends State<MyApp> {
         )
       ],
       child: MaterialApp(
-        theme: ThemeData.light(useMaterial3: true),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green),
+        ),
         home: const RootPage(),
       ),
     );
