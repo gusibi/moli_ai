@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
 import '../models/chat_list_model.dart';
 import '../providers/palm_priovider.dart';
 import '../widgets/chat_card_widget.dart';
@@ -59,7 +58,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   void _navigateToChatDetailPage(ChatCardModel chat) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setChatInfo(chat);
+    palmProvider.setCurrentChatInfo(chat);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const PalmChatScreen(),

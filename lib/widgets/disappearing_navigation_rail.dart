@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../destinations.dart';
+import '../screens/chat_setting_screen.dart';
 
-class DisappearingNavigationRail extends StatelessWidget {
+class DisappearingNavigationRail extends StatefulWidget {
   const DisappearingNavigationRail({
     super.key,
     required this.backgroundColor,
@@ -15,12 +16,19 @@ class DisappearingNavigationRail extends StatelessWidget {
   final ValueChanged<int>? onDestinationSelected;
 
   @override
+  State<DisappearingNavigationRail> createState() =>
+      _DisappearingNavigationRailState();
+}
+
+class _DisappearingNavigationRailState
+    extends State<DisappearingNavigationRail> {
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return NavigationRail(
-      selectedIndex: selectedIndex,
-      backgroundColor: backgroundColor,
-      onDestinationSelected: onDestinationSelected,
+      selectedIndex: widget.selectedIndex,
+      backgroundColor: widget.backgroundColor,
+      onDestinationSelected: widget.onDestinationSelected,
       leading: Column(
         children: [
           IconButton(
@@ -36,7 +44,9 @@ class DisappearingNavigationRail extends StatelessWidget {
             ),
             backgroundColor: colorScheme.tertiaryContainer,
             foregroundColor: colorScheme.onTertiaryContainer,
-            onPressed: () {},
+            onPressed: () {
+              _navigateToCreateNewChat();
+            },
             child: const Icon(Icons.add),
           ),
         ],
@@ -48,6 +58,14 @@ class DisappearingNavigationRail extends StatelessWidget {
           label: Text(d.label),
         );
       }).toList(),
+    );
+  }
+
+  void _navigateToCreateNewChat() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ChatSettingScreen(),
+      ),
     );
   }
 }

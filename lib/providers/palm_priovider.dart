@@ -7,7 +7,6 @@ import '../services/palm_api_service.dart';
 
 class PalmSettingProvider with ChangeNotifier {
   String currentModel = "text-bison-001";
-  String baseURL = BASE_URL;
   String apiKey = API_KEY;
   int chatId = 0;
 
@@ -19,6 +18,8 @@ class PalmSettingProvider with ChangeNotifier {
     currentModel = newModel;
     notifyListeners();
   }
+
+  String baseURL = BASE_URL;
 
   String get getBaseURL {
     return baseURL;
@@ -49,11 +50,11 @@ class PalmSettingProvider with ChangeNotifier {
 
   ChatCardModel currentChatInfo = defaultChat;
 
-  ChatCardModel get getChatInfo {
+  ChatCardModel get getCurrentChatInfo {
     return currentChatInfo;
   }
 
-  void setChatInfo(ChatCardModel newChatInfo) {
+  void setCurrentChatInfo(ChatCardModel newChatInfo) {
     currentChatInfo = newChatInfo;
     notifyListeners();
   }
@@ -78,5 +79,29 @@ class PalmSettingProvider with ChangeNotifier {
   List<String> getAllPalmModels() {
     modelsList = PalmApiService.getModels();
     return modelsList;
+  }
+
+  // new chat
+
+  String newChatTitle = "";
+
+  String get getNewChatTitle {
+    return newChatTitle;
+  }
+
+  void setNewChatTitle(String newTitle) {
+    newChatTitle = newTitle;
+    notifyListeners();
+  }
+
+  String newChatPrompt = "";
+
+  String get getNewChatPrompt {
+    return newChatPrompt;
+  }
+
+  void setNewChatPrompt(String newPrompt) {
+    newChatPrompt = newPrompt;
+    notifyListeners();
   }
 }

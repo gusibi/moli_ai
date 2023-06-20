@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ChatCardModel {
-  final int id;
-  final String title;
-  final IconData? icon;
-  final String? prompt;
-  final String? modelName;
+  int id;
+  String title;
+  IconData? icon;
+  String? prompt;
+  String? modelName;
 
   ChatCardModel(
       {required this.id,

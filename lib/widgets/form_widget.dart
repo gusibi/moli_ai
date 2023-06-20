@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -129,6 +131,92 @@ class ChatInputFormWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChatTitleFormWidget extends StatefulWidget {
+  const ChatTitleFormWidget({super.key});
+
+  @override
+  State<ChatTitleFormWidget> createState() => _ChatTitleFormWidget();
+}
+
+class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var chatInfo = palmProvider.getCurrentChatInfo;
+    var newChatTitle = "";
+    if (chatInfo.id != 0) {
+      newChatTitle = chatInfo.title;
+    }
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Chat Name",
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.badge_outlined),
+      ),
+
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Please enter Chat Name';
+        }
+        return null;
+      },
+      // style: TextStyle(),
+      initialValue: newChatTitle,
+      onChanged: (value) {
+        setState(() {
+          newChatTitle = value.toString();
+        });
+        palmProvider.setNewChatTitle(value.toString());
+      },
+      onSaved: (value) {
+        newChatTitle = value.toString();
+        palmProvider.setNewChatTitle(value.toString());
+        log("chatInfo.title: $newChatTitle");
+      },
+    );
+  }
+}
+
+class ChatPromptFormWidget extends StatefulWidget {
+  const ChatPromptFormWidget({super.key});
+
+  @override
+  State<ChatPromptFormWidget> createState() => _ChatPromptFormWidget();
+}
+
+class _ChatPromptFormWidget extends State<ChatPromptFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var chatInfo = palmProvider.getCurrentChatInfo;
+    var newChatPrompt = "";
+    if (chatInfo.id != 0) {
+      newChatPrompt = chatInfo.prompt!;
+    }
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Prompt",
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.description_outlined),
+      ),
+      initialValue: newChatPrompt,
+      onChanged: (value) {
+        setState(() {
+          newChatPrompt = value.toString();
+        });
+        palmProvider.setNewChatPrompt(value.toString());
+      },
+      onSaved: (value) {
+        newChatPrompt = value.toString();
+        palmProvider.setNewChatPrompt(value.toString());
+        log("chatInfo.prompt: $newChatPrompt");
+      },
     );
   }
 }

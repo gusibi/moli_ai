@@ -50,7 +50,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    String chatTitle = palmProvider.getChatInfo.title;
+    String chatTitle = palmProvider.getCurrentChatInfo.title;
     log("title: $chatTitle");
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +76,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                   width: 2,
                 ),
                 CircleAvatar(
-                  child: Icon(palmProvider.getChatInfo.icon),
+                  child: Icon(palmProvider.getCurrentChatInfo.icon),
                 ),
                 const SizedBox(
                   width: 12,
@@ -95,7 +95,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         height: 6,
                       ),
                       Text(
-                        palmProvider.getChatInfo.prompt!,
+                        palmProvider.getCurrentChatInfo.prompt!,
                         style: TextStyle(
                             color: _colorScheme.onSecondary, fontSize: 12),
                       ),
