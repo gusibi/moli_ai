@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:moli_ai_box/constants/constants.dart';
 
 import '../destinations.dart';
-import '../screens/chat_setting_screen.dart';
+import '../providers/palm_priovider.dart';
+import '../screens/palm_chat_screen.dart';
 
 class DisappearingNavigationRail extends StatefulWidget {
   const DisappearingNavigationRail({
@@ -62,9 +66,12 @@ class _DisappearingNavigationRailState
   }
 
   void _navigateToCreateNewChat() {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    palmProvider.setCurrentChatInfo(newChat);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const ChatSettingScreen(),
+        builder: (context) => const PalmChatScreen(),
       ),
     );
   }

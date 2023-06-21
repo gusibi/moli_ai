@@ -83,25 +83,25 @@ class PalmSettingProvider with ChangeNotifier {
 
   // new chat
 
-  String newChatTitle = "";
+  String currentChatTitle = "";
 
-  String get getNewChatTitle {
-    return newChatTitle;
+  String get getCurrentChatTitle {
+    return currentChatTitle;
   }
 
-  void setNewChatTitle(String newTitle) {
-    newChatTitle = newTitle;
+  void setCurrentChatTitle(String newTitle) {
+    currentChatTitle = newTitle;
     notifyListeners();
   }
 
-  String newChatPrompt = "";
+  String currentChatPrompt = "";
 
-  String get getNewChatPrompt {
-    return newChatPrompt;
+  String get getCurrentChatPrompt {
+    return currentChatPrompt;
   }
 
-  void setNewChatPrompt(String newPrompt) {
-    newChatPrompt = newPrompt;
+  void setCurrentChatPrompt(String newPrompt) {
+    currentChatPrompt = newPrompt;
     notifyListeners();
   }
 }

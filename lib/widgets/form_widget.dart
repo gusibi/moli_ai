@@ -148,10 +148,7 @@ class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var chatInfo = palmProvider.getCurrentChatInfo;
-    var newChatTitle = "";
-    if (chatInfo.id != 0) {
-      newChatTitle = chatInfo.title;
-    }
+    var currentChatTitle = chatInfo.title;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Chat Name",
@@ -166,17 +163,17 @@ class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
         return null;
       },
       // style: TextStyle(),
-      initialValue: newChatTitle,
+      initialValue: currentChatTitle,
       onChanged: (value) {
         setState(() {
-          newChatTitle = value.toString();
+          currentChatTitle = value.toString();
         });
-        palmProvider.setNewChatTitle(value.toString());
+        palmProvider.setCurrentChatTitle(value.toString());
       },
       onSaved: (value) {
-        newChatTitle = value.toString();
-        palmProvider.setNewChatTitle(value.toString());
-        log("chatInfo.title: $newChatTitle");
+        currentChatTitle = value.toString();
+        palmProvider.setCurrentChatTitle(value.toString());
+        log("chatInfo.title: $currentChatTitle");
       },
     );
   }
@@ -195,27 +192,24 @@ class _ChatPromptFormWidget extends State<ChatPromptFormWidget> {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var chatInfo = palmProvider.getCurrentChatInfo;
-    var newChatPrompt = "";
-    if (chatInfo.id != 0) {
-      newChatPrompt = chatInfo.prompt!;
-    }
+    var currentChatPrompt = chatInfo.prompt!;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Prompt",
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.description_outlined),
       ),
-      initialValue: newChatPrompt,
+      initialValue: currentChatPrompt,
       onChanged: (value) {
         setState(() {
-          newChatPrompt = value.toString();
+          currentChatPrompt = value.toString();
         });
-        palmProvider.setNewChatPrompt(value.toString());
+        palmProvider.setCurrentChatPrompt(value.toString());
       },
       onSaved: (value) {
-        newChatPrompt = value.toString();
-        palmProvider.setNewChatPrompt(value.toString());
-        log("chatInfo.prompt: $newChatPrompt");
+        currentChatPrompt = value.toString();
+        palmProvider.setCurrentChatPrompt(value.toString());
+        log("chatInfo.prompt: $currentChatPrompt");
       },
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/chat_list_model.dart';
-import '../widgets/text_widget.dart';
 
 Color scaffoldBackgroundColor = Colors.blueGrey;
 
@@ -35,5 +34,13 @@ final ChatCardModel defaultChat = ChatCardModel(
   icon: Icons.chat,
   title: "随便聊聊",
   prompt: "Hi, how are you?",
+  modelName: "text-bison-001",
+);
+
+final ChatCardModel newChat = ChatCardModel(
+  id: 0,
+  icon: Icons.chat,
+  title: "New Chat",
+  prompt: "You can setting yourself prompt",
   modelName: "text-bison-001",
 );

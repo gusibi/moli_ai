@@ -35,7 +35,7 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
 
   Color get _surfaceColor {
     if (_isSelected) return _colorScheme.primaryContainer;
-    if (!widget.isPreview) return _colorScheme.surface;
+    // if (!widget.isPreview) return _colorScheme.surface;
     return unselectedColor;
   }
 
@@ -94,6 +94,15 @@ class ChatCardHeadline extends StatefulWidget {
 class _ChatCardHeadlineState extends State<ChatCardHeadline> {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
+  late Color unselectedColor = Color.alphaBlend(
+    _colorScheme.primary.withOpacity(0.38),
+    _colorScheme.onSurface,
+  );
+
+  Color get _onSurfaceColor {
+    if (widget.isSelected) return _colorScheme.onPrimaryContainer;
+    return unselectedColor;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,15 +126,19 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
                       widget.chatInfo.title,
                       maxLines: 1,
                       overflow: TextOverflow.fade,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                          color: _onSurfaceColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
                     ),
                     Text(
                       widget.chatInfo.prompt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.fade,
-                      style: _textTheme.labelMedium
-                          ?.copyWith(fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                          color: _onSurfaceColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -134,11 +147,12 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
               // expected to overflow.
               if (constraints.maxWidth - 200 > 0) ...[
                 const Padding(padding: EdgeInsets.only(right: 8.0)),
-                const SizedBox(
+                SizedBox(
                   height: 40,
                   width: 40,
                   child: Icon(
                     Icons.arrow_forward_ios,
+                    color: _onSurfaceColor,
                   ),
                 ),
               ]

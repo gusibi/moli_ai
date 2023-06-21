@@ -34,10 +34,7 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var chatInfo = palmProvider.getCurrentChatInfo;
-    var appBarTitle = "Create New";
-    if (chatInfo.id != 0) {
-      appBarTitle = chatInfo.title;
-    }
+
     List<Widget> formList = [
       const ChatTitleFormWidget(),
       const ChatPromptFormWidget(),
@@ -47,7 +44,7 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          appBarTitle,
+          chatInfo.title,
           style: TextStyle(color: _colorScheme.onSecondary),
         ),
         centerTitle: true,
@@ -90,17 +87,13 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       // do something with _baseUrl and _apiKey
-                      String newTitle = palmProvider.getNewChatTitle;
-                      String newPrompt = palmProvider.getNewChatPrompt;
+                      String newTitle = palmProvider.getCurrentChatTitle;
+                      String newPrompt = palmProvider.getCurrentChatPrompt;
                       log("prompt: $newPrompt, title: $newTitle");
-                      ChatCardModel newChat = ChatCardModel(
-                        id: 0,
-                        icon: Icons.chat,
-                        title: newTitle,
-                        prompt: newPrompt,
-                        modelName: "text-bison-001",
-                      );
-                      _navigateToChatDetailPage(newChat);
+                      chatInfo.title = newTitle;
+                      chatInfo.prompt = newPrompt;
+                      palmProvider.setCurrentChatInfo(chatInfo);
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text('Submit'),

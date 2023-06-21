@@ -5,10 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai_box/services/palm_api_service.dart';
 import 'package:provider/provider.dart';
+import '../models/chat_list_model.dart';
 import '../models/palm_text_model.dart';
 import '../providers/palm_priovider.dart';
 import '../widgets/chat_widget.dart';
 import '../widgets/form_widget.dart';
+import 'chat_setting_screen.dart';
 
 class PalmChatScreen extends StatefulWidget {
   const PalmChatScreen({
@@ -28,11 +30,15 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   late TextEditingController textEditingController;
+  late ChatCardModel currentChatInfo;
 
   @override
   void initState() {
     textEditingController = TextEditingController();
     super.initState();
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    currentChatInfo = palmProvider.getCurrentChatInfo;
   }
 
   @override
@@ -48,10 +54,6 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
-    String chatTitle = palmProvider.getCurrentChatInfo.title;
-    log("title: $chatTitle");
     return Scaffold(
       appBar: AppBar(
         elevation: 4,
@@ -76,7 +78,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                   width: 2,
                 ),
                 CircleAvatar(
-                  child: Icon(palmProvider.getCurrentChatInfo.icon),
+                  child: Icon(currentChatInfo.icon),
                 ),
                 const SizedBox(
                   width: 12,
@@ -87,7 +89,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        chatTitle,
+                        currentChatInfo.title,
                         style: TextStyle(
                             color: _colorScheme.onPrimary, fontSize: 14),
                       ),
@@ -95,15 +97,18 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         height: 6,
                       ),
                       Text(
-                        palmProvider.getCurrentChatInfo.prompt!,
+                        currentChatInfo.prompt!,
                         style: TextStyle(
                             color: _colorScheme.onSecondary, fontSize: 12),
                       ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.settings,
+                IconButton(
+                  onPressed: () {
+                    _navigateToChatSetting();
+                  },
+                  icon: const Icon(Icons.settings),
                   color: _colorScheme.onSecondary,
                 ),
               ],
@@ -148,6 +153,14 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                 ],
               )),
         ),
+      ),
+    );
+  }
+
+  void _navigateToChatSetting() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ChatSettingScreen(),
       ),
     );
   }
