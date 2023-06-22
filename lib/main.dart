@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:moli_ai_box/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
