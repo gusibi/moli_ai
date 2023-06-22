@@ -71,7 +71,9 @@ class _DisappearingNavigationRailState
     palmProvider.setCurrentChatInfo(newChat);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const PalmChatScreen(),
+        builder: (context) => PalmChatScreen(
+          conversationData: newChat,
+        ),
       ),
     );
   }

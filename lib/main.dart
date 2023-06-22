@@ -1,16 +1,22 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:moli_ai_box/screens/setting_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:moli_ai_box/constants/constants.dart';
 
+import 'repositories/datebase/client.dart';
 import 'providers/palm_priovider.dart';
 import 'screens/palm_chat_screen.dart';
 import 'screens/chat_list_screen.dart';
+import 'screens/setting_screen.dart';
 import 'widgets/disappearing_bottom_navigation_bar.dart';
 import 'widgets/disappearing_navigation_rail.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // initialize the database
+  await dbClient.init();
   runApp(const MyApp());
 }
 
@@ -24,6 +30,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    // dbClient.q();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -72,11 +79,13 @@ class _RootPageState extends State<RootPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: Center(
-      //   child: _widgetOptions.elementAt(selectedIndex),
-      // ),
       body: Row(
         children: [
           if (wideScreen)
@@ -127,7 +136,9 @@ class _RootPageState extends State<RootPage> {
     palmProvider.setCurrentChatInfo(newChat);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const PalmChatScreen(),
+        builder: (context) => PalmChatScreen(
+          conversationData: newChat,
+        ),
       ),
     );
   }

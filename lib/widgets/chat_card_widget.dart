@@ -1,4 +1,3 @@
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,7 @@ class ChatCardWidget extends StatefulWidget {
   });
 
   final int index;
-  final ChatCardModel chatInfo;
+  final ConversationCardDto chatInfo;
   final int id;
   final bool isPreview;
   final void Function()? onSelected;
@@ -82,7 +81,7 @@ class ChatCardHeadline extends StatefulWidget {
     required this.isSelected,
   });
 
-  final ChatCardModel chatInfo;
+  final ConversationCardDto chatInfo;
   final bool isSelected;
   final int index;
 

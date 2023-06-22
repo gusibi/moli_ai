@@ -29,7 +29,7 @@ final testChatMessages = [
   },
 ];
 
-final ChatCardModel defaultChat = ChatCardModel(
+final ConversationCardDto defaultChat = ConversationCardDto(
   id: 0,
   icon: Icons.chat,
   title: "随便聊聊",
@@ -37,7 +37,7 @@ final ChatCardModel defaultChat = ChatCardModel(
   modelName: "text-bison-001",
 );
 
-final ChatCardModel newChat = ChatCardModel(
+final ConversationCardDto newChat = ConversationCardDto(
   id: 0,
   icon: Icons.chat,
   title: "New Chat",

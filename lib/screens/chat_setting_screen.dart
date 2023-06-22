@@ -5,12 +5,20 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../models/chat_list_model.dart';
+import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
+import '../repositories/conversation/conversation.dart';
+import '../utils/time.dart';
 import '../widgets/form_widget.dart';
 import 'palm_chat_screen.dart';
 
 class ChatSettingScreen extends StatefulWidget {
-  const ChatSettingScreen({super.key});
+  const ChatSettingScreen({
+    super.key,
+    required this.conversationData,
+  });
+
+  final ConversationCardDto conversationData;
 
   @override
   State<ChatSettingScreen> createState() => _ChatSettingScreenState();
@@ -32,7 +40,7 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var chatInfo = palmProvider.getCurrentChatInfo;
+    var chatInfo = widget.conversationData;
 
     List<Widget> formList = [
       const ChatTitleFormWidget(),
@@ -85,13 +93,22 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      // do something with _baseUrl and _apiKey
                       String newTitle = palmProvider.getCurrentChatTitle;
                       String newPrompt = palmProvider.getCurrentChatPrompt;
                       log("prompt: $newPrompt, title: $newTitle");
                       chatInfo.title = newTitle;
                       chatInfo.prompt = newPrompt;
                       palmProvider.setCurrentChatInfo(chatInfo);
+                      ConversationModel conv = ConversationModel(
+                          id: chatInfo.id,
+                          title: newTitle,
+                          prompt: newPrompt,
+                          icon: chatInfo.icon.codePoint,
+                          desc: chatInfo.desc ?? '',
+                          modelName: chatInfo.modelName!,
+                          rank: 0,
+                          lastTime: timestampNow());
+                      ConversationReop().updateConversation(conv);
                       Navigator.pop(context);
                     }
                   },
@@ -101,17 +118,6 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
             ]),
           ),
         ),
-      ),
-    );
-  }
-
-  void _navigateToChatDetailPage(ChatCardModel chat) {
-    final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setCurrentChatInfo(chat);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const PalmChatScreen(),
       ),
     );
   }

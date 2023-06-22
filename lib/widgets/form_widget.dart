@@ -147,8 +147,7 @@ class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var chatInfo = palmProvider.getCurrentChatInfo;
-    var currentChatTitle = chatInfo.title;
+    var currentChatTitle = palmProvider.getCurrentChatTitle;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Chat Name",
@@ -191,8 +190,7 @@ class _ChatPromptFormWidget extends State<ChatPromptFormWidget> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var chatInfo = palmProvider.getCurrentChatInfo;
-    var currentChatPrompt = chatInfo.prompt!;
+    var currentChatPrompt = palmProvider.getCurrentChatPrompt;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Prompt",

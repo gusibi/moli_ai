@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../constants/api_constants.dart';
 import '../constants/constants.dart';
@@ -48,24 +51,24 @@ class PalmSettingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  ChatCardModel currentChatInfo = defaultChat;
+  ConversationCardDto currentChatInfo = defaultChat;
 
-  ChatCardModel get getCurrentChatInfo {
+  ConversationCardDto get getCurrentChatInfo {
     return currentChatInfo;
   }
 
-  void setCurrentChatInfo(ChatCardModel newChatInfo) {
+  void setCurrentChatInfo(ConversationCardDto newChatInfo) {
     currentChatInfo = newChatInfo;
     notifyListeners();
   }
 
-  List<ChatCardModel> chatList = [defaultChat];
+  List<ConversationCardDto> chatList = [defaultChat];
 
-  List<ChatCardModel> get getChatList {
+  List<ConversationCardDto> get getChatList {
     return chatList;
   }
 
-  void setChatList(List<ChatCardModel> newChatList) {
+  void setChatList(List<ConversationCardDto> newChatList) {
     chatList = newChatList;
     notifyListeners();
   }
@@ -102,6 +105,17 @@ class PalmSettingProvider with ChangeNotifier {
 
   void setCurrentChatPrompt(String newPrompt) {
     currentChatPrompt = newPrompt;
+    notifyListeners();
+  }
+
+  Database? sqliteClient = null;
+
+  Database? getSqliteClient() {
+    return sqliteClient;
+  }
+
+  Future<void> setSqliteClient(Database client) async {
+    sqliteClient = client;
     notifyListeners();
   }
 }
