@@ -5,10 +5,14 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = moli_ai_box
+PRODUCT_NAME = moli_ai
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.moliAiBox
+PRODUCT_BUNDLE_IDENTIFIER = com.example.moliAi
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.example. All rights reserved.
+
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"

@@ -1,9 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.moli_ai_box">
-   <application
-        android:label="moli_ai_box"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:label="moli_ai"
         android:name="${applicationName}"
-        android:icon="@mipmap/app_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,6 +1,6 @@
 {
-    "name": "moli_ai_box",
-    "short_name": "moli_ai_box",
+    "name": "moli_ai",
+    "short_name": "moli_ai",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
