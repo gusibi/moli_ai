@@ -9,16 +9,16 @@ import '../models/chat_list_model.dart';
 import '../services/palm_api_service.dart';
 
 class PalmSettingProvider with ChangeNotifier {
-  String currentModel = "text-bison-001";
+  String defaultModel = "text-bison-001";
   String apiKey = API_KEY;
   int chatId = 0;
 
-  String get getCurrentModel {
-    return currentModel;
+  String get getDefaultModel {
+    return defaultModel;
   }
 
-  void setCurrentModel(String newModel) {
-    currentModel = newModel;
+  void setDefaultModel(String newModel) {
+    defaultModel = newModel;
     notifyListeners();
   }
 
@@ -108,14 +108,14 @@ class PalmSettingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Database? sqliteClient = null;
+  // Database? sqliteClient = null;
 
-  Database? getSqliteClient() {
-    return sqliteClient;
-  }
+  // Database? getSqliteClient() {
+  //   return sqliteClient;
+  // }
 
-  Future<void> setSqliteClient(Database client) async {
-    sqliteClient = client;
-    notifyListeners();
-  }
+  // Future<void> setSqliteClient(Database client) async {
+  //   sqliteClient = client;
+  //   notifyListeners();
+  // }
 }

@@ -6,19 +6,32 @@ import 'package:provider/provider.dart';
 import '../providers/palm_priovider.dart';
 
 class BaseURLFormWidget extends StatefulWidget {
-  const BaseURLFormWidget({super.key});
+  const BaseURLFormWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
 
   @override
   State<BaseURLFormWidget> createState() => _BaseURLFormWidgetState();
 }
 
 class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
+  late String baseURL;
+  @override
+  void initState() {
+    super.initState();
+    // baseURL = widget.defaultValue;    baseURL = "";
+  }
+
   @override
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var baseURL = palmProvider.getBaseURL;
+    // var baseURL = widget.defaultValue;
     return TextFormField(
+      controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "Base URL",
         border: OutlineInputBorder(),
@@ -31,7 +44,6 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
         return null;
       },
       // style: TextStyle(),
-      initialValue: baseURL,
       onChanged: (value) {
         setState(() {
           baseURL = value.toString();
@@ -48,7 +60,12 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
 }
 
 class ApiKeyFormWidget extends StatefulWidget {
-  const ApiKeyFormWidget({super.key});
+  const ApiKeyFormWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
 
   @override
   State<ApiKeyFormWidget> createState() => _ApiKeyFormWidgetState();
@@ -59,8 +76,9 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var apiKey = palmProvider.getApiKey;
+    var apiKey = "";
     return TextFormField(
+      controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "API Key",
         border: OutlineInputBorder(),
@@ -71,7 +89,6 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
         }
         return null;
       },
-      initialValue: apiKey,
       onChanged: (value) {
         setState(() {
           apiKey = value.toString();

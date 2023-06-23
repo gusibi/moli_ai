@@ -36,7 +36,7 @@ class _ModelsDrowDownWidgetState extends State<ModelsDrowDownWidget> {
   Widget build(BuildContext context) {
     final modelsProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    currentModel = modelsProvider.getCurrentModel;
+    currentModel = modelsProvider.getDefaultModel;
     return DropdownButton(
         dropdownColor: scaffoldBackgroundColor,
         iconEnabledColor: Colors.white,
@@ -46,7 +46,7 @@ class _ModelsDrowDownWidgetState extends State<ModelsDrowDownWidget> {
           setState(() {
             currentModel = value.toString();
           });
-          modelsProvider.setCurrentModel(value.toString());
+          modelsProvider.setDefaultModel(value.toString());
         });
   }
 }
@@ -64,7 +64,7 @@ class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
   Widget build(BuildContext context) {
     final modelsProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentModel = modelsProvider.getCurrentModel;
+    var currentModel = modelsProvider.getDefaultModel;
     return DropdownButtonFormField<String>(
       value: currentModel,
       items: modelsProvider
@@ -79,7 +79,7 @@ class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
         setState(() {
           currentModel = value.toString();
         });
-        modelsProvider.setCurrentModel(value.toString());
+        modelsProvider.setDefaultModel(value.toString());
       },
       decoration: const InputDecoration(
         labelText: 'Select an option',
@@ -92,7 +92,7 @@ class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
       },
       onSaved: (value) {
         currentModel = value.toString();
-        modelsProvider.setCurrentModel(value.toString());
+        modelsProvider.setDefaultModel(value.toString());
         print("currentModel: $currentModel");
       },
     );

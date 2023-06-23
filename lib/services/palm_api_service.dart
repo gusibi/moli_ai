@@ -24,13 +24,12 @@ class PalmApiService {
       BuildContext context, String prompt) async {
     final palmSettingProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentModel = palmSettingProvider.getCurrentModel;
+    var currentModel = palmSettingProvider.getDefaultModel;
     var baseURL = palmSettingProvider.getBaseURL;
     var apiKey = palmSettingProvider.getApiKey;
     try {
       log("start, model: $currentModel, prompt: $prompt");
-      // log(Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey")
-      //     as String);
+      log("$baseURL/models/$currentModel:generateText?key=$apiKey");
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request('POST',
           Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));

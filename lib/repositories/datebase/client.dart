@@ -36,24 +36,41 @@ class SqliteClient {
         ''');
   }
 
+  void _createConfigTab(Database db) async {
+    await db.execute('''
+        CREATE TABLE config_tab (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          configName TEXT NOT NULL,
+          value TEXT NOT NULL,
+          createTime INTEGER NOT NULL,
+          updateTime INTEGER NOT NULL
+        );
+        ''');
+  }
+
   // this opens the database (and creates it if it doesn't exist)
   Future<void> init() async {
     log(await getDatabasesPath());
     final database = openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
-      join(await getDatabasesPath(), 'conversation.db'),
-      // When the database is first created, create a table to store dogs.
-      onCreate: (db, version) async {
-        // Run the CREATE TABLE statement on the database.
-        _createConversationTab(db);
-        _createConversationMessageTab(db);
-      },
-      // Set the version. This executes the onCreate function and provides a
-      // path to perform database upgrades and downgrades.
-      version: 1,
-    );
+        // Set the path to the database. Note: Using the `join` function from the
+        // `path` package is best practice to ensure the path is correctly
+        // constructed for each platform.
+        join(await getDatabasesPath(), 'conversation.db'),
+        // When the database is first created, create a table to store dogs.
+        onCreate: (db, version) async {
+          // Run the CREATE TABLE statement on the database.
+          _createConfigTab(db);
+          _createConversationTab(db);
+          _createConversationMessageTab(db);
+        },
+        // Set the version. This executes the onCreate function and provides a
+        // path to perform database upgrades and downgrades.
+        version: 5,
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 5) {
+            _createConfigTab(db); // 创建 config_tab 表
+          }
+        });
     _db = await database;
   }
 

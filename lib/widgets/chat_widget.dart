@@ -21,8 +21,8 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
       _colorScheme.primary.withOpacity(0.44), _colorScheme.primary);
   late final _userMessageColor = _colorScheme.onPrimary;
   late final _aiMessageBackgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.secondary);
-  late final _aiMessageColor = _colorScheme.onSecondary;
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.secondaryContainer);
+  late final _aiMessageColor = _colorScheme.onSecondaryContainer;
   @override
   Widget build(BuildContext context) {
     return widget.chatInfo.chatIndex == 0

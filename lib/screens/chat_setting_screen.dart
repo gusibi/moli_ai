@@ -10,7 +10,6 @@ import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
 import '../utils/time.dart';
 import '../widgets/form_widget.dart';
-import 'palm_chat_screen.dart';
 
 class ChatSettingScreen extends StatefulWidget {
   const ChatSettingScreen({

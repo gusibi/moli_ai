@@ -44,3 +44,5 @@ final ConversationCardDto newChat = ConversationCardDto(
   prompt: "You can setting yourself prompt",
   modelName: "text-bison-001",
 );
+
+final String palmConfigname = "palmConfig";

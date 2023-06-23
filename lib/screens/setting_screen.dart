@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/api_constants.dart';
+import '../constants/constants.dart';
+import '../models/config_model.dart';
+import '../repositories/configretion/config_repo.dart';
 import '../widgets/drop_down.dart';
 import '../widgets/form_widget.dart';
 
@@ -19,16 +25,60 @@ class _SettingScreenState extends State<SettingScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  String basicUrl = BASE_URL;
+  String apiKey = API_KEY;
+  String modelName = DEFAULT_MODEL;
+
+  late TextEditingController basicUrlController;
+  late TextEditingController apiKeyController;
+
+  Map<String, ConfigModel> _configMap = {};
+
   void _hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
   @override
+  void initState() {
+    basicUrlController = TextEditingController(text: BASE_URL);
+    apiKeyController = TextEditingController(text: API_KEY);
+    super.initState();
+    _initPalmConfig();
+  }
+
+  @override
+  void dispose() {
+    basicUrlController.dispose();
+    apiKeyController.dispose();
+    super.dispose();
+  }
+
+  void _initPalmConfig() async {
+    _configMap = await ConfigReop().getAllConfigsMap();
+    ConfigModel? conf = _configMap[palmConfigname];
+
+    if (conf != null) {
+      final palmConfig = conf.toPalmConfig();
+      basicUrl = palmConfig.basicUrl;
+      apiKey = palmConfig.apiKey;
+      modelName = palmConfig.modelName;
+    }
+    setState(() {
+      basicUrlController = TextEditingController(text: basicUrl);
+      apiKeyController = TextEditingController(text: apiKey);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<Widget> formList = [
-      const BaseURLFormWidget(),
-      const ApiKeyFormWidget(),
+      BaseURLFormWidget(
+        controller: basicUrlController,
+      ),
+      ApiKeyFormWidget(
+        controller: apiKeyController,
+      ),
       const ModelsDropdownFormWidget()
     ];
     return Scaffold(
@@ -69,6 +119,12 @@ class _SettingScreenState extends State<SettingScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
+                          log(apiKeyController.text);
+                          log(basicUrlController.text);
+                          _saveConfig(PalmConfig(
+                              basicUrl: basicUrlController.text,
+                              apiKey: apiKeyController.text,
+                              modelName: modelName));
                           // do something with _baseUrl and _apiKey
                         }
                       },
@@ -82,5 +138,9 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
       ),
     );
+  }
+
+  _saveConfig(PalmConfig conf) async {
+    await ConfigReop().createOrUpdatePalmConfig(conf);
   }
 }

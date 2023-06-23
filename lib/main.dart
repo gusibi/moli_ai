@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.green),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
         ),
         home: const RootPage(),
       ),
