@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
 import '../models/conversation_model.dart';
-import '../models/palm_text_model.dart';
 import 'text_widget.dart';
 
 class ConversationMessageWidget extends StatefulWidget {
@@ -79,8 +78,7 @@ class PromptMessageWidget extends StatelessWidget {
             ],
           ),
           padding: const EdgeInsets.all(16),
-          child: ConversationMessageReplyWidget(
-              message: message, color: messageColor),
+          child: PromptTextMessageWidget(message: message, color: messageColor),
         ),
       ),
     );

@@ -202,8 +202,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
               alignment: Alignment.bottomLeft,
               child: Column(
                 children: [
-                  Flexible(
+                  Expanded(
                     child: ListView.builder(
+                      // shrinkWrap: true,
                       itemCount: messageList.length,
                       itemBuilder: (context, index) {
                         return ConversationMessageWidget(

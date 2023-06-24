@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
-class ConversationMessageReplyWidget extends StatelessWidget {
-  const ConversationMessageReplyWidget({
+class PromptTextMessageWidget extends StatelessWidget {
+  const PromptTextMessageWidget({
     Key? key,
     required this.message,
     this.fontSize = 14,
@@ -19,10 +20,41 @@ class ConversationMessageReplyWidget extends StatelessWidget {
       message,
       // textAlign: TextAlign.right,
       style: TextStyle(
-        color: color ?? Colors.red,
+        color: color,
         fontSize: fontSize,
         fontWeight: fontWeight ?? FontWeight.normal,
       ),
+    );
+  }
+}
+
+class ConversationMessageReplyWidget extends StatelessWidget {
+  const ConversationMessageReplyWidget({
+    Key? key,
+    required this.message,
+    this.fontSize = 14,
+    this.color,
+    this.fontWeight,
+  }) : super(key: key);
+
+  final String message;
+  final double fontSize;
+  final Color? color;
+  final FontWeight? fontWeight;
+  @override
+  Widget build(BuildContext context) {
+    return MarkdownBody(
+      data: message,
+      shrinkWrap: true,
+      selectable: true,
+      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+      fitContent: true,
+      // textAlign: TextAlign.right,
+      // style: TextStyle(
+      //   color: color ?? Colors.red,
+      //   fontSize: fontSize,
+      //   fontWeight: fontWeight ?? FontWeight.normal,
+      // ),
     );
   }
 }
