@@ -1,21 +1,14 @@
 # moli_ai
 
-A new Flutter project.
-
-## Getting Started
-
 moli-ai-box is a Google Palm client written in Flutter aiming to provide a convenient learning project to satisfy personal usage needs
 
-A few resources to get you started if this is your first Flutter project:
+## screenshots
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![](assets/screenshots/Screenshot_1687613545.png)
+![](assets/screenshots/Screenshot_1687613600.png)
+![](assets/screenshots/Screenshot_1687613609.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## 
+## DIR
 
 ```
 ├── lib
@@ -52,3 +45,16 @@ samples, guidance on mobile development, and a full API reference.
 - [x] 会话记录保存
 - [x] 会话单独设置
 - [x] 支持markdown
+
+
+----
+
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
