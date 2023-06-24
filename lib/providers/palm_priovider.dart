@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../constants/api_constants.dart';
 import '../constants/constants.dart';
-import '../models/chat_list_model.dart';
+import '../models/conversation_model.dart';
 import '../services/palm_api_service.dart';
 
 class PalmSettingProvider with ChangeNotifier {
@@ -51,24 +48,24 @@ class PalmSettingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  ConversationCardDto currentChatInfo = defaultChat;
+  ConversationModel currentChatInfo = defaultChat;
 
-  ConversationCardDto get getCurrentChatInfo {
+  ConversationModel get getCurrentChatInfo {
     return currentChatInfo;
   }
 
-  void setCurrentChatInfo(ConversationCardDto newChatInfo) {
+  void setCurrentChatInfo(ConversationModel newChatInfo) {
     currentChatInfo = newChatInfo;
     notifyListeners();
   }
 
-  List<ConversationCardDto> chatList = [defaultChat];
+  List<ConversationModel> chatList = [defaultChat];
 
-  List<ConversationCardDto> get getChatList {
+  List<ConversationModel> get getChatList {
     return chatList;
   }
 
-  void setChatList(List<ConversationCardDto> newChatList) {
+  void setChatList(List<ConversationModel> newChatList) {
     chatList = newChatList;
     notifyListeners();
   }

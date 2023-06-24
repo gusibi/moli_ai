@@ -4,13 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai_box/services/palm_api_service.dart';
+import 'package:moli_ai_box/utils/icon.dart';
 import 'package:provider/provider.dart';
-import '../models/chat_list_model.dart';
+import '../constants/constants.dart';
+import '../models/config_model.dart';
 import '../models/conversation_model.dart';
 import '../models/palm_text_model.dart';
 import '../providers/palm_priovider.dart';
+import '../repositories/configretion/config_repo.dart';
 import '../repositories/conversation/conversation.dart';
-import '../repositories/datebase/client.dart';
 import '../widgets/chat_widget.dart';
 import '../widgets/form_widget.dart';
 import 'chat_setting_screen.dart';
@@ -21,7 +23,7 @@ class PalmChatScreen extends StatefulWidget {
     required this.conversationData,
   });
 
-  final ConversationCardDto conversationData;
+  final ConversationModel conversationData;
 
   @override
   State<PalmChatScreen> createState() => _PalmChatScreenState();
@@ -36,12 +38,13 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   late TextEditingController textEditingController;
-  late ConversationCardDto currentConvesation;
+  late ConversationModel currentConvesation;
 
   @override
   void initState() {
     textEditingController = TextEditingController();
     super.initState();
+    _initDefaultConfig();
     _initConversation();
   }
 
@@ -49,6 +52,8 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
     setState(() {
       currentConvesation = widget.conversationData.copy();
     });
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
     if (currentConvesation.id == 0) {
       // create new
       // print(palmProvider.getSqliteClient());
@@ -57,19 +62,41 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
           title: currentConvesation.title,
           prompt: "prompt",
           desc: "desc",
-          icon: currentConvesation.icon.codePoint,
-          modelName: widget.conversationData.modelName!,
+          icon: currentConvesation.icon,
+          modelName: widget.conversationData.modelName,
           rank: 0,
           lastTime: 0);
       print("cnv $cnv");
       int id = await ConversationReop().createConversation(cnv);
       currentConvesation.id = id;
+      palmProvider.setCurrentChatInfo(currentConvesation);
+    } else {
+      ConversationModel? cnv =
+          await ConversationReop().getConversationById(currentConvesation.id);
+      if (cnv != null) {
+        palmProvider.setDefaultModel(cnv.modelName);
+      }
+    }
+  }
+
+  void _initDefaultConfig() async {
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var configMap = await ConfigReop().getAllConfigsMap();
+    ConfigModel? conf = configMap[palmConfigname];
+
+    if (conf != null) {
+      final palmConfig = conf.toPalmConfig();
+      palmProvider.setBaseURL(palmConfig.basicUrl);
+      palmProvider.setApiKey(palmConfig.apiKey);
+      palmProvider.setDefaultModel(palmConfig.modelName);
     }
   }
 
   @override
   void dispose() {
     textEditingController.dispose();
+    _isTyping = false;
     super.dispose();
   }
 
@@ -104,7 +131,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                   width: 2,
                 ),
                 CircleAvatar(
-                  child: Icon(currentConvesation.icon),
+                  child: Icon(convertCodeToIconData(currentConvesation.icon)),
                 ),
                 const SizedBox(
                   width: 12,
@@ -123,7 +150,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         height: 6,
                       ),
                       Text(
-                        currentConvesation.prompt!,
+                        currentConvesation.prompt,
                         style: TextStyle(
                             color: _colorScheme.onSecondary, fontSize: 12),
                       ),

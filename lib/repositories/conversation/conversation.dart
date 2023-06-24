@@ -4,13 +4,14 @@ import 'package:sqflite/sqflite.dart';
 import '../../models/conversation_model.dart';
 
 class ConversationReop {
+  final tableName = "conversation_tab";
   // Define a function that inserts dogs into the database
   Future<int> createConversation(ConversationModel conv) async {
     final Database db = dbClient.get();
     DateTime now = DateTime.now();
     int timestamp = now.second;
     return await db.insert(
-      'conversation_tab',
+      tableName,
       {
         'title': conv.title,
         'prompt': conv.prompt,
@@ -30,7 +31,7 @@ class ConversationReop {
     final Database db = dbClient.get();
 
     // Query the table for all The Dogs.
-    final List<Map<String, dynamic>> maps = await db.query('conversation_tab');
+    final List<Map<String, dynamic>> maps = await db.query(tableName);
 
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
@@ -45,6 +46,27 @@ class ConversationReop {
         lastTime: maps[i]['lastTime'],
       );
     });
+  }
+
+  // A method that retrieves all the dogs from the dogs table.
+  Future<ConversationModel?> getConversationById(int id) async {
+    final Database db = dbClient.get();
+
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableName, where: 'id = ?', whereArgs: [id]);
+    if (maps.length == 1) {
+      return ConversationModel(
+        id: maps[0]['id'],
+        title: maps[0]['title'],
+        prompt: maps[0]['prompt'],
+        desc: maps[0]['desc'],
+        icon: maps[0]['icon'],
+        rank: maps[0]['rank'],
+        modelName: maps[0]['modelName'],
+        lastTime: maps[0]['lastTime'],
+      );
+    }
+    return null;
   }
 
   Future<void> updateConversation(ConversationModel conv) async {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,10 +37,11 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
-        ),
+        // theme: ThemeData(
+        //   useMaterial3: true,
+        //   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
+        // ),
+        theme: ThemeData.light(useMaterial3: true),
         home: const RootPage(),
       ),
     );

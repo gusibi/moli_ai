@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/chat_list_model.dart';
 import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
@@ -13,7 +12,7 @@ class ChatListScreen extends StatefulWidget {
     super.key,
     this.onSelected,
   });
-  final ValueChanged<ConversationCardDto>? onSelected;
+  final ValueChanged<ConversationModel>? onSelected;
 
   @override
   State<ChatListScreen> createState() => _ChatListScreenState();
@@ -24,7 +23,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   // late final _backgroundColor = Color.alphaBlend(
   //     _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
-  late List<ConversationCardDto> _chatList = [];
+  late List<ConversationModel> _chatList = [];
 
   @override
   void initState() {
@@ -41,26 +40,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
     List<ConversationModel> chatList = await ConversationReop().convs();
     print("chatList $chatList");
     if (chatList.isNotEmpty) {
-      _chatList = List.generate(chatList.length, (index) {
-        final iconData =
-            IconData(chatList[index].icon, fontFamily: 'MaterialIcons');
-        return ConversationCardDto(
-          id: chatList[index].id,
-          title: chatList[index].title,
-          prompt: chatList[index].prompt,
-          modelName: chatList[index].modelName,
-          icon: iconData,
-        );
-      });
       setState(() {
-        _chatList = _chatList;
+        _chatList = chatList;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<ConversationCardDto> chatList = palmProvider.getChatList;
+    // List<ConversationModel> chatList = palmProvider.getChatList;
     // List<ConversationModel> chatList =
     //     ConversationReop().convs() as List<ConversationModel>;
     return Padding(
@@ -89,7 +77,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  void _navigateToChatDetailPage(ConversationCardDto chat) {
+  void _navigateToChatDetailPage(ConversationModel chat) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     palmProvider.setCurrentChatInfo(chat);

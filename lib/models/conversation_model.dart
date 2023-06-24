@@ -31,16 +31,16 @@ class ConversationMessageModel {
 }
 
 class ConversationModel {
-  final int id;
-  final String title;
-  final String prompt;
-  final String desc;
-  final int icon;
-  final int rank;
-  final String modelName;
-  final int lastTime;
+  int id;
+  String title;
+  String prompt;
+  String desc;
+  int icon;
+  int rank;
+  String modelName;
+  int lastTime;
 
-  const ConversationModel({
+  ConversationModel({
     required this.id,
     required this.title,
     required this.prompt,
@@ -62,5 +62,18 @@ class ConversationModel {
       "modelName": modelName,
       "lastTime": lastTime
     };
+  }
+
+  ConversationModel copy() {
+    return ConversationModel(
+      id: id,
+      title: title,
+      desc: desc,
+      icon: icon,
+      prompt: prompt,
+      modelName: modelName,
+      rank: rank,
+      lastTime: lastTime,
+    );
   }
 }

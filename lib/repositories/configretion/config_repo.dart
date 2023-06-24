@@ -66,6 +66,7 @@ class ConfigReop {
         updateTime: maps[0]['updateTime'],
       );
     }
+    return null;
   }
 
   Future<List<ConfigModel>> getAllConfigs() async {

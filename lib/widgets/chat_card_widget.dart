@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../models/chat_list_model.dart';
+import '../models/conversation_model.dart';
+import '../utils/icon.dart';
 
 class ChatCardWidget extends StatefulWidget {
   const ChatCardWidget({
@@ -14,7 +15,7 @@ class ChatCardWidget extends StatefulWidget {
   });
 
   final int index;
-  final ConversationCardDto chatInfo;
+  final ConversationModel chatInfo;
   final int id;
   final bool isPreview;
   final void Function()? onSelected;
@@ -81,7 +82,7 @@ class ChatCardHeadline extends StatefulWidget {
     required this.isSelected,
   });
 
-  final ConversationCardDto chatInfo;
+  final ConversationModel chatInfo;
   final bool isSelected;
   final int index;
 
@@ -113,7 +114,8 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(child: Icon(widget.chatInfo.icon)),
+              CircleAvatar(
+                  child: Icon(convertCodeToIconData(widget.chatInfo.icon))),
               const Padding(padding: EdgeInsets.only(right: 8.0)),
               Expanded(
                 child: Column(

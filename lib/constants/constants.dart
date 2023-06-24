@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/chat_list_model.dart';
+import '../models/conversation_model.dart';
 
 Color scaffoldBackgroundColor = Colors.blueGrey;
 
@@ -29,20 +29,26 @@ final testChatMessages = [
   },
 ];
 
-final ConversationCardDto defaultChat = ConversationCardDto(
+final ConversationModel defaultChat = ConversationModel(
   id: 0,
-  icon: Icons.chat,
+  icon: Icons.chat.codePoint,
   title: "随便聊聊",
+  desc: "",
+  rank: 0,
   prompt: "Hi, how are you?",
   modelName: "text-bison-001",
+  lastTime: 0,
 );
 
-final ConversationCardDto newChat = ConversationCardDto(
+final ConversationModel newChat = ConversationModel(
   id: 0,
-  icon: Icons.chat,
+  icon: Icons.chat.codePoint,
   title: "New Chat",
+  desc: "",
+  rank: 0,
   prompt: "You can setting yourself prompt",
   modelName: "text-bison-001",
+  lastTime: 0,
 );
 
-final String palmConfigname = "palmConfig";
+const String palmConfigname = "palmConfig";

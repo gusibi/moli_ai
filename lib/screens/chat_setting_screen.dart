@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../models/chat_list_model.dart';
 import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
@@ -17,7 +16,7 @@ class ChatSettingScreen extends StatefulWidget {
     required this.conversationData,
   });
 
-  final ConversationCardDto conversationData;
+  final ConversationModel conversationData;
 
   @override
   State<ChatSettingScreen> createState() => _ChatSettingScreenState();
@@ -102,9 +101,9 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
                           id: chatInfo.id,
                           title: newTitle,
                           prompt: newPrompt,
-                          icon: chatInfo.icon.codePoint,
-                          desc: chatInfo.desc ?? '',
-                          modelName: chatInfo.modelName!,
+                          icon: chatInfo.icon,
+                          desc: chatInfo.desc,
+                          modelName: chatInfo.modelName,
                           rank: 0,
                           lastTime: timestampNow());
                       ConversationReop().updateConversation(conv);
