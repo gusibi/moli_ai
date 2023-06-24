@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:moli_ai_box/services/palm_api_service.dart';
-import 'package:moli_ai_box/utils/icon.dart';
+import 'package:moli_ai/services/palm_api_service.dart';
+import 'package:moli_ai/utils/icon.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
@@ -256,7 +256,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
       textEditingController.clear();
     });
     try {
-      String prompt = "%currentConversation.prompt:{$text}";
+      String prompt = currentConversation.prompt;
+      prompt = "$prompt:{$text}";
       final response = await PalmApiService.getTextReponse(context, prompt);
       if (response != null) {
         ConversationMessageModel aiMessage = await ConversationMessageRepo()

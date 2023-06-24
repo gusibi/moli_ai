@@ -68,14 +68,14 @@ class PalmApiService {
         var message = response.reasonPhrase;
         log(message!);
         // throw HttpException(message!);
-        return [
-          PalmMessageModel(msg: "Internal Server Error ", chatRole: roleSys)
-        ];
+        return [PalmMessageModel(msg: "Bad Request", chatRole: roleSys)];
       }
       return chatList;
     } catch (error) {
       log("error, $error");
-      return [PalmMessageModel(msg: "Bad Request", chatRole: roleSys)];
+      return [
+        PalmMessageModel(msg: "Internal Server Error", chatRole: roleSys)
+      ];
     }
   }
 }

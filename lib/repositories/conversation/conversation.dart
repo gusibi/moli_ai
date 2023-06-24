@@ -1,4 +1,4 @@
-import 'package:moli_ai_box/repositories/datebase/client.dart';
+import 'package:moli_ai/repositories/datebase/client.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../models/conversation_model.dart';

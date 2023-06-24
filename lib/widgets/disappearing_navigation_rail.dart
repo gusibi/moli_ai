@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:moli_ai_box/constants/constants.dart';
+import 'package:moli_ai/constants/constants.dart';
 
 import '../destinations.dart';
 import '../providers/palm_priovider.dart';
