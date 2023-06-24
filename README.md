@@ -4,7 +4,7 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+moli-ai-box is a Google Palm client written in Flutter aiming to provide a convenient learning project to satisfy personal usage needs
 
 A few resources to get you started if this is your first Flutter project:
 
