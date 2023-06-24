@@ -26,7 +26,7 @@ class ConversationReop {
   }
 
   // A method that retrieves all the dogs from the dogs table.
-  Future<List<ConversationModel>> convs() async {
+  Future<List<ConversationModel>> getAllConversations() async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 

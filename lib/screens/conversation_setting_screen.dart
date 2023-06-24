@@ -10,8 +10,8 @@ import '../repositories/conversation/conversation.dart';
 import '../utils/time.dart';
 import '../widgets/form_widget.dart';
 
-class ChatSettingScreen extends StatefulWidget {
-  const ChatSettingScreen({
+class ConversationSettingScreen extends StatefulWidget {
+  const ConversationSettingScreen({
     super.key,
     required this.conversationData,
   });
@@ -19,10 +19,11 @@ class ChatSettingScreen extends StatefulWidget {
   final ConversationModel conversationData;
 
   @override
-  State<ChatSettingScreen> createState() => _ChatSettingScreenState();
+  State<ConversationSettingScreen> createState() =>
+      _ConversationSettingScreenState();
 }
 
-class _ChatSettingScreenState extends State<ChatSettingScreen> {
+class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
@@ -38,18 +39,18 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var chatInfo = widget.conversationData;
+    var conversationInfo = widget.conversationData;
 
     List<Widget> formList = [
-      const ChatTitleFormWidget(),
-      const ChatPromptFormWidget(),
+      const ConversationTitleFormWidget(),
+      const ConversationPromptFormWidget(),
       // const ModelsDropdownFormWidget()
     ];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          chatInfo.title,
+          conversationInfo.title,
           style: TextStyle(color: _colorScheme.onSecondary),
         ),
         centerTitle: true,
@@ -91,19 +92,21 @@ class _ChatSettingScreenState extends State<ChatSettingScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      String newTitle = palmProvider.getCurrentChatTitle;
-                      String newPrompt = palmProvider.getCurrentChatPrompt;
+                      String newTitle =
+                          palmProvider.getCurrentConversationTitle;
+                      String newPrompt =
+                          palmProvider.getCurrentConversationPrompt;
                       log("prompt: $newPrompt, title: $newTitle");
-                      chatInfo.title = newTitle;
-                      chatInfo.prompt = newPrompt;
-                      palmProvider.setCurrentChatInfo(chatInfo);
+                      conversationInfo.title = newTitle;
+                      conversationInfo.prompt = newPrompt;
+                      palmProvider.setCurrentConversationInfo(conversationInfo);
                       ConversationModel conv = ConversationModel(
-                          id: chatInfo.id,
+                          id: conversationInfo.id,
                           title: newTitle,
                           prompt: newPrompt,
-                          icon: chatInfo.icon,
-                          desc: chatInfo.desc,
-                          modelName: chatInfo.modelName,
+                          icon: conversationInfo.icon,
+                          desc: conversationInfo.desc,
+                          modelName: conversationInfo.modelName,
                           rank: 0,
                           lastTime: timestampNow());
                       ConversationReop().updateConversation(conv);

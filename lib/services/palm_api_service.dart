@@ -20,11 +20,11 @@ class PalmApiService {
     }
   }
 
-  static Future<List<TextChatModel>> getTextReponse(
+  static Future<List<ConversationMessageModel>> getTextReponse(
       BuildContext context, String prompt) async {
     final palmSettingProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentModel = palmSettingProvider.getDefaultModel;
+    var currentModel = palmSettingProvider.getCurrentModel;
     var baseURL = palmSettingProvider.getBaseURL;
     var apiKey = palmSettingProvider.getApiKey;
     try {
@@ -52,7 +52,7 @@ class PalmApiService {
       });
       request.headers.addAll(headers);
 
-      List<TextChatModel> chatList = [];
+      List<ConversationMessageModel> chatList = [];
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
         var resp = await response.stream.bytesToString();
@@ -61,7 +61,7 @@ class PalmApiService {
         log("jsonResponse $jsonResponse");
         chatList = List.generate(
             jsonResponse["candidates"].length,
-            (index) => TextChatModel(
+            (index) => ConversationMessageModel(
                 msg: jsonResponse["candidates"][0]["output"], chatIndex: 1));
       } else {
         var message = response.reasonPhrase;

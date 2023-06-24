@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import '../models/conversation_model.dart';
 import '../utils/icon.dart';
 
-class ChatCardWidget extends StatefulWidget {
-  const ChatCardWidget({
+class ConversationCardWidget extends StatefulWidget {
+  const ConversationCardWidget({
     super.key,
-    required this.chatInfo,
+    required this.conversation,
     this.isPreview = true,
     this.index = 0,
     this.id = 0,
@@ -15,16 +15,16 @@ class ChatCardWidget extends StatefulWidget {
   });
 
   final int index;
-  final ConversationModel chatInfo;
+  final ConversationModel conversation;
   final int id;
   final bool isPreview;
   final void Function()? onSelected;
 
   @override
-  State<ChatCardWidget> createState() => _ChatCardWidgetState();
+  State<ConversationCardWidget> createState() => _ConversationCardWidgetState();
 }
 
-class _ChatCardWidgetState extends State<ChatCardWidget> {
+class _ConversationCardWidgetState extends State<ConversationCardWidget> {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late Color unselectedColor = Color.alphaBlend(
     _colorScheme.primary.withOpacity(0.38),
@@ -62,9 +62,9 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ChatCardHeadline(
+              ConversationCardHeadline(
                   index: widget.index,
-                  chatInfo: widget.chatInfo,
+                  conversation: widget.conversation,
                   isSelected: _isSelected)
             ],
           ),
@@ -74,23 +74,24 @@ class _ChatCardWidgetState extends State<ChatCardWidget> {
   }
 }
 
-class ChatCardHeadline extends StatefulWidget {
-  const ChatCardHeadline({
+class ConversationCardHeadline extends StatefulWidget {
+  const ConversationCardHeadline({
     super.key,
     required this.index,
-    required this.chatInfo,
+    required this.conversation,
     required this.isSelected,
   });
 
-  final ConversationModel chatInfo;
+  final ConversationModel conversation;
   final bool isSelected;
   final int index;
 
   @override
-  State<ChatCardHeadline> createState() => _ChatCardHeadlineState();
+  State<ConversationCardHeadline> createState() =>
+      _ConversationCardHeadlineState();
 }
 
-class _ChatCardHeadlineState extends State<ChatCardHeadline> {
+class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late Color unselectedColor = Color.alphaBlend(
@@ -115,7 +116,7 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                  child: Icon(convertCodeToIconData(widget.chatInfo.icon))),
+                  child: Icon(convertCodeToIconData(widget.conversation.icon))),
               const Padding(padding: EdgeInsets.only(right: 8.0)),
               Expanded(
                 child: Column(
@@ -123,7 +124,7 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.chatInfo.title,
+                      widget.conversation.title,
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                       style: TextStyle(
@@ -132,7 +133,7 @@ class _ChatCardHeadlineState extends State<ChatCardHeadline> {
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      widget.chatInfo.prompt.toString(),
+                      widget.conversation.prompt.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                       style: TextStyle(

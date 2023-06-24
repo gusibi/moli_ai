@@ -29,7 +29,7 @@ final testChatMessages = [
   },
 ];
 
-final ConversationModel defaultChat = ConversationModel(
+final ConversationModel defaultConversation = ConversationModel(
   id: 0,
   icon: Icons.chat.codePoint,
   title: "随便聊聊",
@@ -40,7 +40,7 @@ final ConversationModel defaultChat = ConversationModel(
   lastTime: 0,
 );
 
-final ConversationModel newChat = ConversationModel(
+final ConversationModel newConversation = ConversationModel(
   id: 0,
   icon: Icons.chat.codePoint,
   title: "New Chat",

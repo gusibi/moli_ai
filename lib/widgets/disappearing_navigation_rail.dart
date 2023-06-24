@@ -5,7 +5,7 @@ import 'package:moli_ai_box/constants/constants.dart';
 
 import '../destinations.dart';
 import '../providers/palm_priovider.dart';
-import '../screens/palm_chat_screen.dart';
+import '../screens/conversation_screen.dart';
 
 class DisappearingNavigationRail extends StatefulWidget {
   const DisappearingNavigationRail({
@@ -68,11 +68,11 @@ class _DisappearingNavigationRailState
   void _navigateToCreateNewChat() {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setCurrentChatInfo(newChat);
+    palmProvider.setCurrentConversationInfo(newConversation);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PalmChatScreen(
-          conversationData: newChat,
+        builder: (context) => ConversationScreen(
+          conversationData: newConversation,
         ),
       ),
     );

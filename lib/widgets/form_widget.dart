@@ -104,8 +104,8 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
   }
 }
 
-class ChatInputFormWidget extends StatelessWidget {
-  const ChatInputFormWidget({
+class PromptMessageInputFormWidget extends StatelessWidget {
+  const PromptMessageInputFormWidget({
     super.key,
     required this.textController,
     required this.onPressed,
@@ -152,19 +152,20 @@ class ChatInputFormWidget extends StatelessWidget {
   }
 }
 
-class ChatTitleFormWidget extends StatefulWidget {
-  const ChatTitleFormWidget({super.key});
+class ConversationTitleFormWidget extends StatefulWidget {
+  const ConversationTitleFormWidget({super.key});
 
   @override
-  State<ChatTitleFormWidget> createState() => _ChatTitleFormWidget();
+  State<ConversationTitleFormWidget> createState() =>
+      _ConversationTitleFormWidget();
 }
 
-class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
+class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
   @override
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentChatTitle = palmProvider.getCurrentChatTitle;
+    var currentTitle = palmProvider.getCurrentConversationTitle;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Chat Name",
@@ -179,52 +180,54 @@ class _ChatTitleFormWidget extends State<ChatTitleFormWidget> {
         return null;
       },
       // style: TextStyle(),
-      initialValue: currentChatTitle,
+      initialValue: currentTitle,
       onChanged: (value) {
         setState(() {
-          currentChatTitle = value.toString();
+          currentTitle = value.toString();
         });
-        palmProvider.setCurrentChatTitle(value.toString());
+        palmProvider.setCurrentConversationTitle(value.toString());
       },
       onSaved: (value) {
-        currentChatTitle = value.toString();
-        palmProvider.setCurrentChatTitle(value.toString());
-        log("chatInfo.title: $currentChatTitle");
+        currentTitle = value.toString();
+        palmProvider.setCurrentConversationTitle(value.toString());
+        log("conversation.title: $currentTitle");
       },
     );
   }
 }
 
-class ChatPromptFormWidget extends StatefulWidget {
-  const ChatPromptFormWidget({super.key});
+class ConversationPromptFormWidget extends StatefulWidget {
+  const ConversationPromptFormWidget({super.key});
 
   @override
-  State<ChatPromptFormWidget> createState() => _ChatPromptFormWidget();
+  State<ConversationPromptFormWidget> createState() =>
+      _ConversationPromptFormWidget();
 }
 
-class _ChatPromptFormWidget extends State<ChatPromptFormWidget> {
+class _ConversationPromptFormWidget
+    extends State<ConversationPromptFormWidget> {
   @override
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentChatPrompt = palmProvider.getCurrentChatPrompt;
+    var currentPrompt = palmProvider.getCurrentConversationPrompt;
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Prompt",
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.description_outlined),
       ),
-      initialValue: currentChatPrompt,
+      initialValue: currentPrompt,
       onChanged: (value) {
         setState(() {
-          currentChatPrompt = value.toString();
+          currentPrompt = value.toString();
         });
-        palmProvider.setCurrentChatPrompt(value.toString());
+        palmProvider.setCurrentConversationPrompt(value.toString());
       },
       onSaved: (value) {
-        currentChatPrompt = value.toString();
-        palmProvider.setCurrentChatPrompt(value.toString());
-        log("chatInfo.prompt: $currentChatPrompt");
+        currentPrompt = value.toString();
+        palmProvider.setCurrentConversationPrompt(value.toString());
+        log("conversation.prompt: $currentPrompt");
       },
     );
   }

@@ -5,8 +5,8 @@ import 'package:moli_ai_box/constants/constants.dart';
 
 import 'repositories/datebase/client.dart';
 import 'providers/palm_priovider.dart';
-import 'screens/palm_chat_screen.dart';
-import 'screens/chat_list_screen.dart';
+import 'screens/conversation_screen.dart';
+import 'screens/conversation_list_screen.dart';
 import 'screens/setting_screen.dart';
 import 'widgets/disappearing_bottom_navigation_bar.dart';
 import 'widgets/disappearing_navigation_rail.dart';
@@ -63,7 +63,7 @@ class _RootPageState extends State<RootPage> {
   int selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    ChatListScreen(),
+    ConversationListScreen(),
     SettingScreen(),
   ];
 
@@ -108,11 +108,11 @@ class _RootPageState extends State<RootPage> {
       floatingActionButton: wideScreen
           ? null
           : FloatingActionButton(
-              heroTag: "newChat",
+              heroTag: "newConversation",
               backgroundColor: _colorScheme.tertiaryContainer,
               foregroundColor: _colorScheme.onTertiaryContainer,
               onPressed: () {
-                _navigateToCreateNewChat();
+                _navigateToCreateNewConversation();
               },
               child: const Icon(Icons.add),
             ),
@@ -129,14 +129,14 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-  void _navigateToCreateNewChat() {
+  void _navigateToCreateNewConversation() {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setCurrentChatInfo(newChat);
+    palmProvider.setCurrentConversationInfo(newConversation);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PalmChatScreen(
-          conversationData: newChat,
+        builder: (context) => ConversationScreen(
+          conversationData: newConversation,
         ),
       ),
     );

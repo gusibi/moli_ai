@@ -5,25 +5,25 @@ import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
 import '../widgets/chat_card_widget.dart';
-import 'palm_chat_screen.dart';
+import 'conversation_screen.dart';
 
-class ChatListScreen extends StatefulWidget {
-  const ChatListScreen({
+class ConversationListScreen extends StatefulWidget {
+  const ConversationListScreen({
     super.key,
     this.onSelected,
   });
   final ValueChanged<ConversationModel>? onSelected;
 
   @override
-  State<ChatListScreen> createState() => _ChatListScreenState();
+  State<ConversationListScreen> createState() => _ConversationListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _ConversationListScreenState extends State<ConversationListScreen> {
   // late final _colorScheme = Theme.of(context).colorScheme;
   // late final _backgroundColor = Color.alphaBlend(
   //     _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
-  late List<ConversationModel> _chatList = [];
+  late List<ConversationModel> _conversationList = [];
 
   @override
   void initState() {
@@ -35,13 +35,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     setState(() {
-      _chatList = palmProvider.getChatList;
+      _conversationList = palmProvider.getConversationList;
     });
-    List<ConversationModel> chatList = await ConversationReop().convs();
-    print("chatList $chatList");
-    if (chatList.isNotEmpty) {
+    List<ConversationModel> conversationList =
+        await ConversationReop().getAllConversations();
+    print("conversationList $conversationList");
+    if (conversationList.isNotEmpty) {
       setState(() {
-        _chatList = chatList;
+        _conversationList = conversationList;
       });
     }
   }
@@ -57,16 +58,16 @@ class _ChatListScreenState extends State<ChatListScreen> {
         children: [
           const SizedBox(height: 18),
           ...List.generate(
-            _chatList.length,
+            _conversationList.length,
             (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: ChatCardWidget(
-                  chatInfo: _chatList[index],
-                  id: _chatList[index].id,
+                child: ConversationCardWidget(
+                  conversation: _conversationList[index],
+                  id: _conversationList[index].id,
                   index: index,
                   onSelected: () {
-                    _navigateToChatDetailPage(_chatList[index]);
+                    _navigateToConversationScreen(_conversationList[index]);
                   },
                 ),
               );
@@ -77,13 +78,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  void _navigateToChatDetailPage(ConversationModel chat) {
+  void _navigateToConversationScreen(ConversationModel conv) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setCurrentChatInfo(chat);
+    palmProvider.setCurrentConversationInfo(conv);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PalmChatScreen(conversationData: chat),
+        builder: (context) => ConversationScreen(conversationData: conv),
       ),
     );
   }

@@ -15,10 +15,10 @@ import '../repositories/configretion/config_repo.dart';
 import '../repositories/conversation/conversation.dart';
 import '../widgets/chat_widget.dart';
 import '../widgets/form_widget.dart';
-import 'chat_setting_screen.dart';
+import 'conversation_setting_screen.dart';
 
-class PalmChatScreen extends StatefulWidget {
-  const PalmChatScreen({
+class ConversationScreen extends StatefulWidget {
+  const ConversationScreen({
     super.key,
     required this.conversationData,
   });
@@ -26,19 +26,19 @@ class PalmChatScreen extends StatefulWidget {
   final ConversationModel conversationData;
 
   @override
-  State<PalmChatScreen> createState() => _PalmChatScreenState();
+  State<ConversationScreen> createState() => _ConversationScreenState();
 }
 
-class _PalmChatScreenState extends State<PalmChatScreen> {
+class _ConversationScreenState extends State<ConversationScreen> {
   bool _isTyping = false;
-  List<TextChatModel> chatList = [];
+  List<ConversationMessageModel> messageList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   late TextEditingController textEditingController;
-  late ConversationModel currentConvesation;
+  late ConversationModel currentConversation;
 
   @override
   void initState() {
@@ -50,31 +50,31 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
 
   Future<void> _initConversation() async {
     setState(() {
-      currentConvesation = widget.conversationData.copy();
+      currentConversation = widget.conversationData.copy();
     });
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
-    if (currentConvesation.id == 0) {
+    if (currentConversation.id == 0) {
       // create new
       // print(palmProvider.getSqliteClient());
       ConversationModel cnv = ConversationModel(
           id: 0,
-          title: currentConvesation.title,
+          title: currentConversation.title,
           prompt: "prompt",
           desc: "desc",
-          icon: currentConvesation.icon,
+          icon: currentConversation.icon,
           modelName: widget.conversationData.modelName,
           rank: 0,
           lastTime: 0);
       print("cnv $cnv");
       int id = await ConversationReop().createConversation(cnv);
-      currentConvesation.id = id;
-      palmProvider.setCurrentChatInfo(currentConvesation);
+      currentConversation.id = id;
+      palmProvider.setCurrentConversationInfo(currentConversation);
     } else {
       ConversationModel? cnv =
-          await ConversationReop().getConversationById(currentConvesation.id);
+          await ConversationReop().getConversationById(currentConversation.id);
       if (cnv != null) {
-        palmProvider.setDefaultModel(cnv.modelName);
+        palmProvider.setCurrentModel(cnv.modelName);
       }
     }
   }
@@ -89,7 +89,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
       final palmConfig = conf.toPalmConfig();
       palmProvider.setBaseURL(palmConfig.basicUrl);
       palmProvider.setApiKey(palmConfig.apiKey);
-      palmProvider.setDefaultModel(palmConfig.modelName);
+      palmProvider.setCurrentModel(palmConfig.modelName);
     }
   }
 
@@ -131,7 +131,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                   width: 2,
                 ),
                 CircleAvatar(
-                  child: Icon(convertCodeToIconData(currentConvesation.icon)),
+                  child: Icon(convertCodeToIconData(currentConversation.icon)),
                 ),
                 const SizedBox(
                   width: 12,
@@ -142,7 +142,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        currentConvesation.title,
+                        currentConversation.title,
                         style: TextStyle(
                             color: _colorScheme.onPrimary, fontSize: 14),
                       ),
@@ -150,7 +150,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                         height: 6,
                       ),
                       Text(
-                        currentConvesation.prompt,
+                        currentConversation.prompt,
                         style: TextStyle(
                             color: _colorScheme.onSecondary, fontSize: 12),
                       ),
@@ -159,7 +159,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    _navigateToChatSetting();
+                    _navigateToConversationScreen();
                   },
                   icon: const Icon(Icons.settings),
                   color: _colorScheme.onSecondary,
@@ -179,9 +179,10 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                 children: [
                   Flexible(
                     child: ListView.builder(
-                      itemCount: chatList.length,
+                      itemCount: messageList.length,
                       itemBuilder: (context, index) {
-                        return ChatMessageWidget(chatInfo: chatList[index]);
+                        return ConversationMessageWidget(
+                            conversation: messageList[index]);
                       },
                     ),
                   ),
@@ -193,7 +194,7 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
                   ],
                   const SizedBox(height: 15),
                   // ChatInputFormWidget(),
-                  ChatInputFormWidget(
+                  PromptMessageInputFormWidget(
                       textController: textEditingController,
                       onPressed: () {
                         if (_isTyping) {
@@ -210,11 +211,11 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
     );
   }
 
-  void _navigateToChatSetting() {
+  void _navigateToConversationScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            ChatSettingScreen(conversationData: currentConvesation),
+            ConversationSettingScreen(conversationData: currentConversation),
       ),
     );
   }
@@ -223,13 +224,13 @@ class _PalmChatScreenState extends State<PalmChatScreen> {
     try {
       String text = textEditingController.text;
       setState(() {
-        chatList.add(TextChatModel(msg: text, chatIndex: 0));
+        messageList.add(ConversationMessageModel(msg: text, chatIndex: 0));
         _isTyping = true;
         textEditingController.clear();
       });
       final list = await PalmApiService.getTextReponse(context, text);
       setState(() {
-        chatList.add(list[0]);
+        messageList.add(list[0]);
       });
     } catch (error) {
       log("error $error");

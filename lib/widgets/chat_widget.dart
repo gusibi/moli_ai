@@ -3,19 +3,20 @@ import 'package:flutter/material.dart';
 import '../models/palm_text_model.dart';
 import 'text_widget.dart';
 
-class ChatMessageWidget extends StatefulWidget {
-  const ChatMessageWidget({
+class ConversationMessageWidget extends StatefulWidget {
+  const ConversationMessageWidget({
     super.key,
-    required this.chatInfo,
+    required this.conversation,
   });
 
-  final TextChatModel chatInfo;
+  final ConversationMessageModel conversation;
 
   @override
-  State<ChatMessageWidget> createState() => _ChatMessageWidgetState();
+  State<ConversationMessageWidget> createState() =>
+      _ConversationMessageWidgetState();
 }
 
-class _ChatMessageWidgetState extends State<ChatMessageWidget> {
+class _ConversationMessageWidgetState extends State<ConversationMessageWidget> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _userMessageBackgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.44), _colorScheme.primary);
@@ -25,24 +26,24 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
   late final _aiMessageColor = _colorScheme.onSecondaryContainer;
   @override
   Widget build(BuildContext context) {
-    return widget.chatInfo.chatIndex == 0
-        ? ChatPromptWidget(
-            message: widget.chatInfo.msg,
-            chatIndex: widget.chatInfo.chatIndex,
+    return widget.conversation.chatIndex == 0
+        ? PromptMessageWidget(
+            message: widget.conversation.msg,
+            chatIndex: widget.conversation.chatIndex,
             backgroundColor: _userMessageBackgroundColor,
             messageColor: _userMessageColor,
           )
-        : ChatAiResponseWidget(
-            message: widget.chatInfo.msg,
-            chatIndex: widget.chatInfo.chatIndex,
+        : AiResponseMessageWidget(
+            message: widget.conversation.msg,
+            chatIndex: widget.conversation.chatIndex,
             backgroundColor: _aiMessageBackgroundColor,
             messageColor: _aiMessageColor,
           );
   }
 }
 
-class ChatPromptWidget extends StatelessWidget {
-  const ChatPromptWidget({
+class PromptMessageWidget extends StatelessWidget {
+  const PromptMessageWidget({
     Key? key,
     required this.message,
     required this.chatIndex,
@@ -76,15 +77,16 @@ class ChatPromptWidget extends StatelessWidget {
             ],
           ),
           padding: const EdgeInsets.all(16),
-          child: ChatMessageReplyWidget(message: message, color: messageColor),
+          child: ConversationMessageReplyWidget(
+              message: message, color: messageColor),
         ),
       ),
     );
   }
 }
 
-class ChatAiResponseWidget extends StatelessWidget {
-  const ChatAiResponseWidget({
+class AiResponseMessageWidget extends StatelessWidget {
+  const AiResponseMessageWidget({
     Key? key,
     required this.message,
     required this.chatIndex,
@@ -110,7 +112,8 @@ class ChatAiResponseWidget extends StatelessWidget {
             color: backgroundColor,
           ),
           padding: const EdgeInsets.all(12),
-          child: ChatMessageReplyWidget(message: message, color: messageColor),
+          child: ConversationMessageReplyWidget(
+              message: message, color: messageColor),
         ),
       ),
     );

@@ -50,9 +50,9 @@ class TextModel {
       };
 }
 
-class TextChatModel {
+class ConversationMessageModel {
   final String msg;
   final int chatIndex;
 
-  TextChatModel({required this.msg, required this.chatIndex});
+  ConversationMessageModel({required this.msg, required this.chatIndex});
 }

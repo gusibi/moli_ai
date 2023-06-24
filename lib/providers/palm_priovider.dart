@@ -8,13 +8,12 @@ import '../services/palm_api_service.dart';
 class PalmSettingProvider with ChangeNotifier {
   String defaultModel = "text-bison-001";
   String apiKey = API_KEY;
-  int chatId = 0;
 
-  String get getDefaultModel {
+  String get getCurrentModel {
     return defaultModel;
   }
 
-  void setDefaultModel(String newModel) {
+  void setCurrentModel(String newModel) {
     defaultModel = newModel;
     notifyListeners();
   }
@@ -39,34 +38,25 @@ class PalmSettingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  int get getChatId {
-    return chatId;
+  ConversationModel currentConversationInfo = defaultConversation;
+
+  ConversationModel get getCurrentConversationInfo {
+    return currentConversationInfo;
   }
 
-  void setChatId(int newChatId) {
-    chatId = newChatId;
+  void setCurrentConversationInfo(ConversationModel newConversation) {
+    currentConversationInfo = newConversation;
     notifyListeners();
   }
 
-  ConversationModel currentChatInfo = defaultChat;
+  List<ConversationModel> conversationList = [defaultConversation];
 
-  ConversationModel get getCurrentChatInfo {
-    return currentChatInfo;
+  List<ConversationModel> get getConversationList {
+    return conversationList;
   }
 
-  void setCurrentChatInfo(ConversationModel newChatInfo) {
-    currentChatInfo = newChatInfo;
-    notifyListeners();
-  }
-
-  List<ConversationModel> chatList = [defaultChat];
-
-  List<ConversationModel> get getChatList {
-    return chatList;
-  }
-
-  void setChatList(List<ConversationModel> newChatList) {
-    chatList = newChatList;
+  void setConversationList(List<ConversationModel> newConvs) {
+    conversationList = newConvs;
     notifyListeners();
   }
 
@@ -83,25 +73,25 @@ class PalmSettingProvider with ChangeNotifier {
 
   // new chat
 
-  String currentChatTitle = "";
+  String currentConversationTitle = "";
 
-  String get getCurrentChatTitle {
-    return currentChatTitle;
+  String get getCurrentConversationTitle {
+    return currentConversationTitle;
   }
 
-  void setCurrentChatTitle(String newTitle) {
-    currentChatTitle = newTitle;
+  void setCurrentConversationTitle(String newTitle) {
+    currentConversationTitle = newTitle;
     notifyListeners();
   }
 
-  String currentChatPrompt = "";
+  String currentConversationPrompt = "";
 
-  String get getCurrentChatPrompt {
-    return currentChatPrompt;
+  String get getCurrentConversationPrompt {
+    return currentConversationPrompt;
   }
 
-  void setCurrentChatPrompt(String newPrompt) {
-    currentChatPrompt = newPrompt;
+  void setCurrentConversationPrompt(String newPrompt) {
+    currentConversationPrompt = newPrompt;
     notifyListeners();
   }
 

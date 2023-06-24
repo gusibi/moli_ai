@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ChatMessageReplyWidget extends StatelessWidget {
-  const ChatMessageReplyWidget({
+class ConversationMessageReplyWidget extends StatelessWidget {
+  const ConversationMessageReplyWidget({
     Key? key,
     required this.message,
     this.fontSize = 14,
