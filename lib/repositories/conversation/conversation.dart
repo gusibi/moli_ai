@@ -77,9 +77,7 @@ class ConversationReop {
     await db.update(
       'conversation_tab',
       conv.toMap(),
-      // Ensure that the Dog has a matching id.
       where: 'id = ?',
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
       whereArgs: [conv.id],
     );
   }

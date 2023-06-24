@@ -29,10 +29,23 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
 
   final _formKey = GlobalKey<FormState>();
+  late TextEditingController titleController;
+  late TextEditingController promptController;
 
   void _hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
     SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
+  @override
+  void initState() {
+    setState(() {
+      titleController =
+          TextEditingController(text: widget.conversationData.title);
+      promptController =
+          TextEditingController(text: widget.conversationData.prompt);
+    });
+    super.initState();
   }
 
   @override
@@ -42,8 +55,8 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
     var conversationInfo = widget.conversationData;
 
     List<Widget> formList = [
-      const ConversationTitleFormWidget(),
-      const ConversationPromptFormWidget(),
+      ConversationTitleFormWidget(controller: titleController),
+      ConversationPromptFormWidget(controller: promptController),
       // const ModelsDropdownFormWidget()
     ];
 

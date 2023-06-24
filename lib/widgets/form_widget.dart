@@ -153,7 +153,12 @@ class PromptMessageInputFormWidget extends StatelessWidget {
 }
 
 class ConversationTitleFormWidget extends StatefulWidget {
-  const ConversationTitleFormWidget({super.key});
+  const ConversationTitleFormWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
 
   @override
   State<ConversationTitleFormWidget> createState() =>
@@ -167,6 +172,7 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
         Provider.of<PalmSettingProvider>(context, listen: false);
     var currentTitle = palmProvider.getCurrentConversationTitle;
     return TextFormField(
+      controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "Chat Name",
         border: OutlineInputBorder(),
@@ -180,7 +186,6 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
         return null;
       },
       // style: TextStyle(),
-      initialValue: currentTitle,
       onChanged: (value) {
         setState(() {
           currentTitle = value.toString();
@@ -197,7 +202,12 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
 }
 
 class ConversationPromptFormWidget extends StatefulWidget {
-  const ConversationPromptFormWidget({super.key});
+  const ConversationPromptFormWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
 
   @override
   State<ConversationPromptFormWidget> createState() =>
@@ -212,12 +222,12 @@ class _ConversationPromptFormWidget
         Provider.of<PalmSettingProvider>(context, listen: false);
     var currentPrompt = palmProvider.getCurrentConversationPrompt;
     return TextFormField(
+      controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "Prompt",
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.description_outlined),
       ),
-      initialValue: currentPrompt,
       onChanged: (value) {
         setState(() {
           currentPrompt = value.toString();

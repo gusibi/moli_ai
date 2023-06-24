@@ -52,3 +52,9 @@ final ConversationModel newConversation = ConversationModel(
 );
 
 const String palmConfigname = "palmConfig";
+const String roleUser = "user";
+const String roleAI = "ai";
+const String roleSys = "system";
+
+const maxInt = 9223372036854775807;
+const queyMessageLimit = 100;

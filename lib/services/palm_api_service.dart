@@ -20,7 +20,7 @@ class PalmApiService {
     }
   }
 
-  static Future<List<ConversationMessageModel>> getTextReponse(
+  static Future<List<PalmMessageModel>?> getTextReponse(
       BuildContext context, String prompt) async {
     final palmSettingProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
@@ -52,7 +52,7 @@ class PalmApiService {
       });
       request.headers.addAll(headers);
 
-      List<ConversationMessageModel> chatList = [];
+      List<PalmMessageModel> chatList = [];
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
         var resp = await response.stream.bytesToString();
@@ -61,16 +61,21 @@ class PalmApiService {
         log("jsonResponse $jsonResponse");
         chatList = List.generate(
             jsonResponse["candidates"].length,
-            (index) => ConversationMessageModel(
-                msg: jsonResponse["candidates"][0]["output"], chatIndex: 1));
+            (index) => PalmMessageModel(
+                msg: jsonResponse["candidates"][0]["output"],
+                chatRole: roleAI));
       } else {
         var message = response.reasonPhrase;
-        throw HttpException(message!);
+        log(message!);
+        // throw HttpException(message!);
+        return [
+          PalmMessageModel(msg: "Internal Server Error ", chatRole: roleSys)
+        ];
       }
       return chatList;
     } catch (error) {
       log("error, $error");
-      rethrow;
+      return [PalmMessageModel(msg: "Bad Request", chatRole: roleSys)];
     }
   }
 }

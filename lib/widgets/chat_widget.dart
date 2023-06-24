@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
+import '../models/conversation_model.dart';
 import '../models/palm_text_model.dart';
 import 'text_widget.dart';
 
@@ -26,16 +28,16 @@ class _ConversationMessageWidgetState extends State<ConversationMessageWidget> {
   late final _aiMessageColor = _colorScheme.onSecondaryContainer;
   @override
   Widget build(BuildContext context) {
-    return widget.conversation.chatIndex == 0
+    return widget.conversation.role == roleUser
         ? PromptMessageWidget(
-            message: widget.conversation.msg,
-            chatIndex: widget.conversation.chatIndex,
+            message: widget.conversation.message,
+            role: widget.conversation.role,
             backgroundColor: _userMessageBackgroundColor,
             messageColor: _userMessageColor,
           )
         : AiResponseMessageWidget(
-            message: widget.conversation.msg,
-            chatIndex: widget.conversation.chatIndex,
+            message: widget.conversation.message,
+            role: widget.conversation.role,
             backgroundColor: _aiMessageBackgroundColor,
             messageColor: _aiMessageColor,
           );
@@ -46,13 +48,13 @@ class PromptMessageWidget extends StatelessWidget {
   const PromptMessageWidget({
     Key? key,
     required this.message,
-    required this.chatIndex,
+    required this.role,
     required this.messageColor,
     required this.backgroundColor,
   }) : super(key: key);
 
   final String message;
-  final int chatIndex;
+  final String role;
   final Color messageColor;
   final Color backgroundColor;
 
@@ -89,13 +91,13 @@ class AiResponseMessageWidget extends StatelessWidget {
   const AiResponseMessageWidget({
     Key? key,
     required this.message,
-    required this.chatIndex,
+    required this.role,
     required this.messageColor,
     required this.backgroundColor,
   }) : super(key: key);
 
   final String message;
-  final int chatIndex;
+  final String role;
   final Color messageColor;
   final Color backgroundColor;
 

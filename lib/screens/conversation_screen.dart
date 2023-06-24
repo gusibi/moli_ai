@@ -9,10 +9,10 @@ import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
 import '../models/conversation_model.dart';
-import '../models/palm_text_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/configretion/config_repo.dart';
 import '../repositories/conversation/conversation.dart';
+import '../repositories/conversation/conversation_message.dart';
 import '../widgets/chat_widget.dart';
 import '../widgets/form_widget.dart';
 import 'conversation_setting_screen.dart';
@@ -39,6 +39,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   late TextEditingController textEditingController;
   late ConversationModel currentConversation;
+  late int minMessageId;
+  late bool allMessageloaed = false;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     super.initState();
     _initDefaultConfig();
     _initConversation();
+    _queryConversationMessages();
   }
 
   Future<void> _initConversation() async {
@@ -68,15 +71,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
           lastTime: 0);
       print("cnv $cnv");
       int id = await ConversationReop().createConversation(cnv);
-      currentConversation.id = id;
+      cnv.id = id;
+      currentConversation = cnv;
       palmProvider.setCurrentConversationInfo(currentConversation);
     } else {
       ConversationModel? cnv =
           await ConversationReop().getConversationById(currentConversation.id);
       if (cnv != null) {
         palmProvider.setCurrentModel(cnv.modelName);
+        currentConversation = cnv;
       }
     }
+    setState(() {
+      currentConversation = currentConversation;
+    });
   }
 
   void _initDefaultConfig() async {
@@ -91,6 +99,23 @@ class _ConversationScreenState extends State<ConversationScreen> {
       palmProvider.setApiKey(palmConfig.apiKey);
       palmProvider.setCurrentModel(palmConfig.modelName);
     }
+  }
+
+  void _queryConversationMessages() async {
+    messageList =
+        await ConversationMessageRepo().getMessages(currentConversation.id, 0);
+    if (messageList.isNotEmpty) {
+      minMessageId = messageList[0].id;
+      if (messageList.length < queyMessageLimit) {
+        allMessageloaed = true;
+      }
+    } else {
+      allMessageloaed = true;
+    }
+    setState(() {
+      allMessageloaed = allMessageloaed;
+      messageList = messageList;
+    });
   }
 
   @override
@@ -159,7 +184,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    _navigateToConversationScreen();
+                    _navigateToConversationSettingScreen();
                   },
                   icon: const Icon(Icons.settings),
                   color: _colorScheme.onSecondary,
@@ -211,7 +236,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  void _navigateToConversationScreen() {
+  void _navigateToConversationSettingScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
@@ -221,17 +246,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<void> sendMessageFCT(BuildContext context) async {
+    String text = textEditingController.text;
+    ConversationMessageModel userMessage = await ConversationMessageRepo()
+        .createUserMessage(text, currentConversation.id);
+    setState(() {
+      messageList.add(userMessage);
+      _isTyping = true;
+      textEditingController.clear();
+    });
     try {
-      String text = textEditingController.text;
-      setState(() {
-        messageList.add(ConversationMessageModel(msg: text, chatIndex: 0));
-        _isTyping = true;
-        textEditingController.clear();
-      });
-      final list = await PalmApiService.getTextReponse(context, text);
-      setState(() {
-        messageList.add(list[0]);
-      });
+      String prompt = "%currentConversation.prompt:{$text}";
+      final response = await PalmApiService.getTextReponse(context, prompt);
+      if (response != null) {
+        ConversationMessageModel aiMessage = await ConversationMessageRepo()
+            .createMessageWithRole(response[0].chatRole, response[0].msg,
+                currentConversation.id, userMessage.id);
+        setState(() {
+          messageList.add(aiMessage);
+        });
+      } else {}
     } catch (error) {
       log("error $error");
     } finally {

@@ -1,5 +1,5 @@
 class ConversationMessageModel {
-  final int id;
+  int id;
   final int conversationId;
   final String role;
   final String message;
@@ -7,7 +7,7 @@ class ConversationMessageModel {
   final int vote;
   final String ctime;
 
-  const ConversationMessageModel({
+  ConversationMessageModel({
     required this.id,
     required this.conversationId,
     required this.role,

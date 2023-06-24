@@ -49,7 +49,7 @@ class _DisappearingNavigationRailState
             backgroundColor: colorScheme.tertiaryContainer,
             foregroundColor: colorScheme.onTertiaryContainer,
             onPressed: () {
-              _navigateToCreateNewChat();
+              _navigateToCreateNewConversation();
             },
             child: const Icon(Icons.add),
           ),
@@ -65,7 +65,7 @@ class _DisappearingNavigationRailState
     );
   }
 
-  void _navigateToCreateNewChat() {
+  void _navigateToCreateNewConversation() {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     palmProvider.setCurrentConversationInfo(newConversation);

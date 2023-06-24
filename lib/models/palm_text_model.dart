@@ -50,9 +50,9 @@ class TextModel {
       };
 }
 
-class ConversationMessageModel {
+class PalmMessageModel {
   final String msg;
-  final int chatIndex;
+  final String chatRole;
 
-  ConversationMessageModel({required this.msg, required this.chatIndex});
+  PalmMessageModel({required this.msg, required this.chatRole});
 }
