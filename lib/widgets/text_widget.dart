@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+import 'markdown_view_widget.dart';
+
 class PromptTextMessageWidget extends StatelessWidget {
   const PromptTextMessageWidget({
     Key? key,
@@ -43,12 +45,9 @@ class ConversationMessageReplyWidget extends StatelessWidget {
   final FontWeight? fontWeight;
   @override
   Widget build(BuildContext context) {
-    return MarkdownBody(
-      data: message,
-      shrinkWrap: true,
-      selectable: true,
-      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-      fitContent: true,
+    return MarkdownView(
+      markdown: message,
+
       // textAlign: TextAlign.right,
       // style: TextStyle(
       //   color: color ?? Colors.red,
