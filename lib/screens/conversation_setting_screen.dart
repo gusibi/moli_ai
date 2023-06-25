@@ -82,58 +82,54 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
         ),
       ),
       backgroundColor: _backgroundColor,
-      body: GestureDetector(
-        onTap: () => _hideKeyboard(context),
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 500),
-            padding: const EdgeInsets.all(8.0),
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 500),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: GestureDetector(
+            onTap: () => _hideKeyboard(context),
             child: Form(
               key: _formKey,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    SingleSection(title: "自定义配置", children: [
-                      ConversationTitleFormWidget(controller: titleController),
-                      ConversationDescFormWidget(controller: descController),
-                      ConversationPromptFormWidget(
-                          controller: promptController),
-                    ]),
-                    SingleSection(title: "选择模型", children: [
-                      PalmModelRadioListTile(notifier: palmModel),
-                    ]),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            conversationInfo.title = titleController.text;
-                            conversationInfo.prompt = promptController.text;
-                            conversationInfo.desc = descController.text;
-                            conversationInfo.modelName =
-                                palmModelsMap[palmModel.value]!;
-                            palmProvider
-                                .setCurrentConversationInfo(conversationInfo);
-                            ConversationModel conv = ConversationModel(
-                                id: conversationInfo.id,
-                                title: titleController.text,
-                                prompt: promptController.text,
-                                icon: conversationInfo.icon,
-                                desc: conversationInfo.desc,
-                                modelName: palmModelsMap[palmModel.value]!,
-                                rank: 0,
-                                lastTime: timestampNow());
-                            ConversationReop().updateConversation(conv);
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: const Text('Submit'),
-                      ),
-                    ),
-                  ]),
+              child: ListView(children: [
+                SingleSection(title: "自定义配置", children: [
+                  ConversationTitleFormWidget(controller: titleController),
+                  ConversationDescFormWidget(controller: descController),
+                  ConversationPromptFormWidget(controller: promptController),
+                ]),
+                SingleSection(title: "选择模型", children: [
+                  PalmModelRadioListTile(notifier: palmModel),
+                ]),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        conversationInfo.title = titleController.text;
+                        conversationInfo.prompt = promptController.text;
+                        conversationInfo.desc = descController.text;
+                        conversationInfo.modelName =
+                            palmModelsMap[palmModel.value]!;
+                        palmProvider
+                            .setCurrentConversationInfo(conversationInfo);
+                        ConversationModel conv = ConversationModel(
+                            id: conversationInfo.id,
+                            title: titleController.text,
+                            prompt: promptController.text,
+                            icon: conversationInfo.icon,
+                            desc: conversationInfo.desc,
+                            modelName: palmModelsMap[palmModel.value]!,
+                            rank: 0,
+                            lastTime: timestampNow());
+                        ConversationReop().updateConversation(conv);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Submit'),
+                  ),
+                ),
+              ]),
             ),
           ),
         ),

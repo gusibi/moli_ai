@@ -58,7 +58,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
             _conversationList.length,
             (index) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.only(bottom: 1.0),
                 child: Dismissible(
                   key: UniqueKey(),
                   direction: DismissDirection.startToEnd,

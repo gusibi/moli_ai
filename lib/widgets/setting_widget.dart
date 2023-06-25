@@ -17,13 +17,11 @@ class SingleSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 26),
+        const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
             title.toUpperCase(),
-            // style:
-            //     Theme.of(context).textTheme.headline3?.copyWith(fontSize: 16),
           ),
         ),
         // const SizedBox(height: 8),

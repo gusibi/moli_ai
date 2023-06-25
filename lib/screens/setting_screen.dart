@@ -88,14 +88,14 @@ class _SettingScreenState extends State<SettingScreen> {
       backgroundColor: _backgroundColor,
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          // constraints: const BoxConstraints(maxWidth: 500),
           child: GestureDetector(
             onTap: () => _hideKeyboard(context),
             child: Form(
               key: _formKey,
               child: ListView(
                 children: [
-                  const SizedBox(height: 8),
                   SingleSection(title: "自定义配置", children: [
                     BaseURLFormWidget(
                       controller: basicUrlController,
