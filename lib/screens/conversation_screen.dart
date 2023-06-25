@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:moli_ai/services/palm_api_service.dart';
 import 'package:moli_ai/utils/icon.dart';
 import 'package:provider/provider.dart';
+
 import '../constants/constants.dart';
 import '../models/config_model.dart';
 import '../models/conversation_model.dart';
@@ -13,8 +15,8 @@ import '../providers/palm_priovider.dart';
 import '../repositories/configretion/config_repo.dart';
 import '../repositories/conversation/conversation.dart';
 import '../repositories/conversation/conversation_message.dart';
-import '../widgets/chat_widget.dart';
-import '../widgets/form_widget.dart';
+import '../widgets/conversation_widget.dart';
+import '../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
@@ -41,6 +43,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   late ConversationModel currentConversation;
   late int minMessageId;
   late bool allMessageloaed = false;
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -121,6 +124,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void dispose() {
     textEditingController.dispose();
+    _scrollController.dispose();
     _isTyping = false;
     super.dispose();
   }
@@ -130,8 +134,25 @@ class _ConversationScreenState extends State<ConversationScreen> {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
+  /*这段代码的作用是将滚动条滚动到 ScrollController 的最底部位置。
+  具体来说，它使用 animateTo() 方法来滚动到指定位置。
+  _scrollController.position.maxScrollExtent 表示滚动条的最大位置，即最底部位置。
+  duration 属性表示滚动的持续时间，这里设置为 const Duration(milliseconds: 1)，表示在 1 毫秒内完成滚动。
+  curve 属性表示滚动的动画曲线，这里使用 Curves.easeOut，表示使用缓出的动画效果。
+  */
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 1),
+      curve: Curves.linear,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 4,
@@ -175,7 +196,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         height: 6,
                       ),
                       Text(
-                        currentConversation.prompt,
+                        currentConversation.desc,
                         style: TextStyle(
                             color: _colorScheme.onSecondary, fontSize: 12),
                       ),
@@ -204,7 +225,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      // shrinkWrap: true,
+                      controller: _scrollController,
                       itemCount: messageList.length,
                       itemBuilder: (context, index) {
                         return ConversationMessageWidget(

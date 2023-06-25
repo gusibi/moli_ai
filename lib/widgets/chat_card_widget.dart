@@ -92,7 +92,6 @@ class ConversationCardHeadline extends StatefulWidget {
 }
 
 class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late Color unselectedColor = Color.alphaBlend(
     _colorScheme.primary.withOpacity(0.38),
@@ -133,7 +132,7 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      widget.conversation.prompt.toString(),
+                      widget.conversation.desc.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                       style: TextStyle(

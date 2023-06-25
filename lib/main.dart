@@ -8,8 +8,8 @@ import 'providers/palm_priovider.dart';
 import 'screens/conversation_screen.dart';
 import 'screens/conversation_list_screen.dart';
 import 'screens/setting_screen.dart';
-import 'widgets/disappearing_bottom_navigation_bar.dart';
-import 'widgets/disappearing_navigation_rail.dart';
+import 'widgets/navigation/disappearing_bottom_navigation_bar.dart';
+import 'widgets/navigation/disappearing_navigation_rail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -90,7 +90,7 @@ class _RootPageState extends State<RootPage> {
           if (wideScreen)
             DisappearingNavigationRail(
               selectedIndex: selectedIndex,
-              backgroundColor: _backgroundColor,
+              backgroundColor: Colors.white,
               onDestinationSelected: (index) {
                 setState(() {
                   selectedIndex = index;

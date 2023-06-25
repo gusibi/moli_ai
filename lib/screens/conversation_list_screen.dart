@@ -49,9 +49,6 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // List<ConversationModel> chatList = palmProvider.getChatList;
-    // List<ConversationModel> chatList =
-    //     ConversationReop().convs() as List<ConversationModel>;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: ListView(
@@ -62,13 +59,34 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
             (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
-                child: ConversationCardWidget(
-                  conversation: _conversationList[index],
-                  id: _conversationList[index].id,
-                  index: index,
-                  onSelected: () {
-                    _navigateToConversationScreen(_conversationList[index]);
+                child: Dismissible(
+                  key: UniqueKey(),
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (direction) {
+                    ConversationModel conv = _conversationList[index];
+                    ConversationReop().deleteConversationById(conv.id);
+                    setState(() {
+                      _conversationList.removeAt(index);
+                    });
                   },
+                  background: Container(
+                    color: Colors.red,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(Icons.delete, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  child: ConversationCardWidget(
+                    conversation: _conversationList[index],
+                    id: _conversationList[index].id,
+                    index: index,
+                    onSelected: () {
+                      _navigateToConversationScreen(_conversationList[index]);
+                    },
+                  ),
                 ),
               );
             },

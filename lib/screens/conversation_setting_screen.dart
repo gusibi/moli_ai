@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/constants.dart';
 import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
 import '../utils/time.dart';
-import '../widgets/form_widget.dart';
+import '../widgets/form/form_widget.dart';
+import '../widgets/form/models_choice_widget.dart';
+import '../widgets/setting_widget.dart';
 
 class ConversationSettingScreen extends StatefulWidget {
   const ConversationSettingScreen({
@@ -30,7 +33,9 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
 
   final _formKey = GlobalKey<FormState>();
   late TextEditingController titleController;
+  late TextEditingController descController;
   late TextEditingController promptController;
+  final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
 
   void _hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -42,6 +47,8 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
     setState(() {
       titleController =
           TextEditingController(text: widget.conversationData.title);
+      descController =
+          TextEditingController(text: widget.conversationData.desc);
       promptController =
           TextEditingController(text: widget.conversationData.prompt);
     });
@@ -53,12 +60,6 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var conversationInfo = widget.conversationData;
-
-    List<Widget> formList = [
-      ConversationTitleFormWidget(controller: titleController),
-      ConversationPromptFormWidget(controller: promptController),
-      // const ModelsDropdownFormWidget()
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -80,56 +81,60 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
           },
         ),
       ),
+      backgroundColor: _backgroundColor,
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),
-        child: Container(
-          color: _backgroundColor,
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SizedBox(height: 8),
-              ...List.generate(
-                formList.length,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: formList[index],
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      String newTitle =
-                          palmProvider.getCurrentConversationTitle;
-                      String newPrompt =
-                          palmProvider.getCurrentConversationPrompt;
-                      log("prompt: $newPrompt, title: $newTitle");
-                      conversationInfo.title = newTitle;
-                      conversationInfo.prompt = newPrompt;
-                      palmProvider.setCurrentConversationInfo(conversationInfo);
-                      ConversationModel conv = ConversationModel(
-                          id: conversationInfo.id,
-                          title: newTitle,
-                          prompt: newPrompt,
-                          icon: conversationInfo.icon,
-                          desc: conversationInfo.desc,
-                          modelName: conversationInfo.modelName,
-                          rank: 0,
-                          lastTime: timestampNow());
-                      ConversationReop().updateConversation(conv);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Submit'),
-                ),
-              ),
-            ]),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 500),
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    SingleSection(title: "自定义配置", children: [
+                      ConversationTitleFormWidget(controller: titleController),
+                      ConversationDescFormWidget(controller: descController),
+                      ConversationPromptFormWidget(
+                          controller: promptController),
+                    ]),
+                    SingleSection(title: "选择模型", children: [
+                      PalmModelRadioListTile(notifier: palmModel),
+                    ]),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            conversationInfo.title = titleController.text;
+                            conversationInfo.prompt = promptController.text;
+                            conversationInfo.desc = descController.text;
+                            conversationInfo.modelName =
+                                palmModelsMap[palmModel.value]!;
+                            palmProvider
+                                .setCurrentConversationInfo(conversationInfo);
+                            ConversationModel conv = ConversationModel(
+                                id: conversationInfo.id,
+                                title: titleController.text,
+                                prompt: promptController.text,
+                                icon: conversationInfo.icon,
+                                desc: conversationInfo.desc,
+                                modelName: palmModelsMap[palmModel.value]!,
+                                rank: 0,
+                                lastTime: timestampNow());
+                            ConversationReop().updateConversation(conv);
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Submit'),
+                      ),
+                    ),
+                  ]),
+            ),
           ),
         ),
       ),

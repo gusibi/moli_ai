@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
-import '../providers/palm_priovider.dart';
-import '../services/palm_api_service.dart';
-import 'text_widget.dart';
+import '../../constants/constants.dart';
+import '../../providers/palm_priovider.dart';
+import '../../services/palm_api_service.dart';
+import '../text_widget.dart';
 
 List<DropdownMenuItem<String>>? get getModelsItem {
   var models = PalmApiService.getModels();
@@ -95,6 +95,52 @@ class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
         modelsProvider.setCurrentModel(value.toString());
         print("currentModel: $currentModel");
       },
+    );
+  }
+}
+
+class PalmModelRadioListTile extends StatefulWidget {
+  const PalmModelRadioListTile({super.key, required this.notifier});
+
+  final ValueNotifier<PalmModels> notifier;
+
+  @override
+  State<PalmModelRadioListTile> createState() => _PalmModelRadioListTileState();
+}
+
+class _PalmModelRadioListTileState extends State<PalmModelRadioListTile> {
+  late ValueNotifier<PalmModels> _notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    _notifier = widget.notifier;
+    return Column(
+      children: <Widget>[
+        RadioListTile<PalmModels>(
+          value: PalmModels.textModel,
+          groupValue: _notifier.value,
+          onChanged: (PalmModels? value) {
+            widget.notifier.value = value!;
+            setState(() {
+              _notifier = widget.notifier;
+            });
+          },
+          title: Text(textModel.modelName),
+          // subtitle: Text(textModel.modelDesc),
+        ),
+        RadioListTile<PalmModels>(
+          value: PalmModels.chatModel,
+          groupValue: _notifier.value,
+          onChanged: (PalmModels? value) {
+            widget.notifier.value = value!;
+            setState(() {
+              _notifier = widget.notifier;
+            });
+          },
+          title: Text(chatModel.modelName),
+          // subtitle: Text(textModel.modelDesc),
+        ),
+      ],
     );
   }
 }

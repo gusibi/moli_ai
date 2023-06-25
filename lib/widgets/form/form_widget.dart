@@ -1,9 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/palm_priovider.dart';
+import '../../providers/palm_priovider.dart';
 
 class BaseURLFormWidget extends StatefulWidget {
   const BaseURLFormWidget({
@@ -72,16 +73,28 @@ class ApiKeyFormWidget extends StatefulWidget {
 }
 
 class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
+  bool isObscureText = true;
   @override
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var apiKey = "";
     return TextFormField(
+      obscureText: isObscureText,
       controller: widget.controller,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "API Key",
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isObscureText ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              isObscureText = !isObscureText;
+            });
+          },
+        ),
       ),
       validator: (value) {
         if (value!.isEmpty) {
@@ -104,7 +117,7 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
   }
 }
 
-class PromptMessageInputFormWidget extends StatelessWidget {
+class PromptMessageInputFormWidget extends StatefulWidget {
   const PromptMessageInputFormWidget({
     super.key,
     required this.textController,
@@ -114,38 +127,84 @@ class PromptMessageInputFormWidget extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
+  State<PromptMessageInputFormWidget> createState() =>
+      _PromptMessageInputFormWidgetState();
+}
+
+class _PromptMessageInputFormWidgetState
+    extends State<PromptMessageInputFormWidget> {
+  final _formKey = GlobalKey<FormState>();
+
+  void _handleEnter() {
+    final text = widget.textController.text.trim();
+    if (text.isNotEmpty) {
+      // 处理回车事件
+      log('Enter: $text');
+      widget.textController.clear();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       // height: 60,
       child: Container(
         decoration: const BoxDecoration(color: Colors.white),
         padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const CircleAvatar(child: Icon(Icons.cleaning_services_outlined)),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                maxLines: 2,
-                style: const TextStyle(color: Colors.black, fontSize: 14),
-                controller: textController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: const OutlineInputBorder(),
-                  hintText: "Type your message",
-                  hintStyle: Theme.of(context).textTheme.bodyMedium,
+        child: Form(
+          key: _formKey,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const CircleAvatar(child: Icon(Icons.cleaning_services_outlined)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: RawKeyboardListener(
+                  focusNode: FocusNode(),
+                  onKey: (event) {
+                    if (event is RawKeyUpEvent) {
+                      if (event.logicalKey == LogicalKeyboardKey.enter) {
+                        if (event.isShiftPressed) {
+                          widget.textController.text += '\n';
+                        } else {
+                          _handleEnter();
+                        }
+                      }
+                    }
+                  },
+                  child: TextFormField(
+                    maxLines: 2,
+                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    controller: widget.textController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your message';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      hintText: "Type your message",
+                      hintStyle: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            CircleAvatar(
-                child: IconButton(
-              onPressed: onPressed,
-              icon: const Icon(Icons.send),
-            )),
-            // const CircleAvatar(child: Icon(Icons.send)),
-          ],
+              const SizedBox(width: 8),
+              CircleAvatar(
+                  child: IconButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    widget.onPressed();
+                  }
+                },
+                icon: const Icon(Icons.send),
+              )),
+              // const CircleAvatar(child: Icon(Icons.send)),
+            ],
+          ),
         ),
       ),
     );
@@ -168,6 +227,7 @@ class ConversationTitleFormWidget extends StatefulWidget {
 class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
   @override
   Widget build(BuildContext context) {
+    late final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var currentTitle = palmProvider.getCurrentConversationTitle;
@@ -178,7 +238,8 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
         border: OutlineInputBorder(),
         prefixIcon: Icon(Icons.badge_outlined),
       ),
-
+      style: TextStyle(
+          color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
       validator: (value) {
         if (value!.isEmpty) {
           return 'Please enter Chat Name';
@@ -216,18 +277,22 @@ class ConversationPromptFormWidget extends StatefulWidget {
 
 class _ConversationPromptFormWidget
     extends State<ConversationPromptFormWidget> {
+  late final ColorScheme colorScheme = Theme.of(context).colorScheme;
   @override
   Widget build(BuildContext context) {
     final palmProvider =
         Provider.of<PalmSettingProvider>(context, listen: false);
     var currentPrompt = palmProvider.getCurrentConversationPrompt;
     return TextFormField(
+      maxLines: 2,
       controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "Prompt",
         border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.description_outlined),
+        prefixIcon: Icon(Icons.tips_and_updates_outlined),
       ),
+      style: TextStyle(
+          color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
       onChanged: (value) {
         setState(() {
           currentPrompt = value.toString();
@@ -238,6 +303,53 @@ class _ConversationPromptFormWidget
         currentPrompt = value.toString();
         palmProvider.setCurrentConversationPrompt(value.toString());
         log("conversation.prompt: $currentPrompt");
+      },
+    );
+  }
+}
+
+class ConversationDescFormWidget extends StatefulWidget {
+  const ConversationDescFormWidget({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
+
+  @override
+  State<ConversationDescFormWidget> createState() =>
+      _ConversationDescFormWidget();
+}
+
+class _ConversationDescFormWidget extends State<ConversationDescFormWidget> {
+  @override
+  Widget build(BuildContext context) {
+    late final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final palmProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
+    var currentConversation = palmProvider.getCurrentConversationInfo;
+    var currentDesc = currentConversation.desc;
+    return TextFormField(
+      controller: widget.controller,
+      decoration: const InputDecoration(
+        labelText: "Description",
+        border: OutlineInputBorder(),
+        prefixIcon: Icon(Icons.description_outlined),
+      ),
+      style: TextStyle(
+          color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
+      onChanged: (value) {
+        setState(() {
+          currentDesc = value.toString();
+        });
+        currentConversation.desc = currentDesc;
+        palmProvider.setCurrentConversationInfo(currentConversation);
+      },
+      onSaved: (value) {
+        currentDesc = value.toString();
+        currentConversation.desc = currentDesc;
+        palmProvider.setCurrentConversationInfo(currentConversation);
+        log("conversation.desc: $currentDesc");
       },
     );
   }

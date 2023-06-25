@@ -58,3 +58,36 @@ const String roleSys = "system";
 
 const maxInt = 9223372036854775807;
 const queyMessageLimit = 100;
+
+class PalmModel {
+  final String modelName;
+  final String modelDesc;
+
+  PalmModel({required this.modelName, required this.modelDesc});
+}
+
+final PalmModel textModel =
+    PalmModel(modelName: "text-bison-001", modelDesc: """Generates text.
+Optimized for language tasks such as:
+Code generation
+Text generation
+Text editing
+Problem solving
+Recommendations generation
+Information extraction
+Data extraction or generation
+AI agent
+Can handle zero, one, and few-shot tasks.""");
+
+final PalmModel chatModel = PalmModel(
+    modelName: "chat-bison-001",
+    modelDesc: """Generates text in a conversational format.
+Optimized for dialog language tasks such as implementation of chat bots or AI agents.
+Can handle zero, one, and few-shot tasks.""");
+
+enum PalmModels { textModel, chatModel }
+
+final Map<PalmModels, String> palmModelsMap = {
+  PalmModels.textModel: textModel.modelName,
+  PalmModels.chatModel: chatModel.modelName,
+};

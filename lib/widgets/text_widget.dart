@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'markdown_view_widget.dart';
 
@@ -47,13 +46,6 @@ class ConversationMessageReplyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MarkdownView(
       markdown: message,
-
-      // textAlign: TextAlign.right,
-      // style: TextStyle(
-      //   color: color ?? Colors.red,
-      //   fontSize: fontSize,
-      //   fontWeight: fontWeight ?? FontWeight.normal,
-      // ),
     );
   }
 }

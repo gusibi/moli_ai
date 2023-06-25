@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../destinations.dart';
+import '../../destinations.dart';
 
 class DisappearingBottomNavigationBar extends StatelessWidget {
   const DisappearingBottomNavigationBar({

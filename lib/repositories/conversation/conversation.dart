@@ -5,7 +5,6 @@ import '../../models/conversation_model.dart';
 
 class ConversationReop {
   final tableName = "conversation_tab";
-  // Define a function that inserts dogs into the database
   Future<int> createConversation(ConversationModel conv) async {
     final Database db = dbClient.get();
     DateTime now = DateTime.now();
@@ -25,15 +24,12 @@ class ConversationReop {
     );
   }
 
-  // A method that retrieves all the dogs from the dogs table.
   Future<List<ConversationModel>> getAllConversations() async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
-    // Query the table for all The Dogs.
     final List<Map<String, dynamic>> maps = await db.query(tableName);
 
-    // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return ConversationModel(
         id: maps[i]['id'],
@@ -48,7 +44,6 @@ class ConversationReop {
     });
   }
 
-  // A method that retrieves all the dogs from the dogs table.
   Future<ConversationModel?> getConversationById(int id) async {
     final Database db = dbClient.get();
 
@@ -75,10 +70,23 @@ class ConversationReop {
 
     // Update the given Dog.
     await db.update(
-      'conversation_tab',
+      tableName,
       conv.toMap(),
       where: 'id = ?',
       whereArgs: [conv.id],
+    );
+  }
+
+  Future<void> deleteConversationById(int id) async {
+    final Database db = dbClient.get();
+
+    // Remove the conversation from the database.
+    await db.delete(
+      tableName,
+      // Use a `where` clause to delete a specific conversation.
+      where: 'id = ?',
+      // Pass the conversation's id as a whereArg to prevent SQL injection.
+      whereArgs: [id],
     );
   }
 }

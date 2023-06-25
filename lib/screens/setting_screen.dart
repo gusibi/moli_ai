@@ -7,8 +7,9 @@ import '../constants/api_constants.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
 import '../repositories/configretion/config_repo.dart';
-import '../widgets/drop_down.dart';
-import '../widgets/form_widget.dart';
+import '../widgets/form/models_choice_widget.dart';
+import '../widgets/form/form_widget.dart';
+import '../widgets/setting_widget.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -31,6 +32,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   late TextEditingController basicUrlController;
   late TextEditingController apiKeyController;
+  final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
 
   Map<String, ConfigModel> _configMap = {};
 
@@ -72,15 +74,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> formList = [
-      BaseURLFormWidget(
-        controller: basicUrlController,
-      ),
-      ApiKeyFormWidget(
-        controller: apiKeyController,
-      ),
-      const ModelsDropdownFormWidget()
-    ];
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -92,39 +85,39 @@ class _SettingScreenState extends State<SettingScreen> {
         shadowColor: Colors.white,
         elevation: 4,
       ),
-      body: GestureDetector(
-        onTap: () => _hideKeyboard(context),
+      backgroundColor: _backgroundColor,
+      body: Center(
         child: Container(
-          color: _backgroundColor,
-          padding: const EdgeInsets.all(8.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: GestureDetector(
+            onTap: () => _hideKeyboard(context),
             child: Form(
               key: _formKey,
               child: ListView(
                 children: [
                   const SizedBox(height: 8),
-                  ...List.generate(
-                    formList.length,
-                    (index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: formList[index],
-                      );
-                    },
-                  ),
+                  SingleSection(title: "自定义配置", children: [
+                    BaseURLFormWidget(
+                      controller: basicUrlController,
+                    ),
+                    ApiKeyFormWidget(
+                      controller: apiKeyController,
+                    ),
+                  ]),
+                  SingleSection(title: "选择模型", children: [
+                    PalmModelRadioListTile(notifier: palmModel),
+                  ]),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          log(apiKeyController.text);
-                          log(basicUrlController.text);
                           _saveConfig(PalmConfig(
                               basicUrl: basicUrlController.text,
                               apiKey: apiKeyController.text,
-                              modelName: modelName));
+                              modelName: palmModelsMap[palmModel.value]!));
                           // do something with _baseUrl and _apiKey
                         }
                       },

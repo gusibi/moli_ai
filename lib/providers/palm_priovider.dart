@@ -71,8 +71,6 @@ class PalmSettingProvider with ChangeNotifier {
     return modelsList;
   }
 
-  // new chat
-
   String currentConversationTitle = "";
 
   String get getCurrentConversationTitle {
@@ -94,15 +92,4 @@ class PalmSettingProvider with ChangeNotifier {
     currentConversationPrompt = newPrompt;
     notifyListeners();
   }
-
-  // Database? sqliteClient = null;
-
-  // Database? getSqliteClient() {
-  //   return sqliteClient;
-  // }
-
-  // Future<void> setSqliteClient(Database client) async {
-  //   sqliteClient = client;
-  //   notifyListeners();
-  // }
 }
