@@ -2,13 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
-import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
 import '../models/palm_text_model.dart';
-import '../providers/palm_priovider.dart';
 
 class PalmApiService {
   static List<String> getModels() {
@@ -20,13 +17,12 @@ class PalmApiService {
     }
   }
 
-  static Future<List<PalmMessageModel>?> getTextReponse(
-      BuildContext context, String prompt) async {
-    final palmSettingProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
-    var currentModel = palmSettingProvider.getCurrentModel;
-    var baseURL = palmSettingProvider.getBaseURL;
-    var apiKey = palmSettingProvider.getApiKey;
+  static Future<PalmTextMessageResp> getTextReponse(
+      PalmTextMessageReq req) async {
+    var currentModel = req.modelName;
+    var baseURL = req.basicUrl;
+    var apiKey = req.apiKey;
+    var prompt = req.prompt;
     try {
       log("start, model: $currentModel, prompt: $prompt");
       log("$baseURL/models/$currentModel:generateText?key=$apiKey");
@@ -35,11 +31,11 @@ class PalmApiService {
           Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
       request.body = json.encode({
         "prompt": {"text": prompt},
-        "temperature": 0.7,
+        "temperature": req.temperature,
         "top_k": 40,
         "top_p": 0.95,
         "candidate_count": 1,
-        "max_output_tokens": 1024,
+        "max_output_tokens": req.maxOutputTokens,
         "stop_sequences": [],
         "safety_settings": [
           {"category": "HARM_CATEGORY_DEROGATORY", "threshold": 1},
@@ -52,30 +48,69 @@ class PalmApiService {
       });
       request.headers.addAll(headers);
 
-      List<PalmMessageModel> chatList = [];
       http.StreamedResponse response = await request.send();
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var resp = await response.stream.bytesToString();
         log("resp $resp");
-        Map jsonResponse = jsonDecode(resp);
+        Map<String, dynamic> jsonResponse = jsonDecode(resp);
         log("jsonResponse $jsonResponse");
-        chatList = List.generate(
-            jsonResponse["candidates"].length,
-            (index) => PalmMessageModel(
-                msg: jsonResponse["candidates"][0]["output"],
-                chatRole: roleAI));
+        return PalmTextMessageResp.fromJson(jsonResponse);
       } else {
-        var message = response.reasonPhrase;
-        log(message!);
-        // throw HttpException(message!);
-        return [PalmMessageModel(msg: "Bad Request", chatRole: roleSys)];
+        int httpCode = response.statusCode;
+        String message = response.reasonPhrase!;
+        return PalmTextMessageResp(
+            error: ErrorResp(
+                code: -1,
+                message: "[Bad Request]: $httpCode - $message",
+                status: ""));
       }
-      return chatList;
+    } catch (error) {
+      log("catch error, $error");
+      return PalmTextMessageResp(
+          error: ErrorResp(code: -1, message: error.toString(), status: ""));
+    }
+  }
+
+  static Future<PalmChatMessageResp> getChatReponse(
+      PalmChatMessageReq req) async {
+    var currentModel = req.modelName;
+    var baseURL = req.basicUrl;
+    var apiKey = req.apiKey;
+    var context = req.context;
+    try {
+      log("start, model: $currentModel, prompt: $context");
+      log("$baseURL/models/$currentModel:generateMessage?key=$apiKey");
+      var headers = {'Content-Type': 'application/json'};
+      var request = http.Request('POST',
+          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
+      request.body = json.encode({
+        "prompt": {
+          "context": context,
+          "examples": req.examples,
+          "messages": req.messages
+        },
+        "temperature": req.temperature,
+        "top_k": 40,
+        "top_p": 0.95,
+        "candidate_count": 1
+      });
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var resp = await response.stream.bytesToString();
+        log("resp $resp");
+        Map<String, dynamic> jsonResponse = jsonDecode(resp);
+        log("jsonResponse $jsonResponse");
+        return PalmChatMessageResp.fromJson(jsonResponse);
+      } else {
+        return PalmChatMessageResp(
+            error: ErrorResp(code: -1, message: "Bad Request", status: ""));
+      }
     } catch (error) {
       log("error, $error");
-      return [
-        PalmMessageModel(msg: "Internal Server Error", chatRole: roleSys)
-      ];
+      return PalmChatMessageResp(
+          error: ErrorResp(code: -1, message: error.toString(), status: ""));
     }
   }
 }

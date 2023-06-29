@@ -11,10 +11,12 @@ import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
 import '../models/conversation_model.dart';
+import '../models/palm_text_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/configretion/config_repo.dart';
 import '../repositories/conversation/conversation.dart';
 import '../repositories/conversation/conversation_message.dart';
+import '../widgets/appbar/conversation_appbar.dart';
 import '../widgets/conversation_widget.dart';
 import '../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
@@ -72,7 +74,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           modelName: widget.conversationData.modelName,
           rank: 0,
           lastTime: 0);
-      print("cnv $cnv");
+      log("cnv $cnv");
       int id = await ConversationReop().createConversation(cnv);
       cnv.id = id;
       currentConversation = cnv;
@@ -153,68 +155,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
+    final palmSettingProvider =
+        Provider.of<PalmSettingProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 4,
-        automaticallyImplyLeading: false,
-        backgroundColor: _colorScheme.primary,
-        shadowColor: Colors.white,
-        flexibleSpace: SafeArea(
-          child: Container(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: _colorScheme.onPrimary,
-                  ),
-                ),
-                const SizedBox(
-                  width: 2,
-                ),
-                CircleAvatar(
-                  child: Icon(convertCodeToIconData(currentConversation.icon)),
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        currentConversation.title,
-                        style: TextStyle(
-                            color: _colorScheme.onPrimary, fontSize: 14),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        currentConversation.desc,
-                        style: TextStyle(
-                            color: _colorScheme.onSecondary, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _navigateToConversationSettingScreen();
-                  },
-                  icon: const Icon(Icons.settings),
-                  color: _colorScheme.onSecondary,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      appBar: ConversationAppBarWidget(
+          currentConversation: currentConversation,
+          onPressSetting: _navigateToConversationSettingScreen),
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),
         child: Container(
@@ -248,7 +194,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           log("asking");
                         } else {
                           _hideKeyboard(context);
-                          sendMessageFCT(context);
+                          sendMessageFCT(
+                              context,
+                              palmSettingProvider.getBaseURL,
+                              palmSettingProvider.getApiKey);
                         }
                       }),
                 ],
@@ -267,10 +216,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  Future<void> sendMessageFCT(BuildContext context) async {
+  Future<void> sendMessageFCT(
+      BuildContext context, String basicUrl, apiKey) async {
     String text = textEditingController.text;
+    String trimmedText = text.trimRight();
     ConversationMessageModel userMessage = await ConversationMessageRepo()
-        .createUserMessage(text, currentConversation.id);
+        .createUserMessage(trimmedText, currentConversation.id);
     setState(() {
       messageList.add(userMessage);
       _isTyping = true;
@@ -278,16 +229,30 @@ class _ConversationScreenState extends State<ConversationScreen> {
     });
     try {
       String prompt = currentConversation.prompt;
-      prompt = "$prompt:{$text}";
-      final response = await PalmApiService.getTextReponse(context, prompt);
-      if (response != null) {
-        ConversationMessageModel aiMessage = await ConversationMessageRepo()
-            .createMessageWithRole(response[0].chatRole, response[0].msg,
-                currentConversation.id, userMessage.id);
-        setState(() {
-          messageList.add(aiMessage);
-        });
-      } else {}
+      prompt = "$prompt:{$trimmedText}";
+      PalmTextMessageReq req = PalmTextMessageReq(
+        prompt: prompt,
+        modelName: currentConversation.modelName,
+        basicUrl: basicUrl,
+        apiKey: apiKey,
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+      );
+      final response = await PalmApiService.getTextReponse(req);
+      var chatRole = roleAI;
+      var message = "";
+      if (response.error != null && response.error!.code != 0) {
+        chatRole = roleSys;
+        message = response.error!.message;
+      } else if (response.candidates!.isNotEmpty) {
+        message = response.candidates![0].output!;
+      }
+      ConversationMessageModel aiMessage = await ConversationMessageRepo()
+          .createMessageWithRole(
+              chatRole, message, currentConversation.id, userMessage.id);
+      setState(() {
+        messageList.add(aiMessage);
+      });
     } catch (error) {
       log("error $error");
     } finally {

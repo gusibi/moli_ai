@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,7 +41,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
     });
     List<ConversationModel> conversationList =
         await ConversationReop().getAllConversations();
-    print("conversationList $conversationList");
+    log("conversationList $conversationList");
     if (conversationList.isNotEmpty) {
       setState(() {
         _conversationList = conversationList;

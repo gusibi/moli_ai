@@ -79,14 +79,14 @@ class SqliteClient {
   }
 
   void q() async {
-    print("_db-----<<<<<<<< $_db");
+    log("_db-----<<<<<<<< $_db");
     List<Map<String, dynamic>> tables = await _db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-    print("Tables:--->>>>>> $tables");
+    log("Tables:--->>>>>> $tables");
 
     List<Map<String, dynamic>> columns =
         await _db.rawQuery("PRAGMA table_info(conversation_tab);");
-    print("Columns-----: $columns");
+    log("Columns-----: $columns");
   }
 }
 

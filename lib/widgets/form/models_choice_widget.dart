@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -93,7 +95,7 @@ class _ModelsDropdownFormWidgetState extends State<ModelsDropdownFormWidget> {
       onSaved: (value) {
         currentModel = value.toString();
         modelsProvider.setCurrentModel(value.toString());
-        print("currentModel: $currentModel");
+        log("currentModel: $currentModel");
       },
     );
   }

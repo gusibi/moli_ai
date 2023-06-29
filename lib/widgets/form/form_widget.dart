@@ -54,7 +54,7 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
       onSaved: (value) {
         baseURL = value.toString();
         palmProvider.setBaseURL(value.toString());
-        print("baseURL: $baseURL");
+        log("baseURL: $baseURL");
       },
     );
   }
@@ -111,7 +111,7 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
       onSaved: (value) {
         apiKey = value.toString();
         palmProvider.setApiKey(value.toString());
-        print("apiKey: $apiKey");
+        log("apiKey: $apiKey");
       },
     );
   }
@@ -135,17 +135,9 @@ class _PromptMessageInputFormWidgetState
     extends State<PromptMessageInputFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
-  void _handleEnter() {
-    final text = widget.textController.text.trim();
-    if (text.isNotEmpty) {
-      // 处理回车事件
-      log('Enter: $text');
-      widget.textController.clear();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    var focusNode = FocusNode();
     return SizedBox(
       // height: 60,
       child: Container(
@@ -156,18 +148,37 @@ class _PromptMessageInputFormWidgetState
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CircleAvatar(child: Icon(Icons.cleaning_services_outlined)),
+              const CircleAvatar(child: Icon(Icons.restart_alt)),
               const SizedBox(width: 8),
               Expanded(
                 child: RawKeyboardListener(
-                  focusNode: FocusNode(),
+                  focusNode: focusNode,
                   onKey: (event) {
                     if (event is RawKeyUpEvent) {
                       if (event.logicalKey == LogicalKeyboardKey.enter) {
                         if (event.isShiftPressed) {
-                          widget.textController.text += '\n';
+                          // 获取当前行的文本内容
+                          final text = widget.textController.value.text;
+                          final cursorPosition =
+                              widget.textController.selection.baseOffset;
+                          String textBefore = text.substring(0, cursorPosition);
+                          textBefore = textBefore.trimRight();
+                          widget.textController.value = TextEditingValue(
+                            text: text,
+                            selection: TextSelection.collapsed(
+                                offset: textBefore.length + 1),
+                          );
                         } else {
-                          _handleEnter();
+                          final text = widget.textController.text.trim();
+                          if (text.isEmpty) {
+                            // 处理回车事件
+                            log('Enter: $text');
+                            widget.textController.clear();
+                          }
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            widget.onPressed();
+                          }
                         }
                       }
                     }
