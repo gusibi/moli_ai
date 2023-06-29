@@ -194,7 +194,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           log("asking");
                         } else {
                           _hideKeyboard(context);
-                          sendMessageFCT(
+                          sendMessageByApi(
                               context,
                               palmSettingProvider.getBaseURL,
                               palmSettingProvider.getApiKey);
@@ -216,7 +216,74 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  Future<void> sendMessageFCT(
+  Future<List<String>> sendMessageByTextApi(String basicUrl, apiKey,
+      inputMessage, ConversationModel currentConversation) async {
+    String prompt = currentConversation.prompt;
+    prompt = "$prompt:{$inputMessage}";
+    PalmTextMessageReq req = PalmTextMessageReq(
+      prompt: prompt,
+      modelName: currentConversation.modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
+      temperature: 0.7,
+      maxOutputTokens: 1024,
+    );
+    final response = await PalmApiService.getTextReponse(req);
+    var chatRole = roleAI;
+    var message = "";
+    if (response.error != null && response.error!.code != 0) {
+      chatRole = roleSys;
+      message = response.error!.message;
+    } else if (response.candidates!.isNotEmpty) {
+      message = response.candidates![0].output!;
+    }
+    return [chatRole, message];
+  }
+
+  List<PalmChatReqMessageData> getLastNMessages(int n) {
+    List<ConversationMessageModel> historyMessages = [];
+    if (messageList.length <= n) {
+      historyMessages = messageList;
+    } else {
+      historyMessages = messageList.sublist(messageList.length - n);
+    }
+    List<PalmChatReqMessageData> messages = [];
+    for (var message in historyMessages) {
+      messages.add(PalmChatReqMessageData(
+        content: message.message,
+      ));
+    }
+    return messages;
+  }
+
+  Future<List<String>> sendMessageByChatApi(String basicUrl, apiKey,
+      inputMessage, ConversationModel currentConversation) async {
+    String prompt = currentConversation.prompt;
+    List<PalmChatReqMessageData> messages =
+        getLastNMessages(currentConversation.memeoryCount);
+
+    PalmChatMessageReq req = PalmChatMessageReq(
+      context: prompt,
+      modelName: currentConversation.modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
+      temperature: 0.7,
+      messages: messages,
+      maxOutputTokens: 1024,
+    );
+    final response = await PalmApiService.getChatReponse(req);
+    var chatRole = roleAI;
+    var message = "";
+    if (response.error != null && response.error!.code != 0) {
+      chatRole = roleSys;
+      message = response.error!.message;
+    } else if (response.candidates!.isNotEmpty) {
+      message = response.candidates![0].content;
+    }
+    return [chatRole, message];
+  }
+
+  Future<void> sendMessageByApi(
       BuildContext context, String basicUrl, apiKey) async {
     String text = textEditingController.text;
     String trimmedText = text.trimRight();
@@ -228,25 +295,23 @@ class _ConversationScreenState extends State<ConversationScreen> {
       textEditingController.clear();
     });
     try {
-      String prompt = currentConversation.prompt;
-      prompt = "$prompt:{$trimmedText}";
-      PalmTextMessageReq req = PalmTextMessageReq(
-        prompt: prompt,
-        modelName: currentConversation.modelName,
-        basicUrl: basicUrl,
-        apiKey: apiKey,
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      );
-      final response = await PalmApiService.getTextReponse(req);
+      List<String> result;
       var chatRole = roleAI;
       var message = "";
-      if (response.error != null && response.error!.code != 0) {
-        chatRole = roleSys;
-        message = response.error!.message;
-      } else if (response.candidates!.isNotEmpty) {
-        message = response.candidates![0].output!;
+      if (currentConversation.modelName ==
+          palmModelsMap[PalmModels.textModel]) {
+        result = await sendMessageByTextApi(
+            basicUrl, apiKey, trimmedText, currentConversation);
+        chatRole = result[0];
+        message = result[1];
+      } else if (currentConversation.modelName ==
+          palmModelsMap[PalmModels.chatModel]) {
+        result = await sendMessageByChatApi(
+            basicUrl, apiKey, trimmedText, currentConversation);
+        chatRole = result[0];
+        message = result[1];
       }
+
       ConversationMessageModel aiMessage = await ConversationMessageRepo()
           .createMessageWithRole(
               chatRole, message, currentConversation.id, userMessage.id);

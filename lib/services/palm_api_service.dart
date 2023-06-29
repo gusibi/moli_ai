@@ -81,8 +81,10 @@ class PalmApiService {
       log("start, model: $currentModel, prompt: $context");
       log("$baseURL/models/$currentModel:generateMessage?key=$apiKey");
       var headers = {'Content-Type': 'application/json'};
-      var request = http.Request('POST',
-          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
+      var request = http.Request(
+          'POST',
+          Uri.parse(
+              "$baseURL/models/$currentModel:generateMessage?key=$apiKey"));
       request.body = json.encode({
         "prompt": {
           "context": context,
@@ -108,7 +110,7 @@ class PalmApiService {
             error: ErrorResp(code: -1, message: "Bad Request", status: ""));
       }
     } catch (error) {
-      log("error, $error");
+      log("catch error, $error");
       return PalmChatMessageResp(
           error: ErrorResp(code: -1, message: error.toString(), status: ""));
     }

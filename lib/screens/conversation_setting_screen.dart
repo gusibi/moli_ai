@@ -35,7 +35,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
   late TextEditingController titleController;
   late TextEditingController descController;
   late TextEditingController promptController;
-  final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
+  var palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
 
   void _hideKeyboard(BuildContext context) {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -51,6 +51,13 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
           TextEditingController(text: widget.conversationData.desc);
       promptController =
           TextEditingController(text: widget.conversationData.prompt);
+      if (widget.conversationData.modelName ==
+          palmModelsMap[PalmModels.textModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
+      } else if (widget.conversationData.modelName ==
+          palmModelsMap[PalmModels.chatModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.chatModel);
+      }
     });
     super.initState();
   }

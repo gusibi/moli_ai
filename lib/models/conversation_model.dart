@@ -39,17 +39,18 @@ class ConversationModel {
   int rank;
   String modelName;
   int lastTime;
+  int memeoryCount;
 
-  ConversationModel({
-    required this.id,
-    required this.title,
-    required this.prompt,
-    required this.desc,
-    required this.icon,
-    required this.rank,
-    required this.modelName,
-    required this.lastTime,
-  });
+  ConversationModel(
+      {required this.id,
+      required this.title,
+      required this.prompt,
+      required this.desc,
+      required this.icon,
+      required this.rank,
+      required this.modelName,
+      required this.lastTime,
+      this.memeoryCount = 6});
 
   Map<String, dynamic> toMap() {
     return {

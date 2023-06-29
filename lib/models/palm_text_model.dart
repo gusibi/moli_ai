@@ -79,6 +79,12 @@ class PalmChatReqMessageData {
   final String content;
 
   PalmChatReqMessageData({required this.content});
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['content'] = content;
+    return data;
+  }
 }
 
 class PalmChatExampleData {
@@ -86,6 +92,13 @@ class PalmChatExampleData {
   final PalmChatReqMessageData output;
 
   PalmChatExampleData({required this.input, required this.output});
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['input'] = input.toJson();
+    data['output'] = output.toJson();
+    return data;
+  }
 }
 
 class PalmChatMessageReq {
@@ -125,10 +138,17 @@ class PalmChatMessageResp {
   }
 
   factory PalmChatMessageResp.fromJson(Map<String, dynamic> json) {
+    List<dynamic> candidatesJson = json['candidates'];
+    List<PalmChatRespMessageData> candidates =
+        candidatesJson.map((e) => PalmChatRespMessageData.fromJson(e)).toList();
     return PalmChatMessageResp(
-      candidates: json['candidates'],
-      messages: json['messages'],
-      error: json['error'],
+      candidates: candidates,
+      messages: json['messages'] != null
+          ? (json['messages'] as List)
+              .map((e) => PalmChatRespMessageData.fromJson(e))
+              .toList()
+          : null,
+      error: json['error'] != null ? ErrorResp.fromJson(json['error']) : null,
     );
   }
 }
