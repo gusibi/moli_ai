@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moli_ai/utils/color.dart';
 
 import '../constants/constants.dart';
 import '../models/conversation_model.dart';
@@ -59,6 +60,7 @@ class PromptMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.only(left: 64, right: 14, top: 10, bottom: 2),
       child: Align(
@@ -70,7 +72,7 @@ class PromptMessageWidget extends StatelessWidget {
             color: backgroundColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: getShadowColor(colorScheme),
                 spreadRadius: 1.0,
                 blurRadius: 6.0,
                 offset: const Offset(0, 5),

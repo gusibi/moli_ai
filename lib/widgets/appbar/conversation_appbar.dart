@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moli_ai/utils/icon.dart';
 
 import '../../models/conversation_model.dart';
+import '../../utils/color.dart';
 
 class ConversationAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
@@ -22,8 +23,8 @@ class ConversationAppBarWidget extends StatelessWidget
     return AppBar(
       elevation: 4,
       automaticallyImplyLeading: false,
-      backgroundColor: colorScheme.primary,
-      shadowColor: Colors.white,
+      // backgroundColor: colorScheme.primary,
+      shadowColor: getShadowColor(colorScheme),
       flexibleSpace: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(right: 16),
@@ -33,9 +34,9 @@ class ConversationAppBarWidget extends StatelessWidget
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.arrow_back,
-                  color: colorScheme.onPrimary,
+                  // color: colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(
@@ -54,16 +55,18 @@ class ConversationAppBarWidget extends StatelessWidget
                   children: <Widget>[
                     Text(
                       currentConversation.title,
-                      style:
-                          TextStyle(color: colorScheme.onPrimary, fontSize: 14),
+                      style: const TextStyle(
+                          // color: colorScheme.onPrimary,
+                          fontSize: 14),
                     ),
                     const SizedBox(
                       height: 6,
                     ),
                     Text(
                       currentConversation.desc,
-                      style: TextStyle(
-                          color: colorScheme.onSecondary, fontSize: 12),
+                      style: const TextStyle(
+                          // color: colorScheme.onSecondary,
+                          fontSize: 12),
                     ),
                   ],
                 ),
@@ -74,7 +77,7 @@ class ConversationAppBarWidget extends StatelessWidget
                   // _navigateToConversationSettingScreen();
                 },
                 icon: const Icon(Icons.settings),
-                color: colorScheme.onSecondary,
+                // color: colorScheme.onSecondary,
               ),
             ],
           ),

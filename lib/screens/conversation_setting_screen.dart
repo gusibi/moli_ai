@@ -8,6 +8,7 @@ import '../constants/constants.dart';
 import '../models/conversation_model.dart';
 import '../providers/palm_priovider.dart';
 import '../repositories/conversation/conversation.dart';
+import '../utils/color.dart';
 import '../utils/time.dart';
 import '../widgets/form/form_widget.dart';
 import '../widgets/form/models_choice_widget.dart';
@@ -30,6 +31,10 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _backgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+  late final _buttonColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.primary);
+  late final _buttonTextColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.onPrimary);
 
   final _formKey = GlobalKey<FormState>();
   late TextEditingController titleController;
@@ -72,16 +77,15 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
       appBar: AppBar(
         title: Text(
           conversationInfo.title,
-          style: TextStyle(color: _colorScheme.onSecondary),
+          // style: TextStyle(color: _colorScheme.onSecondary),
         ),
         centerTitle: true,
-        backgroundColor: _colorScheme.primary,
-        shadowColor: Colors.white,
+        shadowColor: getShadowColor(_colorScheme),
         elevation: 4,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
-            color: _colorScheme.onPrimary,
+            // color: _colorScheme.onPrimary,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -110,6 +114,12 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(_buttonColor),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(_buttonTextColor),
+                    ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();

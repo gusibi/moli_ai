@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../models/conversation_model.dart';
+import '../utils/color.dart';
 import '../utils/icon.dart';
 
 class ConversationCardWidget extends StatefulWidget {
@@ -26,16 +27,14 @@ class ConversationCardWidget extends StatefulWidget {
 
 class _ConversationCardWidgetState extends State<ConversationCardWidget> {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
-  late Color unselectedColor = Color.alphaBlend(
-    _colorScheme.primary.withOpacity(0.38),
-    _colorScheme.surface,
-  );
+  late final Color unselectedColor = _colorScheme.surfaceTint;
+  late final Color selectedColor = _colorScheme.surfaceTint;
+
   bool _isSelected = false;
 
   Color get _surfaceColor {
-    if (_isSelected) return _colorScheme.primaryContainer;
-    // if (!widget.isPreview) return _colorScheme.surface;
-    return unselectedColor;
+    if (_isSelected) return unselectedColor;
+    return _colorScheme.surface;
   }
 
   @override
@@ -55,7 +54,7 @@ class _ConversationCardWidgetState extends State<ConversationCardWidget> {
         onTap: widget.onSelected,
         child: Card(
           elevation: 4,
-          shadowColor: Colors.white,
+          shadowColor: getShadowColor(_colorScheme),
           color: _surfaceColor,
           clipBehavior: Clip.hardEdge,
           child: Column(
@@ -92,17 +91,6 @@ class ConversationCardHeadline extends StatefulWidget {
 }
 
 class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
-  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
-  late Color unselectedColor = Color.alphaBlend(
-    _colorScheme.primary.withOpacity(0.38),
-    _colorScheme.onSurface,
-  );
-
-  Color get _onSurfaceColor {
-    if (widget.isSelected) return _colorScheme.onPrimaryContainer;
-    return unselectedColor;
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -127,7 +115,7 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                       style: TextStyle(
-                          color: _onSurfaceColor,
+                          // color: _onSurfaceColor,
                           fontSize: 18,
                           fontWeight: FontWeight.w500),
                     ),
@@ -136,7 +124,7 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                       style: TextStyle(
-                          color: _onSurfaceColor,
+                          // color: _onSurfaceColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w400),
                     ),
@@ -152,7 +140,7 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                   width: 40,
                   child: Icon(
                     Icons.arrow_forward_ios,
-                    color: _onSurfaceColor,
+                    // color: _onSurfaceColor,
                   ),
                 ),
               ]

@@ -10,12 +10,10 @@ import '../../screens/conversation_screen.dart';
 class DisappearingNavigationRail extends StatefulWidget {
   const DisappearingNavigationRail({
     super.key,
-    required this.backgroundColor,
     required this.selectedIndex,
     this.onDestinationSelected,
   });
 
-  final Color backgroundColor;
   final int selectedIndex;
   final ValueChanged<int>? onDestinationSelected;
 
@@ -28,10 +26,8 @@ class _DisappearingNavigationRailState
     extends State<DisappearingNavigationRail> {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return NavigationRail(
       selectedIndex: widget.selectedIndex,
-      backgroundColor: widget.backgroundColor,
       onDestinationSelected: widget.onDestinationSelected,
       leading: Column(
         children: [
@@ -46,8 +42,6 @@ class _DisappearingNavigationRailState
                 Radius.circular(15),
               ),
             ),
-            backgroundColor: colorScheme.tertiaryContainer,
-            foregroundColor: colorScheme.onTertiaryContainer,
             onPressed: () {
               _navigateToCreateNewConversation();
             },

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../models/conversation_model.dart';
 
-Color scaffoldBackgroundColor = Colors.blueGrey;
-
 List<String> modelsList = [
   "chat-bison-001",
   "text-bison-001",
@@ -52,6 +50,7 @@ final ConversationModel newConversation = ConversationModel(
 );
 
 const String palmConfigname = "palmConfig";
+const String themeConfigname = "themeConfig";
 const String roleUser = "user";
 const String roleAI = "ai";
 const String roleSys = "system";

@@ -26,6 +26,28 @@ class PalmConfig {
       );
 }
 
+class ThemeConfig {
+  String themeName;
+  String darkMode; // 0 = light, 1 = dark, 2 = system
+
+  ThemeConfig({
+    required this.themeName,
+    required this.darkMode,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'themeName': themeName,
+      'darkMode': darkMode,
+    };
+  }
+
+  factory ThemeConfig.fromJson(Map<dynamic, dynamic> json) => ThemeConfig(
+        themeName: json['themeName'] as String,
+        darkMode: json['darkMode'] as String,
+      );
+}
+
 class ConfigModel {
   final int id;
   final String configName;
@@ -54,5 +76,10 @@ class ConfigModel {
   PalmConfig toPalmConfig() {
     Map config = jsonDecode(value);
     return PalmConfig.fromJson(config);
+  }
+
+  ThemeConfig toThemeConfig() {
+    Map config = jsonDecode(value);
+    return ThemeConfig.fromJson(config);
   }
 }

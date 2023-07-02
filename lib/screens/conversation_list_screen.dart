@@ -21,11 +21,8 @@ class ConversationListScreen extends StatefulWidget {
 }
 
 class _ConversationListScreenState extends State<ConversationListScreen> {
-  // late final _colorScheme = Theme.of(context).colorScheme;
-  // late final _backgroundColor = Color.alphaBlend(
-  //     _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
-
   late List<ConversationModel> _conversationList = [];
+  late final _colorScheme = Theme.of(context).colorScheme;
 
   @override
   void initState() {
@@ -72,12 +69,12 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                     });
                   },
                   background: Container(
-                    color: Colors.red,
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 16.0),
+                    color: _colorScheme.error,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Icon(Icons.delete, color: Colors.white),
+                        child: Icon(Icons.delete, color: _colorScheme.onError),
                       ),
                     ),
                   ),

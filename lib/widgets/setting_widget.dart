@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/color.dart';
+
 class SingleSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
@@ -12,6 +14,7 @@ class SingleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    late final Color background = colorScheme.surfaceVariant;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -31,17 +34,16 @@ class SingleSection extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: colorScheme.surfaceVariant,
+            color: background,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
+                color: getShadowColor(colorScheme),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
               ),
             ],
           ),
-          // color: Colors.white,
           child: Column(
             children: List.generate(
               children.length,

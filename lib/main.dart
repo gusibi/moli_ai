@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:moli_ai/constants/color_constants.dart';
 import 'package:provider/provider.dart';
+
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 import 'package:moli_ai/constants/constants.dart';
 
+import 'models/config_model.dart';
+import 'repositories/configretion/config_repo.dart';
 import 'repositories/datebase/client.dart';
 import 'providers/palm_priovider.dart';
 import 'screens/conversation_screen.dart';
@@ -26,8 +31,45 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Map<String, ConfigModel> _configMap = {};
+  String themeName = "";
+  String darkMode = "";
+  ThemeData lightTheme = blumineBlueLight;
+  ThemeData darkTheme = blumineBlueDark;
+
+  @override
+  void initState() {
+    super.initState();
+    _initConfig();
+  }
+
+  void _initConfig() async {
+    _configMap = await ConfigReop().getAllConfigsMap();
+
+    ConfigModel? themeConf = _configMap[themeConfigname];
+    if (themeConf != null) {
+      final themeConfig = themeConf.toThemeConfig();
+      themeName = themeConfig.themeName;
+      darkMode = themeConfig.darkMode;
+      Map<String, ThemeData>? theme = themesMap[themeName];
+      if (theme != null) {
+        lightTheme = theme[darkModeLight]!;
+        darkTheme = theme[darkModeDark]!;
+      }
+      setState(() {
+        themeName = themeConfig.themeName;
+        darkMode = themeConfig.darkMode;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+    if (darkMode != "" && darkMode == darkModeDark) {
+      isDarkMode = true;
+    }
     // dbClient.q();
     return MultiProvider(
       providers: [
@@ -37,11 +79,9 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        // theme: ThemeData(
-        //   useMaterial3: true,
-        //   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
-        // ),
-        theme: ThemeData.light(useMaterial3: true),
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: const RootPage(),
       ),
     );
@@ -56,10 +96,6 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  late final _colorScheme = Theme.of(context).colorScheme;
-  late final _backgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
-
   int selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
@@ -90,7 +126,6 @@ class _RootPageState extends State<RootPage> {
           if (wideScreen)
             DisappearingNavigationRail(
               selectedIndex: selectedIndex,
-              backgroundColor: Colors.white,
               onDestinationSelected: (index) {
                 setState(() {
                   selectedIndex = index;
@@ -99,7 +134,6 @@ class _RootPageState extends State<RootPage> {
             ),
           Expanded(
             child: Container(
-              color: _backgroundColor,
               child: _widgetOptions.elementAt(selectedIndex),
             ),
           ),
@@ -109,8 +143,6 @@ class _RootPageState extends State<RootPage> {
           ? null
           : FloatingActionButton(
               heroTag: "newConversation",
-              backgroundColor: _colorScheme.tertiaryContainer,
-              foregroundColor: _colorScheme.onTertiaryContainer,
               onPressed: () {
                 _navigateToCreateNewConversation();
               },

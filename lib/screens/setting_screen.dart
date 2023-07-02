@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../constants/api_constants.dart';
+import '../constants/color_constants.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
 import '../repositories/configretion/config_repo.dart';
+import '../utils/color.dart';
 import '../widgets/form/models_choice_widget.dart';
 import '../widgets/form/form_widget.dart';
+import '../widgets/form/themes_choice_widget.dart';
 import '../widgets/setting_widget.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -20,19 +23,24 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
-
-  late final _backgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
+  late final _backgroundColor = _colorScheme.background;
+  late final _buttonColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.primary);
+  late final _buttonTextColor = Color.alphaBlend(
+      _colorScheme.primary.withOpacity(0.14), _colorScheme.onPrimary);
 
   final _formKey = GlobalKey<FormState>();
 
   String basicUrl = BASE_URL;
   String apiKey = API_KEY;
   String modelName = DEFAULT_MODEL;
+  String selectedTheme = defaultTheme;
+  String selectedDarkMode = defaultDarkMode;
 
   late TextEditingController basicUrlController;
   late TextEditingController apiKeyController;
   final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
+  final themeDarkMode = ValueNotifier<DarkModes>(DarkModes.darkModeSystem);
 
   Map<String, ConfigModel> _configMap = {};
 
@@ -46,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
     basicUrlController = TextEditingController(text: BASE_URL);
     apiKeyController = TextEditingController(text: API_KEY);
     super.initState();
-    _initPalmConfig();
+    _initConfig();
   }
 
   @override
@@ -56,12 +64,12 @@ class _SettingScreenState extends State<SettingScreen> {
     super.dispose();
   }
 
-  void _initPalmConfig() async {
+  void _initConfig() async {
     _configMap = await ConfigReop().getAllConfigsMap();
-    ConfigModel? conf = _configMap[palmConfigname];
+    ConfigModel? palmConf = _configMap[palmConfigname];
 
-    if (conf != null) {
-      final palmConfig = conf.toPalmConfig();
+    if (palmConf != null) {
+      final palmConfig = palmConf.toPalmConfig();
       basicUrl = palmConfig.basicUrl;
       apiKey = palmConfig.apiKey;
       modelName = palmConfig.modelName;
@@ -70,26 +78,43 @@ class _SettingScreenState extends State<SettingScreen> {
       basicUrlController = TextEditingController(text: basicUrl);
       apiKeyController = TextEditingController(text: apiKey);
     });
+
+    ConfigModel? themeConf = _configMap[themeConfigname];
+    if (themeConf != null) {
+      final themeConfig = themeConf.toThemeConfig();
+      setState(() {
+        selectedTheme = themeConfig.themeName;
+        selectedDarkMode = themeConfig.darkMode;
+      });
+    }
+  }
+
+  void handleDarkModeSelected(String value) {
+    setState(() {
+      selectedDarkMode = value;
+    });
+  }
+
+  void handleThemeSelected(String value) {
+    setState(() {
+      selectedTheme = value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Setting",
-          style: TextStyle(color: _colorScheme.onSecondary),
         ),
         centerTitle: true,
-        backgroundColor: _colorScheme.primary,
-        shadowColor: Colors.white,
         elevation: 4,
       ),
       backgroundColor: _backgroundColor,
       body: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          // constraints: const BoxConstraints(maxWidth: 500),
           child: GestureDetector(
             onTap: () => _hideKeyboard(context),
             child: Form(
@@ -108,16 +133,39 @@ class _SettingScreenState extends State<SettingScreen> {
                     PalmModelRadioListTile(notifier: palmModel),
                   ]),
                   const SizedBox(height: 8),
+                  SingleSection(title: "主题选择", children: [
+                    DarkModeDropDownWidget(
+                        onOptionSelected: handleDarkModeSelected,
+                        selectedOption: selectedDarkMode),
+                    ThemesDropDownWidget(
+                      onOptionSelected: handleThemeSelected,
+                      selectedOption: selectedTheme,
+                    ),
+                  ]),
+                  const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(_buttonColor),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(_buttonTextColor),
+                      ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          _saveConfig(PalmConfig(
-                              basicUrl: basicUrlController.text,
-                              apiKey: apiKeyController.text,
-                              modelName: palmModelsMap[palmModel.value]!));
+                          log(themeDarkMode.value.name);
+                          log(selectedTheme);
+                          _saveConfig(
+                              PalmConfig(
+                                  basicUrl: basicUrlController.text,
+                                  apiKey: apiKeyController.text,
+                                  modelName: palmModelsMap[palmModel.value]!),
+                              ThemeConfig(
+                                darkMode: selectedDarkMode,
+                                themeName: selectedTheme,
+                              ));
                           // do something with _baseUrl and _apiKey
                         }
                       },
@@ -133,7 +181,8 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  _saveConfig(PalmConfig conf) async {
-    await ConfigReop().createOrUpdatePalmConfig(conf);
+  _saveConfig(PalmConfig palmConf, ThemeConfig themeConfig) async {
+    await ConfigReop().createOrUpdatePalmConfig(palmConf);
+    await ConfigReop().createOrUpdateThemeConfig(themeConfig);
   }
 }

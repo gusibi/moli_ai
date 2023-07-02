@@ -38,9 +38,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
   List<ConversationMessageModel> messageList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
-  late final _backgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.surface);
-
   late TextEditingController textEditingController;
   late ConversationModel currentConversation;
   late int minMessageId;
@@ -164,7 +161,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),
         child: Container(
-          color: _backgroundColor,
           child: Align(
               alignment: Alignment.bottomLeft,
               child: Column(
@@ -180,8 +176,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                   ),
                   if (_isTyping) ...[
-                    const SpinKitThreeBounce(
-                      color: Colors.white,
+                    SpinKitThreeBounce(
+                      color: _colorScheme.onBackground,
                       size: 18,
                     ),
                   ],
