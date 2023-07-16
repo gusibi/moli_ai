@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:moli_ai/services/palm_api_service.dart';
-import 'package:moli_ai/utils/icon.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';

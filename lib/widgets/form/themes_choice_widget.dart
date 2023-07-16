@@ -31,7 +31,7 @@ class _DarkModeRadioListTileState extends State<DarkModeRadioListTile> {
                 _notifier = widget.notifier;
               });
             },
-            title: Text(darkModeLight),
+            title: const Text(darkModeLight),
             //subtitle: Text(textModel.modelDesc),
           ),
         ),
@@ -45,7 +45,7 @@ class _DarkModeRadioListTileState extends State<DarkModeRadioListTile> {
                 _notifier = widget.notifier;
               });
             },
-            title: Text(darkModeDark),
+            title: const Text(darkModeDark),
             // subtitle: Text(textModel.modelDesc),
           ),
         ),
@@ -59,7 +59,7 @@ class _DarkModeRadioListTileState extends State<DarkModeRadioListTile> {
                 _notifier = widget.notifier;
               });
             },
-            title: Text(darkModeSystem),
+            title: const Text(darkModeSystem),
             // subtitle: Text(textModel.modelDesc),
           ),
         ),

@@ -8,5 +8,6 @@ class Destination {
 
 const List<Destination> destinations = <Destination>[
   Destination(Icons.quickreply, 'Chat'),
+  Destination(Icons.speaker_notes, 'Diary'),
   Destination(Icons.tune, 'Settings'),
 ];

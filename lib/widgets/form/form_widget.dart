@@ -35,7 +35,8 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
       controller: widget.controller,
       decoration: const InputDecoration(
         labelText: "Base URL",
-        border: OutlineInputBorder(),
+        border: InputBorder.none,
+        // border: OutlineInputBorder(),
       ),
 
       validator: (value) {

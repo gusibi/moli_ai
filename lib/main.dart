@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moli_ai/constants/color_constants.dart';
+import 'package:moli_ai/screens/diary_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 import 'package:moli_ai/constants/constants.dart';
 
@@ -100,6 +99,7 @@ class _RootPageState extends State<RootPage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     ConversationListScreen(),
+    DiaryScreen(),
     SettingScreen(),
   ];
 
@@ -139,7 +139,7 @@ class _RootPageState extends State<RootPage> {
           ),
         ],
       ),
-      floatingActionButton: wideScreen
+      floatingActionButton: wideScreen || selectedIndex != 0
           ? null
           : FloatingActionButton(
               heroTag: "newConversation",
