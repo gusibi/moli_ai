@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:moli_ai/repositories/datebase/client.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -14,6 +16,7 @@ class ConversationReop {
       {
         'title': conv.title,
         'prompt': conv.prompt,
+        'convType': conv.convType,
         "desc": conv.desc,
         "icon": conv.icon,
         "rank": 0,
@@ -24,17 +27,43 @@ class ConversationReop {
     );
   }
 
-  Future<List<ConversationModel>> getAllConversations() async {
+  Future<List<ConversationModel>> getAllChatConversations() async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
-    final List<Map<String, dynamic>> maps = await db.query(tableName);
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableName, where: 'convType = ?', whereArgs: ["chat"]);
 
     return List.generate(maps.length, (i) {
+      log("$maps[i]");
       return ConversationModel(
         id: maps[i]['id'],
         title: maps[i]['title'],
         prompt: maps[i]['prompt'],
+        convType: maps[i]['convType'],
+        desc: maps[i]['desc'],
+        icon: maps[i]['icon'],
+        rank: maps[i]['rank'],
+        modelName: maps[i]['modelName'],
+        lastTime: maps[i]['lastTime'],
+      );
+    });
+  }
+
+  Future<List<ConversationModel>> getAllDiaryConversations() async {
+    // Get a reference to the database.
+    final Database db = dbClient.get();
+
+    final List<Map<String, dynamic>> maps =
+        await db.query(tableName, where: 'convType = ?', whereArgs: ["diary"]);
+
+    return List.generate(maps.length, (i) {
+      log("$maps[i]");
+      return ConversationModel(
+        id: maps[i]['id'],
+        title: maps[i]['title'],
+        prompt: maps[i]['prompt'],
+        convType: maps[i]['convType'],
         desc: maps[i]['desc'],
         icon: maps[i]['icon'],
         rank: maps[i]['rank'],
@@ -54,6 +83,7 @@ class ConversationReop {
         id: maps[0]['id'],
         title: maps[0]['title'],
         prompt: maps[0]['prompt'],
+        convType: maps[0]["convType"],
         desc: maps[0]['desc'],
         icon: maps[0]['icon'],
         rank: maps[0]['rank'],

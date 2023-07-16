@@ -122,10 +122,12 @@ class PromptMessageInputFormWidget extends StatefulWidget {
   const PromptMessageInputFormWidget({
     super.key,
     required this.textController,
-    required this.onPressed,
+    required this.sendOnPressed,
+    required this.leftOnPressed,
   });
   final TextEditingController textController;
-  final VoidCallback onPressed;
+  final VoidCallback sendOnPressed;
+  final VoidCallback leftOnPressed;
 
   @override
   State<PromptMessageInputFormWidget> createState() =>
@@ -149,7 +151,13 @@ class _PromptMessageInputFormWidgetState
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CircleAvatar(child: Icon(Icons.restart_alt)),
+              CircleAvatar(
+                  child: IconButton(
+                onPressed: () {
+                  widget.leftOnPressed();
+                },
+                icon: const Icon(Icons.reset_tv),
+              )),
               const SizedBox(width: 8),
               Expanded(
                 child: RawKeyboardListener(
@@ -178,7 +186,7 @@ class _PromptMessageInputFormWidgetState
                           }
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
-                            widget.onPressed();
+                            widget.sendOnPressed();
                           }
                         }
                       }
@@ -186,7 +194,7 @@ class _PromptMessageInputFormWidgetState
                   },
                   child: TextFormField(
                     maxLines: 2,
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                     controller: widget.textController,
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -209,7 +217,7 @@ class _PromptMessageInputFormWidgetState
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    widget.onPressed();
+                    widget.sendOnPressed();
                   }
                 },
                 icon: const Icon(Icons.send),

@@ -114,19 +114,15 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                       widget.conversation.title,
                       maxLines: 1,
                       overflow: TextOverflow.fade,
-                      style: TextStyle(
-                          // color: _onSurfaceColor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w500),
                     ),
                     Text(
                       widget.conversation.desc.toString(),
                       maxLines: 1,
                       overflow: TextOverflow.fade,
-                      style: TextStyle(
-                          // color: _onSurfaceColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ],
                 ),
@@ -135,7 +131,7 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
               // expected to overflow.
               if (constraints.maxWidth - 200 > 0) ...[
                 const Padding(padding: EdgeInsets.only(right: 8.0)),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                   width: 40,
                   child: Icon(

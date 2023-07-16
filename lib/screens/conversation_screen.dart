@@ -65,6 +65,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           id: 0,
           title: currentConversation.title,
           prompt: "prompt",
+          convType: "chat",
           desc: "desc",
           icon: currentConversation.icon,
           modelName: widget.conversationData.modelName,
@@ -159,45 +160,46 @@ class _ConversationScreenState extends State<ConversationScreen> {
           onPressSetting: _navigateToConversationSettingScreen),
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),
-        child: Container(
-          child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: messageList.length,
-                      itemBuilder: (context, index) {
-                        return ConversationMessageWidget(
-                            conversation: messageList[index]);
-                      },
-                    ),
+        child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: messageList.length,
+                    itemBuilder: (context, index) {
+                      return ConversationMessageWidget(
+                          conversation: messageList[index]);
+                    },
                   ),
-                  if (_isTyping) ...[
-                    SpinKitThreeBounce(
-                      color: _colorScheme.onBackground,
-                      size: 18,
-                    ),
-                  ],
-                  const SizedBox(height: 15),
-                  // ChatInputFormWidget(),
-                  PromptMessageInputFormWidget(
-                      textController: textEditingController,
-                      onPressed: () {
-                        if (_isTyping) {
-                          log("asking");
-                        } else {
-                          _hideKeyboard(context);
-                          sendMessageByApi(
-                              context,
-                              palmSettingProvider.getBaseURL,
-                              palmSettingProvider.getApiKey);
-                        }
-                      }),
+                ),
+                if (_isTyping) ...[
+                  SpinKitThreeBounce(
+                    color: _colorScheme.onBackground,
+                    size: 18,
+                  ),
                 ],
-              )),
-        ),
+                const SizedBox(height: 15),
+                // ChatInputFormWidget(),
+                PromptMessageInputFormWidget(
+                    textController: textEditingController,
+                    leftOnPressed: () {
+                      _hideKeyboard(context);
+                    },
+                    sendOnPressed: () {
+                      if (_isTyping) {
+                        log("asking");
+                      } else {
+                        _hideKeyboard(context);
+                        sendMessageByApi(
+                            context,
+                            palmSettingProvider.getBaseURL,
+                            palmSettingProvider.getApiKey);
+                      }
+                    }),
+              ],
+            )),
       ),
     );
   }

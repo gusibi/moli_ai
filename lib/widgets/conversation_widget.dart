@@ -26,21 +26,30 @@ class _ConversationMessageWidgetState extends State<ConversationMessageWidget> {
   late final _aiMessageBackgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.secondaryContainer);
   late final _aiMessageColor = _colorScheme.onSecondaryContainer;
+  late final _sysMessageColor = _colorScheme.onSecondaryContainer;
   @override
   Widget build(BuildContext context) {
-    return widget.conversation.role == roleUser
-        ? PromptMessageWidget(
-            message: widget.conversation.message,
-            role: widget.conversation.role,
-            backgroundColor: _userMessageBackgroundColor,
-            messageColor: _userMessageColor,
-          )
-        : AiResponseMessageWidget(
-            message: widget.conversation.message,
-            role: widget.conversation.role,
-            backgroundColor: _aiMessageBackgroundColor,
-            messageColor: _aiMessageColor,
-          );
+    if (widget.conversation.role == roleUser) {
+      return PromptMessageWidget(
+        message: widget.conversation.message,
+        role: widget.conversation.role,
+        backgroundColor: _userMessageBackgroundColor,
+        messageColor: _userMessageColor,
+      );
+    } else if (widget.conversation.role == roleAI) {
+      return AiResponseMessageWidget(
+        message: widget.conversation.message,
+        role: widget.conversation.role,
+        backgroundColor: _aiMessageBackgroundColor,
+        messageColor: _aiMessageColor,
+      );
+    } else {
+      return SysResponseMessageWidget(
+        message: widget.conversation.message,
+        role: widget.conversation.role,
+        messageColor: _sysMessageColor,
+      );
+    }
   }
 }
 
@@ -79,7 +88,7 @@ class PromptMessageWidget extends StatelessWidget {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: PromptTextMessageWidget(message: message, color: messageColor),
         ),
       ),
@@ -107,7 +116,6 @@ class AiResponseMessageWidget extends StatelessWidget {
       padding: const EdgeInsets.only(left: 14, right: 64, top: 10, bottom: 10),
       child: Align(
         alignment: Alignment.topLeft,
-        // padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -116,6 +124,39 @@ class AiResponseMessageWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: ConversationMessageReplyWidget(
               message: message, color: messageColor),
+        ),
+      ),
+    );
+  }
+}
+
+class SysResponseMessageWidget extends StatelessWidget {
+  const SysResponseMessageWidget({
+    Key? key,
+    required this.message,
+    required this.role,
+    required this.messageColor,
+  }) : super(key: key);
+
+  final String message;
+  final String role;
+  final Color messageColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 2),
+      child: Align(
+        alignment: Alignment.center,
+        // padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            const Expanded(
+                child: ConversationMessageReplyWidget(message: '------')),
+            Text(message, style: TextStyle(color: messageColor)),
+            const Expanded(
+                child: ConversationMessageReplyWidget(message: '------')),
+          ],
         ),
       ),
     );

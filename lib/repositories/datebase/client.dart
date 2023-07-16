@@ -38,13 +38,20 @@ class SqliteClient {
 
   void _createConfigTab(Database db) async {
     await db.execute('''
-        CREATE TABLE config_tab (
+        CREATE TABLE IF NOT EXISTS config_tab (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           configName TEXT NOT NULL,
           value TEXT NOT NULL,
           createTime INTEGER NOT NULL,
           updateTime INTEGER NOT NULL
         );
+        ''');
+  }
+
+  void _updateConversactionTab(Database db) async {
+    await db.execute('''
+        ALTER TABLE conversation_tab ADD convType data_type DEFAULT "chat", ;
+        ADD config data_type DEFAULT "";
         ''');
   }
 
@@ -65,10 +72,12 @@ class SqliteClient {
         },
         // Set the version. This executes the onCreate function and provides a
         // path to perform database upgrades and downgrades.
-        version: 5,
+        version: 11,
         onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 5) {
+          log("db version: $oldVersion");
+          if (oldVersion < 11) {
             _createConfigTab(db); // 创建 config_tab 表
+            _updateConversactionTab(db);
           }
         });
     _db = await database;

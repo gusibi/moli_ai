@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/conversation_model.dart';
-import '../providers/palm_priovider.dart';
+import '../providers/diary_privider.dart';
 import '../repositories/conversation/conversation.dart';
 import '../widgets/chat_card_widget.dart';
-import 'conversation_screen.dart';
+import 'diary_screen.dart';
 
-class ConversationListScreen extends StatefulWidget {
-  const ConversationListScreen({
+class DiaryistScreen extends StatefulWidget {
+  const DiaryistScreen({
     super.key,
     this.onSelected,
   });
   final ValueChanged<ConversationModel>? onSelected;
 
   @override
-  State<ConversationListScreen> createState() => _ConversationListScreenState();
+  State<DiaryistScreen> createState() => _DiaryListScreenState();
 }
 
-class _ConversationListScreenState extends State<ConversationListScreen> {
-  late List<ConversationModel> _conversationList = [];
+class _DiaryListScreenState extends State<DiaryistScreen> {
+  late List<ConversationModel> _diaryList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
   @override
@@ -31,17 +31,16 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   }
 
   void _query() async {
-    final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+    final diaryProvider = Provider.of<DiaryProvider>(context, listen: false);
     setState(() {
-      _conversationList = palmProvider.getConversationList;
+      _diaryList = diaryProvider.getDiaryList;
     });
-    List<ConversationModel> conversationList =
-        await ConversationReop().getAllChatConversations();
-    log("conversationList $conversationList");
-    if (conversationList.isNotEmpty) {
+    List<ConversationModel> diaryList =
+        await ConversationReop().getAllDiaryConversations();
+    log("conversationList $diaryList");
+    if (diaryList.isNotEmpty) {
       setState(() {
-        _conversationList = conversationList;
+        _diaryList = diaryList;
       });
     }
   }
@@ -54,7 +53,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
         children: [
           const SizedBox(height: 18),
           ...List.generate(
-            _conversationList.length,
+            _diaryList.length,
             (index) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 1.0),
@@ -62,10 +61,10 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                   key: UniqueKey(),
                   direction: DismissDirection.startToEnd,
                   onDismissed: (direction) {
-                    ConversationModel conv = _conversationList[index];
+                    ConversationModel conv = _diaryList[index];
                     ConversationReop().deleteConversationById(conv.id);
                     setState(() {
-                      _conversationList.removeAt(index);
+                      _diaryList.removeAt(index);
                     });
                   },
                   background: Container(
@@ -79,11 +78,11 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                     ),
                   ),
                   child: ConversationCardWidget(
-                    conversation: _conversationList[index],
-                    id: _conversationList[index].id,
+                    conversation: _diaryList[index],
+                    id: _diaryList[index].id,
                     index: index,
                     onSelected: () {
-                      _navigateToConversationScreen(_conversationList[index]);
+                      _navigateToDiaryScreen(_diaryList[index]);
                     },
                   ),
                 ),
@@ -95,13 +94,12 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
     );
   }
 
-  void _navigateToConversationScreen(ConversationModel conv) {
-    final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
-    palmProvider.setCurrentConversationInfo(conv);
+  void _navigateToDiaryScreen(ConversationModel diary) {
+    final diaryProvider = Provider.of<DiaryProvider>(context, listen: false);
+    diaryProvider.setCurrentDiaryInfo(diary);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ConversationScreen(conversationData: conv),
+        builder: (context) => DiaryScreen(diaryData: diary),
       ),
     );
   }

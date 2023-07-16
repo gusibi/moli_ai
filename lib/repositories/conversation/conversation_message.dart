@@ -43,6 +43,11 @@ class ConversationMessageRepo {
     return createMessageWithRole(roleUser, message, conversationId, 0);
   }
 
+  Future<ConversationMessageModel> createSysMessage(
+      String message, int conversationId) async {
+    return createMessageWithRole(roleSys, message, conversationId, 0);
+  }
+
   Future<ConversationMessageModel> createAIMessage(
       String message, int conversationId, int replyId) async {
     return createMessageWithRole(roleUser, message, conversationId, replyId);
@@ -57,6 +62,7 @@ class ConversationMessageRepo {
     final List<Map<String, dynamic>> maps = await db.query(tableName,
         where: 'id < ? AND conversationId = ?',
         whereArgs: [lastId, conversationId],
+        orderBy: 'id ASC',
         limit: queyMessageLimit);
     return List.generate(maps.length, (i) {
       return ConversationMessageModel(

@@ -31,6 +31,7 @@ final ConversationModel defaultConversation = ConversationModel(
   id: 0,
   icon: Icons.chat.codePoint,
   title: "随便聊聊",
+  convType: "chat",
   desc: "",
   rank: 0,
   prompt: "Hi, how are you?",
@@ -42,10 +43,23 @@ final ConversationModel newConversation = ConversationModel(
   id: 0,
   icon: Icons.chat.codePoint,
   title: "New Chat",
+  convType: "chat",
   desc: "",
   rank: 0,
   prompt: "You can setting yourself prompt",
   modelName: "text-bison-001",
+  lastTime: 0,
+);
+
+final ConversationModel newDiaryConversation = ConversationModel(
+  id: 0,
+  icon: Icons.note.codePoint,
+  title: "Today Diary",
+  convType: "diary",
+  desc: "you can talk with ai",
+  rank: 0,
+  prompt: "You can setting yourself prompt",
+  modelName: textModel.modelName,
   lastTime: 0,
 );
 
@@ -90,3 +104,39 @@ final Map<PalmModels, String> palmModelsMap = {
   PalmModels.textModel: textModel.modelName,
   PalmModels.chatModel: chatModel.modelName,
 };
+
+const String diaryPrompt = '''
+Hello, I want you to be my daily journal co-pilot. I will write down my random thoughts, notes ideas etc during the day. At the end of the day I will ask you to:
+1. Write a version of my journal that is better formatted, logically structured/organized, with improved writing without altering the meaning of my journal.
+2. Summarize the key take-aways from my journal
+3. Discover important insights into my life
+4. Base on my journal, create an actionable to-do lists of the tasks/plans mentioned in my journal. Write the list in first-person voice, also in JSON following this template: 
+{
+"Task Name ": "Task Description",
+}
+
+please using the following format: 
+
+## Improved Journal Entry
+
+here is imporoved journal entry
+
+## Key Takeaways
+
+here is key takeways
+
+## Insights
+
+here is insights
+
+## Actionable To-Do List
+
+here is to-do list, must return json format, example {
+    "Develop AI Tutoring System": "I need to start developing my idea for a learning tutor system using ChatGPT.",
+    "Invest in Tesla": "I need to review my investment plan for Tesla and decide whether to adjust it based on the recent market movement."
+}
+
+Here is my thoughts: {%s}
+
+Thanks!
+''';

@@ -133,6 +133,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                         ConversationModel conv = ConversationModel(
                             id: conversationInfo.id,
                             title: titleController.text,
+                            convType: "chat",
                             prompt: promptController.text,
                             icon: conversationInfo.icon,
                             desc: conversationInfo.desc,
