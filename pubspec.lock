@@ -81,38 +81,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.2"
-  firebase_core:
-    dependency: "direct main"
-    description:
-      name: firebase_core
-      sha256: "2e9324f719e90200dc7d3c4f5d2abc26052f9f2b995d3b6626c47a0dfe1c8192"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.15.0"
-  firebase_core_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_core_platform_interface
-      sha256: b63e3be6c96ef5c33bdec1aab23c91eb00696f6452f0519401d640938c94cba2
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.8.0"
-  firebase_core_web:
-    dependency: transitive
-    description:
-      name: firebase_core_web
-      sha256: "0fd5c4b228de29b55fac38aed0d9e42514b3d3bd47675de52bf7f8fccaf922fa"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.6.0"
   flex_color_scheme:
     dependency: "direct main"
     description:
       name: flex_color_scheme
-      sha256: "5be124fa61821a684c0628ca5f687a8512db06738f784516278688eb727a3ef1"
+      sha256: "659cf59bd5ccaa1e7de9384342be8b666ff10b108ed57a7fd46c122fb8bf6aca"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.1.2"
+    version: "7.2.0"
   flex_seed_scheme:
     dependency: transitive
     description:
@@ -152,11 +128,6 @@ packages:
     version: "5.2.0"
   flutter_test:
     dependency: "direct dev"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -300,10 +271,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
+      sha256: "43798d895c929056255600343db8f049921cbec94d31ec87f1dc5c16c01935dd"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.4"
+    version: "2.1.5"
   provider:
     dependency: "direct main"
     description:
@@ -430,5 +401,5 @@ packages:
     source: hosted
     version: "1.0.1"
 sdks:
-  dart: ">=3.0.0 <4.0.0"
+  dart: ">=3.0.6 <4.0.0"
   flutter: ">=3.10.0"

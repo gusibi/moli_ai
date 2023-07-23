@@ -153,7 +153,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 onPressed: () {
                   summaryDaily(context);
                 },
-                icon: const Icon(Icons.functions),
+                icon: const Icon(Icons.run_circle_outlined),
                 // color: colorScheme.onSecondary,
               ),
               IconButton(

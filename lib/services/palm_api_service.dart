@@ -24,7 +24,7 @@ class PalmApiService {
     var apiKey = req.apiKey;
     var prompt = req.prompt;
     try {
-      log("start, model: $currentModel, prompt: $prompt");
+      // log("start, model: $currentModel, prompt: $prompt");
       log("$baseURL/models/$currentModel:generateText?key=$apiKey");
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request('POST',
@@ -51,9 +51,9 @@ class PalmApiService {
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200 || response.statusCode == 400) {
         var resp = await response.stream.bytesToString();
-        log("resp $resp");
+        // log("resp $resp");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
-        log("jsonResponse $jsonResponse");
+        // log("jsonResponse $jsonResponse");
         return PalmTextMessageResp.fromJson(jsonResponse);
       } else {
         int httpCode = response.statusCode;
@@ -78,7 +78,7 @@ class PalmApiService {
     var apiKey = req.apiKey;
     var context = req.context;
     try {
-      log("start, model: $currentModel, prompt: $context");
+      // log("start, model: $currentModel, prompt: $context");
       log("$baseURL/models/$currentModel:generateMessage?key=$apiKey");
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request(
@@ -101,9 +101,9 @@ class PalmApiService {
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200 || response.statusCode == 400) {
         var resp = await response.stream.bytesToString();
-        log("resp $resp");
+        // log("resp $resp");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
-        log("jsonResponse $jsonResponse");
+        // log("jsonResponse $jsonResponse");
         return PalmChatMessageResp.fromJson(jsonResponse);
       } else {
         return PalmChatMessageResp(

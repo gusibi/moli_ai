@@ -31,6 +31,8 @@ class SqliteClient {
           icon INTEGER NOT NULL,
           rank INTEGER NOT NULL,
           modelName TEXT NOT NULL,
+          convType data_type DEFAULT "chat",
+          config data_type DEFAULT "",
           lastTime INTEGER NOT NULL
         );
         ''');
@@ -72,13 +74,9 @@ class SqliteClient {
         },
         // Set the version. This executes the onCreate function and provides a
         // path to perform database upgrades and downgrades.
-        version: 11,
+        version: 1,
         onUpgrade: (db, oldVersion, newVersion) async {
           log("db version: $oldVersion");
-          if (oldVersion < 11) {
-            _createConfigTab(db); // 创建 config_tab 表
-            _updateConversactionTab(db);
-          }
         });
     _db = await database;
   }
