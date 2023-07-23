@@ -34,7 +34,7 @@ moli-ai-box is a Google Palm client written in Flutter aiming to provide a conve
 
 
 
-## TODO
+## Features
 
 - [x] 模型选择菜单  
 - [x] 菜单/侧边菜单
@@ -47,4 +47,16 @@ moli-ai-box is a Google Palm client written in Flutter aiming to provide a conve
 - [x] 支持markdown
 
 
-----
+## Build
+
+### macOS
+
+```
+flutter build macos --no-tree-shake-icons
+```
+
+### android
+
+```
+flutter build apk --no-tree-shake-icons
+```
