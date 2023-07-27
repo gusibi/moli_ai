@@ -144,7 +144,6 @@ class _PromptMessageInputFormWidgetState
     return SizedBox(
       // height: 60,
       child: Container(
-        decoration: const BoxDecoration(color: Colors.white),
         padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
         child: Form(
           key: _formKey,
@@ -156,7 +155,7 @@ class _PromptMessageInputFormWidgetState
                 onPressed: () {
                   widget.leftOnPressed();
                 },
-                icon: const Icon(Icons.reset_tv),
+                icon: const Icon(Icons.clear_all),
               )),
               const SizedBox(width: 8),
               Expanded(

@@ -120,7 +120,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
       appBar: AppBar(
         elevation: 4,
         automaticallyImplyLeading: false,
-        title: const Text("Diary"),
         // backgroundColor: colorScheme.primary,
         shadowColor: getShadowColor(colorScheme),
         flexibleSpace: SafeArea(
@@ -147,20 +146,33 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 width: 12,
               ),
               const Expanded(
-                child: Column(children: []),
+                child: Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Diary",
+                        style: TextStyle(
+                            // color: colorScheme.onPrimary,
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               IconButton(
                 onPressed: () {
                   summaryDaily(context);
                 },
-                icon: const Icon(Icons.run_circle_outlined),
+                icon: const Icon(Icons.directions_run),
                 // color: colorScheme.onSecondary,
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.settings),
-                // color: colorScheme.onSecondary,
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: const Icon(Icons.settings),
+              //   // color: colorScheme.onSecondary,
+              // ),
             ],
           ),
         ),
@@ -228,20 +240,20 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Future<void> summaryDaily(BuildContext context) async {
     // get diary message
     try {
-      List<ConversationMessageModel> _messageList =
+      List<ConversationMessageModel> messageList =
           await ConversationMessageRepo().getMessages(currentDiary.id, 0);
       var message = '';
-      for (var i = 0; i < _messageList.length; i++) {
-        if (_messageList[i].role == roleAI) {
+      for (var i = 0; i < messageList.length; i++) {
+        if (messageList[i].role == roleAI) {
           continue;
         }
-        if (_messageList[i].role == roleSys) {
-          if (_messageList[i].message == "diary reset") {
+        if (messageList[i].role == roleSys) {
+          if (messageList[i].message == "diary reset") {
             message = "";
           }
           continue;
         }
-        message += "${_messageList[i].message}\n";
+        message += "${messageList[i].message}\n";
       }
       List<String> result;
       var chatRole = roleAI;

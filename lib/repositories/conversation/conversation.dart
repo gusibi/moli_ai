@@ -54,8 +54,12 @@ class ConversationReop {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
-    final List<Map<String, dynamic>> maps =
-        await db.query(tableName, where: 'convType = ?', whereArgs: ["diary"]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'convType = ?',
+      whereArgs: ["diary"],
+      orderBy: 'id DESC',
+    );
 
     return List.generate(maps.length, (i) {
       log("$maps[i]");
@@ -76,8 +80,11 @@ class ConversationReop {
   Future<ConversationModel?> getConversationById(int id) async {
     final Database db = dbClient.get();
 
-    final List<Map<String, dynamic>> maps =
-        await db.query(tableName, where: 'id = ?', whereArgs: [id]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     if (maps.length == 1) {
       return ConversationModel(
         id: maps[0]['id'],

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../constants/constants.dart';
 import '../models/conversation_model.dart';
 import '../providers/diary_privider.dart';
 import '../repositories/conversation/conversation.dart';
@@ -23,6 +24,7 @@ class DiaryistScreen extends StatefulWidget {
 class _DiaryListScreenState extends State<DiaryistScreen> {
   late List<ConversationModel> _diaryList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
+  bool wideScreen = false;
 
   @override
   void initState() {
@@ -47,49 +49,73 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ListView(
-        children: [
-          const SizedBox(height: 18),
-          ...List.generate(
-            _diaryList.length,
-            (index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 1.0),
-                child: Dismissible(
-                  key: UniqueKey(),
-                  direction: DismissDirection.startToEnd,
-                  onDismissed: (direction) {
-                    ConversationModel conv = _diaryList[index];
-                    ConversationReop().deleteConversationById(conv.id);
-                    setState(() {
-                      _diaryList.removeAt(index);
-                    });
-                  },
-                  background: Container(
-                    color: _colorScheme.error,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(Icons.delete, color: _colorScheme.onError),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ListView(
+          children: [
+            const SizedBox(height: 18),
+            ...List.generate(
+              _diaryList.length,
+              (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 1.0),
+                  child: Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.startToEnd,
+                    onDismissed: (direction) {
+                      ConversationModel conv = _diaryList[index];
+                      ConversationReop().deleteConversationById(conv.id);
+                      setState(() {
+                        _diaryList.removeAt(index);
+                      });
+                    },
+                    background: Container(
+                      color: _colorScheme.error,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child:
+                              Icon(Icons.delete, color: _colorScheme.onError),
+                        ),
                       ),
                     ),
+                    child: ConversationCardWidget(
+                      conversation: _diaryList[index],
+                      id: _diaryList[index].id,
+                      index: index,
+                      onSelected: () {
+                        _navigateToDiaryScreen(_diaryList[index]);
+                      },
+                    ),
                   ),
-                  child: ConversationCardWidget(
-                    conversation: _diaryList[index],
-                    id: _diaryList[index].id,
-                    index: index,
-                    onSelected: () {
-                      _navigateToDiaryScreen(_diaryList[index]);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: wideScreen
+          ? null
+          : FloatingActionButton(
+              heroTag: "newDiary",
+              onPressed: () {
+                _navigateToCreateNewDiary();
+              },
+              child: const Icon(Icons.note_add),
+            ),
+    );
+  }
+
+  void _navigateToCreateNewDiary() {
+    final diaryProvider = Provider.of<DiaryProvider>(context, listen: false);
+    diaryProvider.setCurrentDiaryInfo(newDiaryConversation);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DiaryScreen(
+          diaryData: newDiaryConversation,
+        ),
       ),
     );
   }
