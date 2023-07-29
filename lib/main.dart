@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:moli_ai/constants/color_constants.dart';
+import 'package:moli_ai/providers/default_privider.dart';
 import 'package:moli_ai/providers/diary_privider.dart';
 import 'package:moli_ai/screens/diary_list_screen.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +46,37 @@ class _MyAppState extends State<MyApp> {
     _initConfig();
   }
 
+  ThemeMode _getThemeDarkMode(
+      DefaultSettingProvider defaultProvider, String selectedDarkMode) {
+    var isDarkMode = defaultProvider.isDark;
+    if (defaultProvider.darkMode != "") {
+      selectedDarkMode = defaultProvider.darkMode;
+    }
+    if (selectedDarkMode == darkModeDark) {
+      isDarkMode = true;
+    } else if (selectedDarkMode == darkModeLight) {
+      isDarkMode = false;
+    } else {
+      isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    }
+    return isDarkMode ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  Map<String, ThemeData> _getThemeInfo(
+      DefaultSettingProvider defaultProvider, String themeName) {
+    if (defaultProvider.themeName != "") {
+      themeName = defaultProvider.themeName;
+    }
+    Map<String, ThemeData>? theme = themesMap[themeName];
+    if (theme != null) {
+      return theme;
+    }
+    return <String, ThemeData>{
+      darkModeLight: blumineBlueLight,
+      darkModeDark: blumineBlueDark
+    };
+  }
+
   void _initConfig() async {
     _configMap = await ConfigReop().getAllConfigsMap();
 
@@ -51,11 +85,6 @@ class _MyAppState extends State<MyApp> {
       final themeConfig = themeConf.toThemeConfig();
       themeName = themeConfig.themeName;
       darkMode = themeConfig.darkMode;
-      Map<String, ThemeData>? theme = themesMap[themeName];
-      if (theme != null) {
-        lightTheme = theme[darkModeLight]!;
-        darkTheme = theme[darkModeDark]!;
-      }
       setState(() {
         themeName = themeConfig.themeName;
         darkMode = themeConfig.darkMode;
@@ -65,11 +94,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-    if (darkMode != "" && darkMode == darkModeDark) {
-      isDarkMode = true;
-    }
     // dbClient.q();
     return MultiProvider(
       providers: [
@@ -77,13 +101,20 @@ class _MyAppState extends State<MyApp> {
           create: (context) => PalmSettingProvider(),
         ),
         ChangeNotifierProvider(create: (context) => DiaryProvider()),
+        ChangeNotifierProvider(create: (context) => DefaultSettingProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: const RootPage(),
+      child: Consumer<DefaultSettingProvider>(
+        builder: (context, defaultProvider, child) {
+          var themeMode = _getThemeDarkMode(defaultProvider, darkMode);
+          var themeData = _getThemeInfo(defaultProvider, darkMode);
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: themeData[darkModeLight],
+            darkTheme: themeData[darkModeDark],
+            themeMode: themeMode,
+            home: const RootPage(),
+          );
+        },
       ),
     );
   }

@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/api_constants.dart';
 import '../constants/color_constants.dart';
 import '../constants/constants.dart';
 import '../models/config_model.dart';
+import '../providers/default_privider.dart';
 import '../repositories/configretion/config_repo.dart';
 import '../widgets/form/models_choice_widget.dart';
 import '../widgets/form/form_widget.dart';
@@ -154,8 +156,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          log(themeDarkMode.value.name);
+                          log(selectedDarkMode);
                           log(selectedTheme);
+                          _updateThem(selectedDarkMode, selectedTheme);
                           _saveConfig(
                               PalmConfig(
                                   basicUrl: basicUrlController.text,
@@ -165,7 +168,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                 darkMode: selectedDarkMode,
                                 themeName: selectedTheme,
                               ));
-                          // do something with _baseUrl and _apiKey
                         }
                       },
                       child: const Text('Submit'),
@@ -183,5 +185,21 @@ class _SettingScreenState extends State<SettingScreen> {
   _saveConfig(PalmConfig palmConf, ThemeConfig themeConfig) async {
     await ConfigReop().createOrUpdatePalmConfig(palmConf);
     await ConfigReop().createOrUpdateThemeConfig(themeConfig);
+  }
+
+  _updateThem(String selectedDarkMode, selectedTheme) {
+    final defaultProvider =
+        Provider.of<DefaultSettingProvider>(context, listen: false);
+    var isDarkMode = defaultProvider.isDark;
+    if (selectedDarkMode == darkModeDark) {
+      isDarkMode = true;
+    } else if (selectedDarkMode == darkModeLight) {
+      isDarkMode = false;
+    } else {
+      isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    }
+    defaultProvider.setIsDark(isDarkMode);
+    defaultProvider.setDarkMode(selectedDarkMode);
+    defaultProvider.setThemeName(selectedTheme);
   }
 }
