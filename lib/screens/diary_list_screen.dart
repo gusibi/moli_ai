@@ -51,7 +51,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ListView(
           children: [
             const SizedBox(height: 18),
@@ -59,7 +59,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
               _diaryList.length,
               (index) {
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 1.0),
+                  padding: const EdgeInsets.only(bottom: 8.0),
                   child: Dismissible(
                     key: UniqueKey(),
                     direction: DismissDirection.startToEnd,

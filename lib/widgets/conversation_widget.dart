@@ -21,8 +21,8 @@ class ConversationMessageWidget extends StatefulWidget {
 class _ConversationMessageWidgetState extends State<ConversationMessageWidget> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _userMessageBackgroundColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.44), _colorScheme.primary);
-  late final _userMessageColor = _colorScheme.onPrimary;
+      _colorScheme.primary.withOpacity(0.44), _colorScheme.primaryContainer);
+  late final _userMessageColor = _colorScheme.onPrimaryContainer;
   late final _aiMessageBackgroundColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.secondaryContainer);
   late final _aiMessageColor = _colorScheme.onSecondaryContainer;

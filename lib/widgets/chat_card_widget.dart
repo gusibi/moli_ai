@@ -27,14 +27,17 @@ class ConversationCardWidget extends StatefulWidget {
 
 class _ConversationCardWidgetState extends State<ConversationCardWidget> {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
-  late final Color unselectedColor = _colorScheme.surfaceTint;
+  late Color unselectedColor = Color.alphaBlend(
+    _colorScheme.primary.withOpacity(0.08),
+    _colorScheme.surface,
+  );
   late final Color selectedColor = _colorScheme.surfaceTint;
 
   bool _isSelected = false;
 
-  Color get _surfaceColor {
-    if (_isSelected) return unselectedColor;
-    return _colorScheme.surface;
+  Color get _cardColor {
+    if (_isSelected) return _colorScheme.primaryContainer;
+    return unselectedColor;
   }
 
   @override
@@ -55,7 +58,7 @@ class _ConversationCardWidgetState extends State<ConversationCardWidget> {
         child: Card(
           elevation: 4,
           shadowColor: getShadowColor(_colorScheme),
-          color: _surfaceColor,
+          color: _cardColor,
           clipBehavior: Clip.hardEdge,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

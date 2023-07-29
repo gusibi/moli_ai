@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'markdown_view_widget.dart';
 
@@ -17,14 +18,26 @@ class PromptTextMessageWidget extends StatelessWidget {
   final FontWeight? fontWeight;
   @override
   Widget build(BuildContext context) {
-    return Text(
-      message,
-      // textAlign: TextAlign.right,
-      style: TextStyle(
-        color: color,
-        fontSize: fontSize,
-        fontWeight: fontWeight ?? FontWeight.normal,
+    return GestureDetector(
+      child: SelectableText(
+        message,
+        // textAlign: TextAlign.right,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: fontWeight ?? FontWeight.normal,
+        ),
       ),
+      onLongPress: () {
+        ClipboardData data = ClipboardData(text: message);
+        Clipboard.setData(data);
+        // Show a snackbar to notify the user that the text has been copied.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Text copied to clipboard'),
+          ),
+        );
+      },
     );
   }
 }
@@ -44,8 +57,20 @@ class ConversationMessageReplyWidget extends StatelessWidget {
   final FontWeight? fontWeight;
   @override
   Widget build(BuildContext context) {
-    return MarkdownView(
-      markdown: message,
+    return GestureDetector(
+      child: MarkdownView(
+        markdown: message,
+      ),
+      onLongPress: () {
+        ClipboardData data = ClipboardData(text: message);
+        Clipboard.setData(data);
+        // Show a snackbar to notify the user that the text has been copied.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Text copied to clipboard'),
+          ),
+        );
+      },
     );
   }
 }

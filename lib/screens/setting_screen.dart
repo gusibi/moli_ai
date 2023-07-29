@@ -112,7 +112,7 @@ class _SettingScreenState extends State<SettingScreen> {
         centerTitle: true,
         elevation: 4,
       ),
-      backgroundColor: _backgroundColor,
+      // backgroundColor: _backgroundColor,
       body: Center(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

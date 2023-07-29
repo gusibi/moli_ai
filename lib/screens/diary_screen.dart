@@ -33,6 +33,9 @@ class DiaryScreen extends StatefulWidget {
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
+  late final _colorScheme = Theme.of(context).colorScheme;
+  late final _backgroundColor = _colorScheme.background;
+
   late TextEditingController textEditingController;
   final _scrollController = ScrollController();
   late ConversationModel currentDiary;
@@ -116,6 +119,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+        _colorScheme.primary.withOpacity(0.14), colorScheme.surface);
     return Scaffold(
       appBar: AppBar(
         elevation: 4,
@@ -177,6 +182,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
           ),
         ),
       ),
+      backgroundColor: backgroundColor,
       body: GestureDetector(
           onTap: () => _hideKeyboard(context),
           child: Align(

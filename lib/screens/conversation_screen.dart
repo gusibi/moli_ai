@@ -149,6 +149,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    late final colorScheme = Theme.of(context).colorScheme;
+    late final backgroundColor = Color.alphaBlend(
+        _colorScheme.primary.withOpacity(0.14), colorScheme.surface);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
@@ -158,6 +162,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       appBar: ConversationAppBarWidget(
           currentConversation: currentConversation,
           onPressSetting: _navigateToConversationSettingScreen),
+      backgroundColor: backgroundColor,
       body: GestureDetector(
         onTap: () => _hideKeyboard(context),
         child: Align(
