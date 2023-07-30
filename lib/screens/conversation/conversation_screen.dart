@@ -7,17 +7,17 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai/services/palm_api_service.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
-import '../models/config_model.dart';
-import '../models/conversation_model.dart';
-import '../models/palm_text_model.dart';
-import '../providers/palm_priovider.dart';
-import '../repositories/configretion/config_repo.dart';
-import '../repositories/conversation/conversation.dart';
-import '../repositories/conversation/conversation_message.dart';
-import '../widgets/appbar/conversation_appbar.dart';
-import '../widgets/conversation_widget.dart';
-import '../widgets/form/form_widget.dart';
+import '../../constants/constants.dart';
+import '../../models/config_model.dart';
+import '../../models/conversation_model.dart';
+import '../../models/palm_text_model.dart';
+import '../../providers/palm_priovider.dart';
+import '../../repositories/configretion/config_repo.dart';
+import '../../repositories/conversation/conversation.dart';
+import '../../repositories/conversation/conversation_message.dart';
+import '../../widgets/appbar/conversation_appbar.dart';
+import '../../widgets/conversation_widget.dart';
+import '../../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
 
 class ConversationScreen extends StatefulWidget {

@@ -3,11 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
-import '../models/conversation_model.dart';
-import '../providers/diary_privider.dart';
-import '../repositories/conversation/conversation.dart';
-import '../widgets/chat_card_widget.dart';
+import '../../constants/constants.dart';
+import '../../models/conversation_model.dart';
+import '../../providers/diary_privider.dart';
+import '../../repositories/conversation/conversation.dart';
+import '../../widgets/chat_card_widget.dart';
 import 'diary_screen.dart';
 
 class DiaryistScreen extends StatefulWidget {

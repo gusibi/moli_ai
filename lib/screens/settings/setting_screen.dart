@@ -2,18 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moli_ai/screens/settings/palm_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/api_constants.dart';
-import '../constants/color_constants.dart';
-import '../constants/constants.dart';
-import '../models/config_model.dart';
-import '../providers/default_privider.dart';
-import '../repositories/configretion/config_repo.dart';
-import '../widgets/form/models_choice_widget.dart';
-import '../widgets/form/form_widget.dart';
-import '../widgets/form/themes_choice_widget.dart';
-import '../widgets/setting_widget.dart';
+import '../../constants/api_constants.dart';
+import '../../constants/color_constants.dart';
+import '../../constants/constants.dart';
+import '../../models/config_model.dart';
+import '../../providers/default_privider.dart';
+import '../../repositories/configretion/config_repo.dart';
+import '../../widgets/form/themes_choice_widget.dart';
+import '../../widgets/list/setting_list_widget.dart';
+import '../../widgets/list/setting_widget.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -23,13 +23,6 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  late final _colorScheme = Theme.of(context).colorScheme;
-  late final _backgroundColor = _colorScheme.background;
-  late final _buttonColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.primary);
-  late final _buttonTextColor = Color.alphaBlend(
-      _colorScheme.primary.withOpacity(0.14), _colorScheme.onPrimary);
-
   final _formKey = GlobalKey<FormState>();
 
   String basicUrl = BASE_URL;
@@ -94,12 +87,14 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {
       selectedDarkMode = value;
     });
+    _saveConfig();
   }
 
   void handleThemeSelected(String value) {
     setState(() {
       selectedTheme = value;
     });
+    _saveConfig();
   }
 
   @override
@@ -107,7 +102,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Setting",
+          "设置",
         ),
         centerTitle: true,
         elevation: 4,
@@ -121,20 +116,34 @@ class _SettingScreenState extends State<SettingScreen> {
             child: Form(
               key: _formKey,
               child: ListView(
+                shrinkWrap: false,
                 children: [
-                  SingleSection(title: "自定义配置", children: [
-                    BaseURLFormWidget(
-                      controller: basicUrlController,
+                  ListTileSection(title: "模型配置", children: [
+                    SettingListTile(
+                      title: "Google Palm",
+                      icon: Icons.park_outlined,
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        _navigateToPalmSettingScreen();
+                      },
                     ),
-                    ApiKeyFormWidget(
-                      controller: apiKeyController,
+                    // Divider(),
+                    SettingListTile(
+                      title: "OpenAI",
+                      icon: Icons.chat_bubble_outline,
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {},
                     ),
-                  ]),
-                  SingleSection(title: "选择模型", children: [
-                    PalmModelRadioListTile(notifier: palmModel),
+                    // Divider(),
+                    SettingListTile(
+                      title: "Auzre OpenAI",
+                      icon: Icons.api_outlined,
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {},
+                    ),
                   ]),
                   const SizedBox(height: 8),
-                  SingleSection(title: "主题选择", children: [
+                  FormSection(title: "主题选择", children: [
                     DarkModeDropDownWidget(
                         onOptionSelected: handleDarkModeSelected,
                         selectedOption: selectedDarkMode),
@@ -144,35 +153,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ]),
                   const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(_buttonColor),
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(_buttonTextColor),
-                      ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          log(selectedDarkMode);
-                          log(selectedTheme);
-                          _updateThem(selectedDarkMode, selectedTheme);
-                          _saveConfig(
-                              PalmConfig(
-                                  basicUrl: basicUrlController.text,
-                                  apiKey: apiKeyController.text,
-                                  modelName: palmModelsMap[palmModel.value]!),
-                              ThemeConfig(
-                                darkMode: selectedDarkMode,
-                                themeName: selectedTheme,
-                              ));
-                        }
-                      },
-                      child: const Text('Submit'),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -182,9 +162,20 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  _saveConfig(PalmConfig palmConf, ThemeConfig themeConfig) async {
-    await ConfigReop().createOrUpdatePalmConfig(palmConf);
-    await ConfigReop().createOrUpdateThemeConfig(themeConfig);
+  void _navigateToPalmSettingScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PalmSettingScreen(),
+      ),
+    );
+  }
+
+  _saveConfig() async {
+    await ConfigReop().createOrUpdateThemeConfig(ThemeConfig(
+      darkMode: selectedDarkMode,
+      themeName: selectedTheme,
+    ));
+    _updateThem(selectedDarkMode, selectedTheme);
   }
 
   _updateThem(String selectedDarkMode, selectedTheme) {

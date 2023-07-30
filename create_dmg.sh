@@ -5,5 +5,5 @@ create-dmg --volname moli_ai \
 --window-size 800 400 \
 --hide-extension moli_ai \
 --app-drop-link  600 185 \
-moli_ai.dmg \
-moli_ai.app
+MoliAI.dmg \
+Moli\ AI.app

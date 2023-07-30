@@ -8,17 +8,17 @@ import 'package:moli_ai/constants/constants.dart';
 import 'package:moli_ai/providers/diary_privider.dart';
 import 'package:provider/provider.dart';
 
-import '../models/config_model.dart';
-import '../models/conversation_model.dart';
-import '../models/palm_text_model.dart';
-import '../providers/palm_priovider.dart';
-import '../repositories/configretion/config_repo.dart';
-import '../repositories/conversation/conversation.dart';
-import '../repositories/conversation/conversation_message.dart';
-import '../services/palm_api_service.dart';
-import '../utils/color.dart';
-import '../widgets/conversation_widget.dart';
-import '../widgets/form/form_widget.dart';
+import '../../models/config_model.dart';
+import '../../models/conversation_model.dart';
+import '../../models/palm_text_model.dart';
+import '../../providers/palm_priovider.dart';
+import '../../repositories/configretion/config_repo.dart';
+import '../../repositories/conversation/conversation.dart';
+import '../../repositories/conversation/conversation_message.dart';
+import '../../services/palm_api_service.dart';
+import '../../utils/color.dart';
+import '../../widgets/conversation_widget.dart';
+import '../../widgets/form/form_widget.dart';
 
 class DiaryScreen extends StatefulWidget {
   final ConversationModel diaryData;

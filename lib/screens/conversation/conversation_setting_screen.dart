@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
-import '../models/conversation_model.dart';
-import '../providers/palm_priovider.dart';
-import '../repositories/conversation/conversation.dart';
-import '../utils/color.dart';
-import '../utils/time.dart';
-import '../widgets/form/form_widget.dart';
-import '../widgets/form/models_choice_widget.dart';
-import '../widgets/setting_widget.dart';
+import '../../constants/constants.dart';
+import '../../models/conversation_model.dart';
+import '../../providers/palm_priovider.dart';
+import '../../repositories/conversation/conversation.dart';
+import '../../utils/color.dart';
+import '../../utils/time.dart';
+import '../../widgets/form/form_widget.dart';
+import '../../widgets/form/models_choice_widget.dart';
+import '../../widgets/list/setting_widget.dart';
 
 class ConversationSettingScreen extends StatefulWidget {
   const ConversationSettingScreen({
@@ -102,12 +102,12 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
             child: Form(
               key: _formKey,
               child: ListView(children: [
-                SingleSection(title: "自定义配置", children: [
+                FormSection(title: "自定义配置", children: [
                   ConversationTitleFormWidget(controller: titleController),
                   ConversationDescFormWidget(controller: descController),
                   ConversationPromptFormWidget(controller: promptController),
                 ]),
-                SingleSection(title: "选择模型", children: [
+                FormSection(title: "选择模型", children: [
                   PalmModelRadioListTile(notifier: palmModel),
                 ]),
                 const SizedBox(height: 8),

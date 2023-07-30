@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/conversation_model.dart';
-import '../providers/palm_priovider.dart';
-import '../repositories/conversation/conversation.dart';
-import '../widgets/chat_card_widget.dart';
+import '../../models/conversation_model.dart';
+import '../../providers/palm_priovider.dart';
+import '../../repositories/conversation/conversation.dart';
+import '../../widgets/chat_card_widget.dart';
 import 'conversation_screen.dart';
 
 class ConversationListScreen extends StatefulWidget {
