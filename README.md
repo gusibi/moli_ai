@@ -3,12 +3,8 @@
 MoliAI is a Google Palm client written in Flutter, designed to provide a practical learning project for personal usage. It currently supports conversations with Google Palm and offers a unique diary enhancement feature. You can input daily inspiration, messages, etc., and MoliAI will summarize your day, providing intelligent suggestions and to-do items based on the information you input.
 
 
-<div>
-  <img alt="conversation-list.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/conversation-list.png" style="display: inline-block;">
-  <img alt="chat-mobile.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/chat-mobile.png" style="display: inline-block;">
-  <img alt="setting.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting.png" style="display: inline-block;">
-  <img alt="setting-green.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting-green.png" style="display: inline-block;">
-</div>
+![MoliAI Screenshot](assets/screenshots/pages.png) 
+
 
 ## Features
 
