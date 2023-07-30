@@ -2,39 +2,62 @@ import 'package:flutter/material.dart';
 
 import '../constants/api_constants.dart';
 import '../constants/constants.dart';
+import '../models/config_model.dart';
 import '../models/conversation_model.dart';
 import '../services/palm_api_service.dart';
 
-class PalmSettingProvider with ChangeNotifier {
-  String defaultModel = "text-bison-001";
-  String apiKey = API_KEY;
+class ModelSettingProvider with ChangeNotifier {
+  String defaultPalmModel = "text-bison-001";
+  String palmApiKey = PALM_API_KEY;
 
-  String get getCurrentModel {
-    return defaultModel;
+  String get getCurrentPalmModel {
+    return defaultPalmModel;
   }
 
-  void setCurrentModel(String newModel) {
-    defaultModel = newModel;
+  void setCurrentPalmModel(String newModel) {
+    defaultPalmModel = newModel;
     notifyListeners();
   }
 
-  String baseURL = BASE_URL;
+  String basePalmURL = PALM_BASE_URL;
 
-  String get getBaseURL {
-    return baseURL;
+  String get getBasePalmURL {
+    return basePalmURL;
   }
 
-  void setBaseURL(String newBaseURL) {
-    baseURL = newBaseURL;
+  void setBasePalmURL(String newBaseURL) {
+    basePalmURL = newBaseURL;
     notifyListeners();
   }
 
-  String get getApiKey {
-    return apiKey;
+  String get getPalmApiKey {
+    return palmApiKey;
   }
 
-  void setApiKey(String newApiKey) {
-    apiKey = newApiKey;
+  void setPalmApiKey(String newApiKey) {
+    palmApiKey = newApiKey;
+    notifyListeners();
+  }
+
+  PalmConfig palmAIConfig = defaultPalmConfig;
+
+  PalmConfig get getPalmAIConfig {
+    return palmAIConfig;
+  }
+
+  void setPalmAIConfig(PalmConfig config) {
+    palmAIConfig = config;
+    notifyListeners();
+  }
+
+  AzureOpenAIConfig azureOpenAIConfig = defaultAzureOpenAIConfig;
+
+  AzureOpenAIConfig get getAuzreOpenAIConfig {
+    return azureOpenAIConfig;
+  }
+
+  void setAzureOpenAIConfig(AzureOpenAIConfig config) {
+    azureOpenAIConfig = config;
     notifyListeners();
   }
 

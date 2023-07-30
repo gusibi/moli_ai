@@ -26,6 +26,37 @@ class PalmConfig {
       );
 }
 
+class AzureOpenAIConfig {
+  String basicUrl;
+  String apiKey;
+  String apiVersion;
+  String modelName;
+
+  AzureOpenAIConfig({
+    required this.basicUrl,
+    required this.apiKey,
+    required this.apiVersion,
+    required this.modelName,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'basicUrl': basicUrl,
+      'apiKey': apiKey,
+      'apiVersion': apiVersion,
+      'modelName': modelName,
+    };
+  }
+
+  factory AzureOpenAIConfig.fromJson(Map<dynamic, dynamic> json) =>
+      AzureOpenAIConfig(
+        basicUrl: json['basicUrl'] as String,
+        apiKey: json['apiKey'] as String,
+        apiVersion: json['apiVersion'] as String,
+        modelName: json['modelName'] as String,
+      );
+}
+
 class ThemeConfig {
   String themeName;
   String darkMode; // 0 = light, 1 = dark, 2 = system
@@ -76,6 +107,11 @@ class ConfigModel {
   PalmConfig toPalmConfig() {
     Map config = jsonDecode(value);
     return PalmConfig.fromJson(config);
+  }
+
+  AzureOpenAIConfig toAzureConfig() {
+    Map config = jsonDecode(value);
+    return AzureOpenAIConfig.fromJson(config);
   }
 
   ThemeConfig toThemeConfig() {

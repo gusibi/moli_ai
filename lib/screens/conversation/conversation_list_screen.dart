@@ -32,7 +32,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
 
   void _query() async {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     setState(() {
       _conversationList = palmProvider.getConversationList;
     });
@@ -97,7 +97,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
 
   void _navigateToConversationScreen(ConversationModel conv) {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     palmProvider.setCurrentConversationInfo(conv);
     Navigator.of(context).push(
       MaterialPageRoute(

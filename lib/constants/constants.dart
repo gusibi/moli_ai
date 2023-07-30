@@ -64,6 +64,7 @@ final ConversationModel newDiaryConversation = ConversationModel(
 );
 
 const String palmConfigname = "palmConfig";
+const String azureConfigname = "azureConfig";
 const String themeConfigname = "themeConfig";
 const String roleUser = "user";
 const String roleAI = "ai";

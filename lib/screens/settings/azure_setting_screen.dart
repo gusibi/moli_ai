@@ -5,24 +5,22 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/api_constants.dart';
-import '../../constants/color_constants.dart';
 import '../../constants/constants.dart';
 import '../../models/config_model.dart';
-import '../../providers/default_privider.dart';
+import '../../providers/palm_priovider.dart';
 import '../../repositories/configretion/config_repo.dart';
-import '../../widgets/form/models_choice_widget.dart';
 import '../../widgets/form/form_widget.dart';
-import '../../widgets/form/themes_choice_widget.dart';
 import '../../widgets/list/setting_widget.dart';
 
-class PalmSettingScreen extends StatefulWidget {
-  const PalmSettingScreen({super.key});
+class AzureOpenAISettingScreen extends StatefulWidget {
+  const AzureOpenAISettingScreen({super.key});
 
   @override
-  State<PalmSettingScreen> createState() => _PlamSettingScreenState();
+  State<AzureOpenAISettingScreen> createState() =>
+      _AzureOpenAISettingScreenState();
 }
 
-class _PlamSettingScreenState extends State<PalmSettingScreen> {
+class _AzureOpenAISettingScreenState extends State<AzureOpenAISettingScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
   late final _buttonColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.primary);
@@ -31,16 +29,15 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String basicUrl = BASE_URL;
-  String apiKey = API_KEY;
-  String modelName = DEFAULT_MODEL;
-  String selectedTheme = defaultTheme;
-  String selectedDarkMode = defaultDarkMode;
+  String endPoint = PALM_BASE_URL;
+  String apiKey = PALM_API_KEY;
+  String apiVersion = AZURE_DEFAULT_API_VERSION;
+  String modelName = AZURE_DEFAULT_MODEL_NAME;
 
   late TextEditingController basicUrlController;
   late TextEditingController apiKeyController;
-  final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
-  final themeDarkMode = ValueNotifier<DarkModes>(DarkModes.darkModeSystem);
+  late TextEditingController modelNameController;
+  late TextEditingController apiVersionController;
 
   Map<String, ConfigModel> _configMap = {};
 
@@ -51,8 +48,11 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
 
   @override
   void initState() {
-    basicUrlController = TextEditingController(text: BASE_URL);
-    apiKeyController = TextEditingController(text: API_KEY);
+    basicUrlController = TextEditingController(text: AZURE_BASE_URL);
+    apiKeyController = TextEditingController(text: AZURE_API_KEY);
+    apiVersionController =
+        TextEditingController(text: AZURE_DEFAULT_API_VERSION);
+    modelNameController = TextEditingController(text: AZURE_DEFAULT_MODEL_NAME);
     super.initState();
     _initConfig();
   }
@@ -66,38 +66,21 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
 
   void _initConfig() async {
     _configMap = await ConfigReop().getAllConfigsMap();
-    ConfigModel? palmConf = _configMap[palmConfigname];
+    ConfigModel? azureConf = _configMap[azureConfigname];
 
-    if (palmConf != null) {
-      final palmConfig = palmConf.toPalmConfig();
-      basicUrl = palmConfig.basicUrl;
-      apiKey = palmConfig.apiKey;
-      modelName = palmConfig.modelName;
+    log(azureConf.toString());
+    if (azureConf != null) {
+      final azureConfig = azureConf.toAzureConfig();
+      endPoint = azureConfig.basicUrl;
+      apiKey = azureConfig.apiKey;
+      apiVersion = azureConfig.apiVersion;
+      modelName = azureConfig.modelName;
     }
     setState(() {
-      basicUrlController = TextEditingController(text: basicUrl);
+      basicUrlController = TextEditingController(text: endPoint);
       apiKeyController = TextEditingController(text: apiKey);
-    });
-
-    ConfigModel? themeConf = _configMap[themeConfigname];
-    if (themeConf != null) {
-      final themeConfig = themeConf.toThemeConfig();
-      setState(() {
-        selectedTheme = themeConfig.themeName;
-        selectedDarkMode = themeConfig.darkMode;
-      });
-    }
-  }
-
-  void handleDarkModeSelected(String value) {
-    setState(() {
-      selectedDarkMode = value;
-    });
-  }
-
-  void handleThemeSelected(String value) {
-    setState(() {
-      selectedTheme = value;
+      apiVersionController = TextEditingController(text: apiVersion);
+      modelNameController = TextEditingController(text: modelName);
     });
   }
 
@@ -106,7 +89,7 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Palm 模型设置",
+          "Azure OpenAI 模型设置",
         ),
         centerTitle: true,
         elevation: 4,
@@ -122,15 +105,36 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
               child: ListView(
                 children: [
                   FormSection(title: "自定义配置", children: [
-                    BaseURLFormWidget(
+                    TextFormWidget(
                       controller: basicUrlController,
+                      label: "Endpoint",
+                      onSaved: (value) {
+                        endPoint = value.toString();
+                      },
                     ),
-                    ApiKeyFormWidget(
+                    TextFormWidget(
                       controller: apiKeyController,
+                      label: "API Key",
+                      onSaved: (value) {
+                        apiKey = value.toString();
+                      },
                     ),
                   ]),
-                  FormSection(title: "选择模型", children: [
-                    PalmModelRadioListTile(notifier: palmModel),
+                  FormSection(title: "模型配置", children: [
+                    TextFormWidget(
+                      controller: modelNameController,
+                      label: "模型部署名",
+                      onSaved: (value) {
+                        modelName = value.toString();
+                      },
+                    ),
+                    TextFormWidget(
+                      controller: apiVersionController,
+                      label: "API版本",
+                      onSaved: (value) {
+                        apiVersion = value.toString();
+                      },
+                    ),
                   ]),
                   const SizedBox(height: 8),
                   Padding(
@@ -145,14 +149,13 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          log(selectedDarkMode);
-                          log(selectedTheme);
-                          _saveConfig(
-                            PalmConfig(
-                                basicUrl: basicUrlController.text,
-                                apiKey: apiKeyController.text,
-                                modelName: palmModelsMap[palmModel.value]!),
+                          var azureConfig = AzureOpenAIConfig(
+                            basicUrl: basicUrlController.text,
+                            apiKey: apiKeyController.text,
+                            apiVersion: apiVersionController.text,
+                            modelName: modelNameController.text,
                           );
+                          _saveConfig(azureConfig);
                         }
                       },
                       child: const Text('Submit'),
@@ -167,7 +170,10 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
     );
   }
 
-  _saveConfig(PalmConfig palmConf) async {
-    await ConfigReop().createOrUpdatePalmConfig(palmConf);
+  _saveConfig(AzureOpenAIConfig azureConf) async {
+    final modelSettingProvider =
+        Provider.of<ModelSettingProvider>(context, listen: false);
+    modelSettingProvider.setAzureOpenAIConfig(azureConf);
+    await ConfigReop().createOrUpdateAzureOpenAIConfig(azureConf);
   }
 }

@@ -5,7 +5,7 @@ import 'dart:io';
 import "package:http/http.dart" as http;
 
 import '../constants/constants.dart';
-import '../models/palm_text_model.dart';
+import '../dto/palm_text_dto.dart';
 
 class PalmApiService {
   static List<String> getModels() {

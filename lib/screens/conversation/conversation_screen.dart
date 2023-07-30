@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import '../../constants/constants.dart';
 import '../../models/config_model.dart';
 import '../../models/conversation_model.dart';
-import '../../models/palm_text_model.dart';
+import '../../dto/palm_text_dto.dart';
 import '../../providers/palm_priovider.dart';
 import '../../repositories/configretion/config_repo.dart';
 import '../../repositories/conversation/conversation.dart';
@@ -57,7 +57,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       currentConversation = widget.conversationData.copy();
     });
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     if (currentConversation.id == 0) {
       // create new
       // print(palmProvider.getSqliteClient());
@@ -80,7 +80,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       ConversationModel? cnv =
           await ConversationReop().getConversationById(currentConversation.id);
       if (cnv != null) {
-        palmProvider.setCurrentModel(cnv.modelName);
+        palmProvider.setCurrentPalmModel(cnv.modelName);
         currentConversation = cnv;
       }
     }
@@ -91,15 +91,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   void _initDefaultConfig() async {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var configMap = await ConfigReop().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
     if (conf != null) {
       final palmConfig = conf.toPalmConfig();
-      palmProvider.setBaseURL(palmConfig.basicUrl);
-      palmProvider.setApiKey(palmConfig.apiKey);
-      palmProvider.setCurrentModel(palmConfig.modelName);
+      palmProvider.setBasePalmURL(palmConfig.basicUrl);
+      palmProvider.setPalmApiKey(palmConfig.apiKey);
+      palmProvider.setCurrentPalmModel(palmConfig.modelName);
     }
   }
 
@@ -157,7 +157,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       _scrollToBottom();
     });
     final palmSettingProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     return Scaffold(
       appBar: ConversationAppBarWidget(
           currentConversation: currentConversation,
@@ -199,8 +199,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         _hideKeyboard(context);
                         sendMessageByApi(
                             context,
-                            palmSettingProvider.getBaseURL,
-                            palmSettingProvider.getApiKey);
+                            palmSettingProvider.getBasePalmURL,
+                            palmSettingProvider.getPalmApiKey);
                       }
                     }),
               ],

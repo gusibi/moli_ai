@@ -6,6 +6,57 @@ import 'package:provider/provider.dart';
 
 import '../../providers/palm_priovider.dart';
 
+class TextFormWidget extends StatefulWidget {
+  const TextFormWidget({
+    super.key,
+    required this.controller,
+    required this.label,
+    required this.onSaved,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final void Function(String? value) onSaved;
+
+  @override
+  State<TextFormWidget> createState() => _TextFormWidgetState();
+}
+
+class _TextFormWidgetState extends State<TextFormWidget> {
+  late String baseURL;
+  @override
+  void initState() {
+    super.initState();
+    // baseURL = widget.defaultValue;    baseURL = "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // var baseURL = widget.defaultValue;
+    return TextFormField(
+      controller: widget.controller,
+      decoration: InputDecoration(
+        labelText: widget.label,
+        border: InputBorder.none,
+        // border: OutlineInputBorder(),
+      ),
+
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Please enter ${widget.label}';
+        }
+        return null;
+      },
+      // style: TextStyle(),
+      onChanged: (value) {},
+      onSaved: (value) {
+        log("${widget.label}: $value");
+        widget.onSaved(value);
+      },
+    );
+  }
+}
+
 class BaseURLFormWidget extends StatefulWidget {
   const BaseURLFormWidget({
     super.key,
@@ -29,7 +80,7 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
   @override
   Widget build(BuildContext context) {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     // var baseURL = widget.defaultValue;
     return TextFormField(
       controller: widget.controller,
@@ -50,11 +101,11 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
         setState(() {
           baseURL = value.toString();
         });
-        palmProvider.setBaseURL(value.toString());
+        palmProvider.setBasePalmURL(value.toString());
       },
       onSaved: (value) {
         baseURL = value.toString();
-        palmProvider.setBaseURL(value.toString());
+        palmProvider.setBasePalmURL(value.toString());
         log("baseURL: $baseURL");
       },
     );
@@ -78,7 +129,7 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
   @override
   Widget build(BuildContext context) {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var apiKey = "";
     return TextFormField(
       obscureText: isObscureText,
@@ -107,11 +158,11 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
         setState(() {
           apiKey = value.toString();
         });
-        palmProvider.setApiKey(value.toString());
+        palmProvider.setPalmApiKey(value.toString());
       },
       onSaved: (value) {
         apiKey = value.toString();
-        palmProvider.setApiKey(value.toString());
+        palmProvider.setPalmApiKey(value.toString());
         log("apiKey: $apiKey");
       },
     );
@@ -248,7 +299,7 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var currentTitle = palmProvider.getCurrentConversationTitle;
     return TextFormField(
       controller: widget.controller,
@@ -300,7 +351,7 @@ class _ConversationPromptFormWidget
   @override
   Widget build(BuildContext context) {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var currentPrompt = palmProvider.getCurrentConversationPrompt;
     return TextFormField(
       maxLines: 2,
@@ -345,7 +396,7 @@ class _ConversationDescFormWidget extends State<ConversationDescFormWidget> {
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var currentConversation = palmProvider.getCurrentConversationInfo;
     var currentDesc = currentConversation.desc;
     return TextFormField(

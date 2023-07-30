@@ -5,7 +5,7 @@ import 'package:moli_ai/constants/color_constants.dart';
 import 'package:moli_ai/providers/default_privider.dart';
 import 'package:moli_ai/providers/diary_privider.dart';
 import 'package:moli_ai/screens/diary/diary_list_screen.dart';
-import 'package:moli_ai/screens/settings/palm_screen.dart';
+import 'package:moli_ai/screens/settings/palm_setting_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:moli_ai/constants/constants.dart';
@@ -100,7 +100,7 @@ class _MoliAIAppState extends State<MoliAIApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => PalmSettingProvider(),
+          create: (context) => ModelSettingProvider(),
         ),
         ChangeNotifierProvider(create: (context) => DiaryProvider()),
         ChangeNotifierProvider(create: (context) => DefaultSettingProvider()),
@@ -199,7 +199,7 @@ class _RootPageState extends State<RootPage> {
 
   void _navigateToCreateNewConversation() {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     palmProvider.setCurrentConversationInfo(newConversation);
     Navigator.of(context).push(
       MaterialPageRoute(

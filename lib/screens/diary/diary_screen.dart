@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/config_model.dart';
 import '../../models/conversation_model.dart';
-import '../../models/palm_text_model.dart';
+import '../../dto/palm_text_dto.dart';
 import '../../providers/palm_priovider.dart';
 import '../../repositories/configretion/config_repo.dart';
 import '../../repositories/conversation/conversation.dart';
@@ -53,15 +53,15 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   void _initDefaultConfig() async {
     final palmProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     var configMap = await ConfigReop().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
     if (conf != null) {
       final palmConfig = conf.toPalmConfig();
-      palmProvider.setBaseURL(palmConfig.basicUrl);
-      palmProvider.setApiKey(palmConfig.apiKey);
-      palmProvider.setCurrentModel(palmConfig.modelName);
+      palmProvider.setBasePalmURL(palmConfig.basicUrl);
+      palmProvider.setPalmApiKey(palmConfig.apiKey);
+      palmProvider.setCurrentPalmModel(palmConfig.modelName);
     }
   }
 
@@ -221,13 +221,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Future<List<String>> sendMessageByTextApi(
       String diaryMessage, ConversationModel currentConversation) async {
     final palmSettingProvider =
-        Provider.of<PalmSettingProvider>(context, listen: false);
+        Provider.of<ModelSettingProvider>(context, listen: false);
     String prompt = sprintf(diaryPrompt, [diaryMessage]);
     PalmTextMessageReq req = PalmTextMessageReq(
       prompt: prompt,
       modelName: currentConversation.modelName,
-      basicUrl: palmSettingProvider.getBaseURL,
-      apiKey: palmSettingProvider.getApiKey,
+      basicUrl: palmSettingProvider.getBasePalmURL,
+      apiKey: palmSettingProvider.getPalmApiKey,
       temperature: 0.7,
       maxOutputTokens: 4092,
     );

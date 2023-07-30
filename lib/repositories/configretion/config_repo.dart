@@ -52,6 +52,37 @@ class ConfigReop {
     }
   }
 
+  Future<int> createOrUpdateAzureOpenAIConfig(AzureOpenAIConfig config) async {
+    final Database db = dbClient.get();
+
+    ConfigModel? conf = await getConfigByName(azureConfigname);
+    if (conf == null) {
+      return await db.insert(
+        'config_tab',
+        {
+          'configName': azureConfigname,
+          'value': jsonEncode(config.toMap()),
+          'createTime': DateTime.now().second,
+          'updateTime': DateTime.now().second,
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } else {
+      // Update the given Dog.
+      return await db.update(
+        'config_tab',
+        {
+          'value': jsonEncode(config.toMap()),
+          'updateTime': DateTime.now().second,
+        },
+        // Ensure that the Dog has a matching id.
+        where: 'id = ?',
+        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        whereArgs: [conf.id],
+      );
+    }
+  }
+
   Future<int> createOrUpdateThemeConfig(ThemeConfig config) async {
     final Database db = dbClient.get();
     var configName = themeConfigname;
