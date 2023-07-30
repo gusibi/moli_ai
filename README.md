@@ -1,14 +1,44 @@
-# moli_ai
+# MoliAI
 
-moli-ai-box is a Google Palm client written in Flutter aiming to provide a convenient learning project to satisfy personal usage needs
+MoliAI is a Google Palm client written in Flutter, designed to provide a practical learning project for personal usage. It currently supports conversations with Google Palm and offers a unique diary enhancement feature. You can input daily inspiration, messages, etc., and MoliAI will summarize your day, providing intelligent suggestions and to-do items based on the information you input.
 
-## screenshots
+![MoliAI Screenshot](assets/screenshots/conversation-list.png) ![MoliAI Screenshot](assets/screenshots/chat-mobile.png)
+![MoliAI Screenshot](assets/screenshots/setting.png) ![MoliAI Screenshot](assets/screenshots/setting-green.png)
 
-![](assets/screenshots/Screenshot_1687613545.png)
-![](assets/screenshots/Screenshot_1687613600.png)
-![](assets/screenshots/Screenshot_1687613609.png)
+## Features
 
-## DIR
+- Chat with Google Palm AI assistant
+- Diary assistant to summarize your day
+
+## Tech Stack
+
+- Flutter
+- flex_color_scheme for theming
+- flutter_markdown for text formatting
+- sqflite for local storage
+
+## Getting Started
+
+To start using MoliAI, follow these steps:
+
+1. Install Flutter
+2. Clone the repository
+3. Run the project using `flutter run`
+
+## Build
+
+### macOS
+
+```
+flutter build macos --no-tree-shake-icons
+```
+### android
+
+```
+flutter build apk --no-tree-shake-icons
+```
+
+## Directory Structure
 
 ```
 ├── lib
@@ -23,40 +53,26 @@ moli-ai-box is a Google Palm client written in Flutter aiming to provide a conve
 └── test
 ```
 
-* lib 目录是项目中最重要的目录，其中包含了应用程序的所有代码。在 lib 目录中，通常会创建以下子目录
-    * models：用于存放数据模型类。
-    * repositories：用于存放数据仓库类，负责从不同的数据源中获取数据，并将其提供给其他部分使用。
-    * screens：用于存放屏幕组件，每个屏幕组件通常对应应用程序中的一个屏幕。
-    * services：用于存放服务类，比如网络服务、数据库服务等。
-    * widgets：用于存放小部件组件，通常用于组合成更大的屏幕组件。
-* android 和 ios 目录是针对 Android 和 iOS 平台的原生代码目录。在这些目录中，您可以添加原生代码，比如插件、原生库等。
-* test 目录是用于存放测试代码的目录，包含了应用程序的单元测试、集成测试等。
+- `lib`: Contains all application code. This directory usually contains these subdirectories:
+    - `models`: Contains data model classes.
+    - `repositories`: Contains data repository classes, responsible for retrieving data from different sources.
+    - `screens`: Contains screen components, each typically corresponding to a screen in the app.
+    - `services`: Contains service classes, such as network services, database services, etc.
+    - `widgets`: Contains widget components, typically used to compose larger screen components.
+- `android` and `ios`: These directories contain native code for Android and iOS platforms. You can add native code such as plugins and native libraries here.
+- `test`: Contains application testing code, including unit tests and integration tests.
 
+## Roadmap
 
+Currently, MoliAI only supports Google Palm. Plans are underway to include support for OpenAI and Microsoft Bing AI.
 
-## Features
+## License
 
-- [x] 模型选择菜单  
-- [x] 菜单/侧边菜单
-- [x] http 调用  
-- [x] Android 网络权限
-- [x] iOS 网络权限
-- [x] + 创建新的会话
-- [x] 会话记录保存
-- [x] 会话单独设置
-- [x] 支持markdown
+This project is licensed under the Creative Commons Attribution-NonCommercial (CC BY-NC) license. For more information, see the LICENSE file.
 
+## Contact
 
-## Build
+If you need any help or have any questions, feel free to open an issue. I will respond as soon as possible.
 
-### macOS
+Thank you for checking out MoliAI! If you have any feedback or suggestions for improving this README, please let me know.
 
-```
-flutter build macos --no-tree-shake-icons
-```
-
-### android
-
-```
-flutter build apk --no-tree-shake-icons
-```
