@@ -4,10 +4,10 @@ MoliAI is a Google Palm client written in Flutter, designed to provide a practic
 
 
 <div>
-  <img src="conversation-list.png" alt="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/conversation-list.png" style="display: inline-block;">
-  <img src="chat-mobile.png" alt="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/chat-mobile.png" style="display: inline-block;">
-  <img src="setting.png" alt="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting.png" style="display: inline-block;">
-  <img src="setting-green.png" alt="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting-green.png" style="display: inline-block;">
+  <img alt="conversation-list.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/conversation-list.png" style="display: inline-block;">
+  <img alt="chat-mobile.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/chat-mobile.png" style="display: inline-block;">
+  <img alt="setting.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting.png" style="display: inline-block;">
+  <img alt="setting-green.png" src="https://github.com/gusibi/moli_ai/blob/main/assets/screenshots/setting-green.png" style="display: inline-block;">
 </div>
 
 ## Features
