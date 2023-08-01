@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moli_ai/constants/api_constants.dart';
+import 'package:moli_ai/dto/ai_service_dto.dart';
+import 'package:moli_ai/services/services.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'package:moli_ai/constants/constants.dart';
@@ -10,12 +13,10 @@ import 'package:provider/provider.dart';
 
 import '../../models/config_model.dart';
 import '../../models/conversation_model.dart';
-import '../../dto/palm_text_dto.dart';
 import '../../providers/palm_priovider.dart';
 import '../../repositories/configretion/config_repo.dart';
 import '../../repositories/conversation/conversation.dart';
 import '../../repositories/conversation/conversation_message.dart';
-import '../../services/palm_api_service.dart';
 import '../../utils/color.dart';
 import '../../widgets/conversation_widget.dart';
 import '../../widgets/form/form_widget.dart';
@@ -40,20 +41,19 @@ class _DiaryScreenState extends State<DiaryScreen> {
   final _scrollController = ScrollController();
   late ConversationModel currentDiary;
   late String currentDay = '${DateTime.now().day}';
-  List<ConversationMessageModel> messageList = [];
+  List<ConversationMessageModel> _messageList = [];
   bool _isTyping = false;
 
   void _queryConversationMessages() async {
-    messageList =
+    _messageList =
         await ConversationMessageRepo().getMessages(currentDiary.id, 0);
     setState(() {
-      messageList = messageList;
+      _messageList = _messageList;
     });
   }
 
   void _initDefaultConfig() async {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var configMap = await ConfigReop().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
@@ -62,6 +62,17 @@ class _DiaryScreenState extends State<DiaryScreen> {
       palmProvider.setBasePalmURL(palmConfig.basicUrl);
       palmProvider.setPalmApiKey(palmConfig.apiKey);
       palmProvider.setCurrentPalmModel(palmConfig.modelName);
+    }
+    conf = configMap[azureConfigname];
+    if (conf != null) {
+      final azureConfig = conf.toAzureConfig();
+      palmProvider.setAzureOpenAIConfig(azureConfig);
+    }
+
+    ConfigModel? defaultAIConf = configMap[defaultAIConfigname];
+    if (defaultAIConf != null) {
+      final defaultAI = defaultAIConf.toDefaultAIConfig();
+      palmProvider.setDiaryAI(defaultAI.diaryAI);
     }
   }
 
@@ -173,11 +184,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 icon: const Icon(Icons.directions_run),
                 // color: colorScheme.onSecondary,
               ),
-              // IconButton(
-              //   onPressed: () {},
-              //   icon: const Icon(Icons.settings),
-              //   // color: colorScheme.onSecondary,
-              // ),
             ],
           ),
         ),
@@ -191,10 +197,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
                 Expanded(
                   child: ListView.builder(
                     controller: _scrollController,
-                    itemCount: messageList.length,
+                    itemCount: _messageList.length,
                     itemBuilder: (context, index) {
                       return ConversationMessageWidget(
-                          conversation: messageList[index]);
+                          conversation: _messageList[index]);
                     },
                   ),
                 ),
@@ -220,25 +226,49 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   Future<List<String>> sendMessageByTextApi(
       String diaryMessage, ConversationModel currentConversation) async {
-    final palmSettingProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final aiSettingProvider =
+        Provider.of<AISettingProvider>(context, listen: false);
     String prompt = sprintf(diaryPrompt, [diaryMessage]);
-    PalmTextMessageReq req = PalmTextMessageReq(
+    var aiService = PALM_SERVICE;
+    var modelName = "";
+    var basicUrl = "";
+    var apiKey = "";
+    var defaultAI = aiSettingProvider.getDiaryAI;
+    if (defaultAI == defaultAIAzure) {
+      aiService = AZURE_SERVICE;
+      modelName = aiSettingProvider.getAuzreOpenAIConfig.modelName;
+      basicUrl = aiSettingProvider.getAuzreOpenAIConfig.basicUrl;
+      apiKey = aiSettingProvider.getAuzreOpenAIConfig.apiKey;
+    } else if (defaultAI == defaultAIOpenAI) {
+      aiService = OPENAI_SERVICE;
+    } else {
+      aiService = PALM_SERVICE;
+      modelName = aiSettingProvider.getCurrentPalmModel;
+      basicUrl = aiSettingProvider.getBasePalmURL;
+      apiKey = aiSettingProvider.getPalmApiKey;
+    }
+    TextAIMessageReq req = TextAIMessageReq(
+      aiService: aiService,
       prompt: prompt,
-      modelName: currentConversation.modelName,
-      basicUrl: palmSettingProvider.getBasePalmURL,
-      apiKey: palmSettingProvider.getPalmApiKey,
+      messages: [
+        ChatMessageData(content: diaryPrompt, role: roleSys),
+        ChatMessageData(content: diaryMessage, role: roleUser)
+      ],
+      modelName: modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
       temperature: 0.7,
-      maxOutputTokens: 4092,
+      apiVersion: aiSettingProvider.getAuzreOpenAIConfig.apiVersion,
+      maxOutputTokens: 4096 - prompt.length,
     );
-    final response = await PalmApiService.getTextReponse(req);
+    final response = await AIApiService.getTextReponse(req);
     var chatRole = roleAI;
     var message = "";
     if (response.error != null && response.error!.code != 0) {
       chatRole = roleSys;
       message = response.error!.message;
     } else if (response.candidates!.isNotEmpty) {
-      message = response.candidates![0].output!;
+      message = response.candidates![0].message!.content;
     }
     return [chatRole, message];
   }
@@ -270,6 +300,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
           .createMessageWithRole(chatRole, message, currentDiary.id, 0);
       setState(() {
         messageList.add(aiMessage);
+        _messageList = messageList;
         _isTyping = false;
       });
     } catch (error) {
@@ -287,7 +318,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     ConversationMessageModel userMessage = await ConversationMessageRepo()
         .createUserMessage(trimmedText, currentDiary.id);
     setState(() {
-      messageList.add(userMessage);
+      _messageList.add(userMessage);
       _isTyping = false;
       textEditingController.clear();
     });
@@ -297,7 +328,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     ConversationMessageModel sysMessage = await ConversationMessageRepo()
         .createSysMessage("diary reset", currentDiary.id);
     setState(() {
-      messageList.add(sysMessage);
+      _messageList.add(sysMessage);
       _isTyping = false;
       textEditingController.clear();
     });

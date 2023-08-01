@@ -79,8 +79,7 @@ class _BaseURLFormWidgetState extends State<BaseURLFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     // var baseURL = widget.defaultValue;
     return TextFormField(
       controller: widget.controller,
@@ -128,8 +127,7 @@ class _ApiKeyFormWidgetState extends State<ApiKeyFormWidget> {
   bool isObscureText = true;
   @override
   Widget build(BuildContext context) {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var apiKey = "";
     return TextFormField(
       obscureText: isObscureText,
@@ -298,8 +296,7 @@ class _ConversationTitleFormWidget extends State<ConversationTitleFormWidget> {
   @override
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var currentTitle = palmProvider.getCurrentConversationTitle;
     return TextFormField(
       controller: widget.controller,
@@ -350,8 +347,7 @@ class _ConversationPromptFormWidget
   late final ColorScheme colorScheme = Theme.of(context).colorScheme;
   @override
   Widget build(BuildContext context) {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var currentPrompt = palmProvider.getCurrentConversationPrompt;
     return TextFormField(
       maxLines: 2,
@@ -395,8 +391,7 @@ class _ConversationDescFormWidget extends State<ConversationDescFormWidget> {
   @override
   Widget build(BuildContext context) {
     late final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var currentConversation = palmProvider.getCurrentConversationInfo;
     var currentDesc = currentConversation.desc;
     return TextFormField(

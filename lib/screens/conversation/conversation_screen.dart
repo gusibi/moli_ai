@@ -56,8 +56,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     setState(() {
       currentConversation = widget.conversationData.copy();
     });
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     if (currentConversation.id == 0) {
       // create new
       // print(palmProvider.getSqliteClient());
@@ -90,8 +89,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   void _initDefaultConfig() async {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var configMap = await ConfigReop().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
@@ -157,7 +155,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       _scrollToBottom();
     });
     final palmSettingProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+        Provider.of<AISettingProvider>(context, listen: false);
     return Scaffold(
       appBar: ConversationAppBarWidget(
           currentConversation: currentConversation,

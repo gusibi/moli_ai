@@ -172,7 +172,7 @@ class _AzureOpenAISettingScreenState extends State<AzureOpenAISettingScreen> {
 
   _saveConfig(AzureOpenAIConfig azureConf) async {
     final modelSettingProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+        Provider.of<AISettingProvider>(context, listen: false);
     modelSettingProvider.setAzureOpenAIConfig(azureConf);
     await ConfigReop().createOrUpdateAzureOpenAIConfig(azureConf);
   }

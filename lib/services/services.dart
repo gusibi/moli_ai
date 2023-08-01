@@ -3,9 +3,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import "package:http/http.dart" as http;
+import 'package:moli_ai/constants/api_constants.dart';
+import 'package:moli_ai/dto/ai_service_dto.dart';
+import 'package:moli_ai/services/azure_openai_service.dart';
 
 import '../constants/constants.dart';
 import '../dto/palm_text_dto.dart';
+import 'palm_api_service.dart';
 
 class AIApiService {
   static List<String> getModels() {
@@ -17,57 +21,21 @@ class AIApiService {
     }
   }
 
-  static Future<PalmTextMessageResp> getTextReponse(
-      PalmTextMessageReq req) async {
-    var currentModel = req.modelName;
-    var baseURL = req.basicUrl;
-    var apiKey = req.apiKey;
-    var prompt = req.prompt;
-    try {
-      // log("start, model: $currentModel, prompt: $prompt");
-      log("$baseURL/models/$currentModel:generateText?key=$apiKey");
-      var headers = {'Content-Type': 'application/json'};
-      var request = http.Request('POST',
-          Uri.parse("$baseURL/models/$currentModel:generateText?key=$apiKey"));
-      request.body = json.encode({
-        "prompt": {"text": prompt},
-        "temperature": req.temperature,
-        "top_k": 40,
-        "top_p": 0.95,
-        "candidate_count": 1,
-        "max_output_tokens": req.maxOutputTokens,
-        "stop_sequences": [],
-        "safety_settings": [
-          {"category": "HARM_CATEGORY_DEROGATORY", "threshold": 1},
-          {"category": "HARM_CATEGORY_TOXICITY", "threshold": 1},
-          {"category": "HARM_CATEGORY_VIOLENCE", "threshold": 2},
-          {"category": "HARM_CATEGORY_SEXUAL", "threshold": 2},
-          {"category": "HARM_CATEGORY_MEDICAL", "threshold": 2},
-          {"category": "HARM_CATEGORY_DANGEROUS", "threshold": 2}
-        ]
-      });
-      request.headers.addAll(headers);
-
-      http.StreamedResponse response = await request.send();
-      if (response.statusCode == 200 || response.statusCode == 400) {
-        var resp = await response.stream.bytesToString();
-        // log("resp $resp");
-        Map<String, dynamic> jsonResponse = jsonDecode(resp);
-        // log("jsonResponse $jsonResponse");
-        return PalmTextMessageResp.fromJson(jsonResponse);
-      } else {
-        int httpCode = response.statusCode;
-        String message = response.reasonPhrase!;
-        return PalmTextMessageResp(
-            error: ErrorResp(
-                code: -1,
-                message: "[Bad Request]: $httpCode - $message",
-                status: ""));
-      }
-    } catch (error) {
-      log("catch error, $error");
-      return PalmTextMessageResp(
-          error: ErrorResp(code: -1, message: error.toString(), status: ""));
+  static Future<TextMessageResp> getTextReponse(TextAIMessageReq req) async {
+    if (req.aiService == PALM_SERVICE) {
+      var palmReq = req.toPalmReq();
+      var resp = await PalmApiService.getTextReponse(palmReq);
+      return TextMessageResp.fromPalmResp(resp);
+    } else if (req.aiService == AZURE_SERVICE) {
+      var azureReq = req.toAzureReq();
+      var resp = await AzureOpenAIApiService.getChatReponse(azureReq);
+      return TextMessageResp.fromAzureResp(resp);
+    } else {
+      return TextMessageResp(
+          error: ErrorResp(
+              code: -1,
+              message: "[Bad Request] api service not support",
+              status: "400"));
     }
   }
 

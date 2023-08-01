@@ -66,8 +66,10 @@ final ConversationModel newDiaryConversation = ConversationModel(
 const String palmConfigname = "palmConfig";
 const String azureConfigname = "azureConfig";
 const String themeConfigname = "themeConfig";
+const String defaultAIConfigname = "defaultAIConfig";
 const String roleUser = "user";
 const String roleAI = "ai";
+const String roleAssistant = "assistant";
 const String roleSys = "system";
 
 const maxInt = 9223372036854775807;

@@ -6,7 +6,7 @@ import '../models/config_model.dart';
 import '../models/conversation_model.dart';
 import '../services/palm_api_service.dart';
 
-class ModelSettingProvider with ChangeNotifier {
+class AISettingProvider with ChangeNotifier {
   String defaultPalmModel = "text-bison-001";
   String palmApiKey = PALM_API_KEY;
 
@@ -58,6 +58,17 @@ class ModelSettingProvider with ChangeNotifier {
 
   void setAzureOpenAIConfig(AzureOpenAIConfig config) {
     azureOpenAIConfig = config;
+    notifyListeners();
+  }
+
+  String defaultDiaryAI = defaultAIPalm;
+
+  String get getDiaryAI {
+    return defaultDiaryAI;
+  }
+
+  void setDiaryAI(String ai) {
+    defaultDiaryAI = ai;
     notifyListeners();
   }
 

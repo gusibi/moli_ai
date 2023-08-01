@@ -12,6 +12,7 @@ import '../../constants/constants.dart';
 import '../../models/config_model.dart';
 import '../../providers/default_privider.dart';
 import '../../repositories/configretion/config_repo.dart';
+import '../../widgets/form/models_choice_widget.dart';
 import '../../widgets/form/themes_choice_widget.dart';
 import '../../widgets/list/setting_list_widget.dart';
 import '../../widgets/list/setting_widget.dart';
@@ -31,6 +32,8 @@ class _SettingScreenState extends State<SettingScreen> {
   String modelName = PALM_DEFAULT_MODEL;
   String selectedTheme = defaultTheme;
   String selectedDarkMode = defaultDarkMode;
+  String selectedDiaryAI = defaultAI;
+  String selectedChatAI = defaultAI;
 
   late TextEditingController basicUrlController;
   late TextEditingController apiKeyController;
@@ -82,6 +85,15 @@ class _SettingScreenState extends State<SettingScreen> {
         selectedDarkMode = themeConfig.darkMode;
       });
     }
+
+    ConfigModel? defaultAIConf = _configMap[defaultAIConfigname];
+    if (defaultAIConf != null) {
+      final defaultAI = defaultAIConf.toDefaultAIConfig();
+      setState(() {
+        selectedDiaryAI = defaultAI.diaryAI;
+        selectedChatAI = defaultAI.chatAI;
+      });
+    }
   }
 
   void handleDarkModeSelected(String value) {
@@ -96,6 +108,13 @@ class _SettingScreenState extends State<SettingScreen> {
       selectedTheme = value;
     });
     _saveConfig();
+  }
+
+  void handleDiaryAISelected(String value) {
+    setState(() {
+      selectedDiaryAI = value;
+    });
+    _saveDefaultAIConfig();
   }
 
   @override
@@ -146,6 +165,22 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ]),
                   const SizedBox(height: 8),
+                  FormSection(title: "默认模型选择", children: [
+                    DefaultAIDropDownWidget(
+                        labelText: "Diary AI",
+                        options: const [
+                          defaultAIPalm,
+                          defaultAIAzure,
+                          defaultAIOpenAI
+                        ],
+                        onOptionSelected: handleDiaryAISelected,
+                        selectedOption: selectedDiaryAI),
+                    ThemesDropDownWidget(
+                      onOptionSelected: handleThemeSelected,
+                      selectedOption: selectedTheme,
+                    ),
+                  ]),
+                  const SizedBox(height: 8),
                   FormSection(title: "主题选择", children: [
                     DarkModeDropDownWidget(
                         onOptionSelected: handleDarkModeSelected,
@@ -155,7 +190,6 @@ class _SettingScreenState extends State<SettingScreen> {
                       selectedOption: selectedTheme,
                     ),
                   ]),
-                  const SizedBox(height: 8),
                 ],
               ),
             ),
@@ -187,6 +221,13 @@ class _SettingScreenState extends State<SettingScreen> {
       themeName: selectedTheme,
     ));
     _updateThem(selectedDarkMode, selectedTheme);
+  }
+
+  _saveDefaultAIConfig() async {
+    await ConfigReop().createOrUpdateDefaultAIConfig(DefaultAIConfig(
+      diaryAI: selectedDiaryAI,
+      chatAI: selectedDiaryAI,
+    ));
   }
 
   _updateThem(String selectedDarkMode, selectedTheme) {

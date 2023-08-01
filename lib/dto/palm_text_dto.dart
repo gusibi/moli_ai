@@ -190,4 +190,11 @@ class ErrorResp {
       status: json['status'] as String,
     );
   }
+  factory ErrorResp.fromAzureJson(Map<String, dynamic> json) {
+    return ErrorResp(
+      code: -1,
+      message: json['message'] as String,
+      status: json['code'] as String,
+    );
+  }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:moli_ai/dto/palm_text_dto.dart';
 
 class AzureOpenAIChatReqMessageData {
@@ -22,7 +24,6 @@ class AzureOpenAIMessageReq {
   final List<AzureOpenAIChatReqMessageData> messages;
   final double temperature;
   final int maxTokens;
-  String context;
 
   AzureOpenAIMessageReq({
     required this.messages,
@@ -32,7 +33,6 @@ class AzureOpenAIMessageReq {
     required this.basicUrl,
     required this.temperature,
     required this.maxTokens,
-    this.context = "",
   });
 }
 
@@ -55,16 +55,23 @@ class AzureOpenAIChatMessageResp {
       this.error});
 
   factory AzureOpenAIChatMessageResp.fromJson(Map<String, dynamic> json) {
-    List<Choices> choices =
-        json['choices'].map((e) => Choices.fromJson(e)).toList();
+    // List<Choices> choices =
+    //     json['choices'].map((e) => Choices.fromJson(e)).toList();
+    List<Choices> choices = [];
+    if (json.containsKey('choices')) {
+      choices =
+          List<Choices>.from(json['choices'].map((e) => Choices.fromJson(e)));
+    }
+    // log("json: $json");
     return AzureOpenAIChatMessageResp(
-      id: json['id'],
-      object: json['object'],
-      created: json['created'],
-      model: json['model'],
+      id: json['id'] ?? '',
+      object: json['object'] ?? '',
+      created: json['created'] as int? ?? 0,
+      model: json['model'] ?? '',
       choices: choices,
       usage: json['usage'] != null ? Usage.fromJson(json['usage']) : null,
-      error: json['error'] != null ? ErrorResp.fromJson(json['error']) : null,
+      error:
+          json['error'] != null ? ErrorResp.fromAzureJson(json['error']) : null,
     );
   }
 }

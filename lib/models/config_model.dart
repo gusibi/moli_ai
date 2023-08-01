@@ -57,6 +57,29 @@ class AzureOpenAIConfig {
       );
 }
 
+class DefaultAIConfig {
+  String diaryAI;
+  String chatAI;
+
+  DefaultAIConfig({
+    required this.diaryAI,
+    required this.chatAI,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'diaryAI': diaryAI,
+      'chatAI': chatAI,
+    };
+  }
+
+  factory DefaultAIConfig.fromJson(Map<dynamic, dynamic> json) =>
+      DefaultAIConfig(
+        diaryAI: json['diaryAI'] as String,
+        chatAI: json['chatAI'] as String,
+      );
+}
+
 class ThemeConfig {
   String themeName;
   String darkMode; // 0 = light, 1 = dark, 2 = system
@@ -117,5 +140,10 @@ class ConfigModel {
   ThemeConfig toThemeConfig() {
     Map config = jsonDecode(value);
     return ThemeConfig.fromJson(config);
+  }
+
+  DefaultAIConfig toDefaultAIConfig() {
+    Map config = jsonDecode(value);
+    return DefaultAIConfig.fromJson(config);
   }
 }

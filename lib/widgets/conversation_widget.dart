@@ -144,8 +144,11 @@ class SysResponseMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double textMaxWidth = screenWidth * 2 / 3;
+
     return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 2),
+      padding: const EdgeInsets.only(left: 64, right: 64, top: 10, bottom: 2),
       child: Align(
         alignment: Alignment.center,
         // padding: const EdgeInsets.all(8.0),
@@ -153,7 +156,10 @@ class SysResponseMessageWidget extends StatelessWidget {
           children: [
             const Expanded(
                 child: ConversationMessageReplyWidget(message: '------')),
-            Text(message, style: TextStyle(color: messageColor)),
+            Container(
+              constraints: BoxConstraints(maxWidth: textMaxWidth),
+              child: Text(message, style: TextStyle(color: messageColor)),
+            ),
             const Expanded(
                 child: ConversationMessageReplyWidget(message: '------')),
           ],

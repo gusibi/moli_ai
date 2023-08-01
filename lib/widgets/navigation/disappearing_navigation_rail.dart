@@ -60,8 +60,7 @@ class _DisappearingNavigationRailState
   }
 
   void _navigateToCreateNewConversation() {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     palmProvider.setCurrentConversationInfo(newConversation);
     Navigator.of(context).push(
       MaterialPageRoute(

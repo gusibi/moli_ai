@@ -69,8 +69,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final palmProvider =
-        Provider.of<ModelSettingProvider>(context, listen: false);
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
     var conversationInfo = widget.conversationData;
 
     return Scaffold(

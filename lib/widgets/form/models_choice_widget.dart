@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moli_ai/constants/color_constants.dart';
 
 import '../../constants/constants.dart';
 
@@ -46,6 +47,54 @@ class _PalmModelRadioListTileState extends State<PalmModelRadioListTile> {
           // subtitle: Text(textModel.modelDesc),
         ),
       ],
+    );
+  }
+}
+
+class DefaultAIDropDownWidget extends StatefulWidget {
+  final ValueChanged<String> onOptionSelected;
+  String selectedOption;
+  String labelText;
+  List<String> options;
+  DefaultAIDropDownWidget(
+      {super.key,
+      required this.labelText,
+      required this.onOptionSelected,
+      required this.options,
+      required this.selectedOption});
+
+  @override
+  State<DefaultAIDropDownWidget> createState() =>
+      _DefaultAIDropDownWidgetState();
+}
+
+class _DefaultAIDropDownWidgetState extends State<DefaultAIDropDownWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      child: Column(
+        children: [
+          DropdownButtonFormField(
+            decoration: InputDecoration(
+              labelText: widget.labelText,
+              border: const OutlineInputBorder(),
+            ),
+            value: widget.selectedOption,
+            items: widget.options.map((option) {
+              return DropdownMenuItem(
+                value: option,
+                child: Text(option),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                widget.selectedOption = value as String;
+              });
+              widget.onOptionSelected(value!);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

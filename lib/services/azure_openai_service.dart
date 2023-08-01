@@ -44,13 +44,17 @@ class AzureOpenAIApiService {
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
-      if (response.statusCode == 200 || response.statusCode == 400) {
+      if (response.statusCode == 200 ||
+          response.statusCode == 400 ||
+          response.statusCode == 404) {
         var resp = await response.stream.bytesToString();
         // log("resp $resp");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
         // log("jsonResponse $jsonResponse");
         return AzureOpenAIChatMessageResp.fromJson(jsonResponse);
       } else {
+        var resp = await response.stream.bytesToString();
+        log(resp.toString());
         return AzureOpenAIChatMessageResp(
             error: ErrorResp(code: -1, message: "Bad Request", status: ""));
       }

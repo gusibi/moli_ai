@@ -2,17 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 import '../../constants/api_constants.dart';
 import '../../constants/color_constants.dart';
 import '../../constants/constants.dart';
 import '../../models/config_model.dart';
-import '../../providers/default_privider.dart';
 import '../../repositories/configretion/config_repo.dart';
 import '../../widgets/form/models_choice_widget.dart';
 import '../../widgets/form/form_widget.dart';
-import '../../widgets/form/themes_choice_widget.dart';
 import '../../widgets/list/setting_widget.dart';
 
 class PalmSettingScreen extends StatefulWidget {
