@@ -6,6 +6,7 @@ import "package:http/http.dart" as http;
 import 'package:moli_ai/constants/api_constants.dart';
 import 'package:moli_ai/dto/ai_service_dto.dart';
 import 'package:moli_ai/services/azure_openai_service.dart';
+import 'package:moli_ai/services/gemini_api.service.dart';
 
 import '../constants/constants.dart';
 import '../dto/palm_text_dto.dart';
@@ -23,9 +24,9 @@ class AIApiService {
 
   static Future<TextMessageResp> getTextReponse(TextAIMessageReq req) async {
     if (req.aiService == PALM_SERVICE) {
-      var palmReq = req.toPalmReq();
-      var resp = await PalmApiService.getTextReponse(palmReq);
-      return TextMessageResp.fromPalmResp(resp);
+      var palmReq = req.toGeminiReq();
+      var resp = await GeminiApiService.getTextReponse(palmReq);
+      return TextMessageResp.fromGeminiResp(resp);
     } else if (req.aiService == AZURE_SERVICE) {
       var azureReq = req.toAzureReq();
       var resp = await AzureOpenAIApiService.getChatReponse(azureReq);

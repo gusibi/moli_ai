@@ -62,6 +62,9 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
       } else if (widget.conversationData.modelName ==
           palmModelsMap[PalmModels.chatModel]) {
         palmModel = ValueNotifier<PalmModels>(PalmModels.chatModel);
+      } else if (widget.conversationData.modelName ==
+          palmModelsMap[PalmModels.geminiProModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.geminiProModel);
       }
     });
     super.initState();

@@ -23,6 +23,19 @@ class _PalmModelRadioListTileState extends State<PalmModelRadioListTile> {
     return Column(
       children: <Widget>[
         RadioListTile<PalmModels>(
+          value: PalmModels.geminiProModel,
+          groupValue: _notifier.value,
+          onChanged: (PalmModels? value) {
+            widget.notifier.value = value!;
+            setState(() {
+              _notifier = widget.notifier;
+              log("model: $value");
+            });
+          },
+          title: Text(geminiProModel.modelName),
+          // subtitle: Text(textModel.modelDesc),
+        ),
+        RadioListTile<PalmModels>(
           value: PalmModels.textModel,
           groupValue: _notifier.value,
           onChanged: (PalmModels? value) {

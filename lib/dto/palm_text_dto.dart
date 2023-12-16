@@ -136,6 +136,10 @@ class PalmChatMessageResp {
   }
 
   factory PalmChatMessageResp.fromJson(Map<String, dynamic> json) {
+    if (json['candidates'] == null) {
+      return PalmChatMessageResp(
+          error: ErrorResp(message: "Response is Empty", code: -1, status: ''));
+    }
     List<dynamic> candidatesJson = json['candidates'];
     List<PalmChatRespMessageData> candidates =
         candidatesJson.map((e) => PalmChatRespMessageData.fromJson(e)).toList();

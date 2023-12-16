@@ -5,6 +5,7 @@ import '../models/conversation_model.dart';
 List<String> modelsList = [
   "chat-bison-001",
   "text-bison-001",
+  "gemini-pro",
 ];
 
 final testChatMessages = [
@@ -82,6 +83,13 @@ class PalmModel {
   PalmModel({required this.modelName, required this.modelDesc});
 }
 
+final PalmModel geminiProModel = PalmModel(
+    modelName: "gemini-pro",
+    modelDesc:
+        """Gemini is a family of generative AI models that lets developers generate content and solve problems. 
+        These models are designed and trained to handle both text and images as input. 
+        This guide provides information about each model variant to help you decide which is the best fit for your use case.""");
+
 final PalmModel textModel =
     PalmModel(modelName: "text-bison-001", modelDesc: """Generates text.
 Optimized for language tasks such as:
@@ -101,11 +109,12 @@ final PalmModel chatModel = PalmModel(
 Optimized for dialog language tasks such as implementation of chat bots or AI agents.
 Can handle zero, one, and few-shot tasks.""");
 
-enum PalmModels { textModel, chatModel }
+enum PalmModels { textModel, chatModel, geminiProModel }
 
 final Map<PalmModels, String> palmModelsMap = {
   PalmModels.textModel: textModel.modelName,
   PalmModels.chatModel: chatModel.modelName,
+  PalmModels.geminiProModel: geminiProModel.modelName,
 };
 
 const String diaryPrompt = '''

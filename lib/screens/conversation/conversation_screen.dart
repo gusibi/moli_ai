@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:moli_ai/dto/gemini_dto.dart';
 
 import 'package:moli_ai/services/palm_api_service.dart';
+import 'package:moli_ai/services/gemini_api.service.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/constants.dart';
@@ -241,19 +243,48 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   List<PalmChatReqMessageData> getLastNMessages(int n) {
-    List<ConversationMessageModel> historyMessages = [];
-    if (messageList.length <= n) {
-      historyMessages = messageList;
-    } else {
-      historyMessages = messageList.sublist(messageList.length - n);
-    }
     List<PalmChatReqMessageData> messages = [];
-    for (var message in historyMessages) {
-      messages.add(PalmChatReqMessageData(
-        content: message.message,
-      ));
+    var count = 0;
+    for (var i = messageList.length - 1; i >= 0; i--) {
+      if (messageList[i].role != roleSys) {
+        count += 1;
+        messages.insert(
+            0, PalmChatReqMessageData(content: messageList[i].message));
+      }
+      if (count == n) {
+        break;
+      }
     }
     return messages;
+  }
+
+  List<GeminiMessageContent> getLastNContents(int n) {
+    List<GeminiMessageContent> contents = [];
+    var count = 0;
+    GeminiMessageContent? lastContent;
+    for (var i = messageList.length - 1; i >= 0; i--) {
+      if (messageList[i].role != roleSys) {
+        var role = getRole(messageList[i]); // Get role based on your logic
+        List<Parts> parts;
+        if (lastContent != null && role == lastContent.role) {
+          // lastContent.parts.insert(0, {"text": messageList[i].message});
+          lastContent.parts.insert(0, Parts(text: messageList[i].message));
+          parts = lastContent.parts;
+          contents[0] = lastContent; // Add existing content with updated parts
+        } else {
+          parts = [
+            Parts(text: messageList[i].message),
+          ];
+          lastContent = GeminiMessageContent(role: role, parts: parts);
+          contents.insert(0, lastContent); // Add new content for new role
+        }
+        count += 1;
+      }
+      if (count == n) {
+        break;
+      }
+    }
+    return contents;
   }
 
   Future<List<String>> sendMessageByChatApi(String basicUrl, apiKey,
@@ -279,6 +310,34 @@ class _ConversationScreenState extends State<ConversationScreen> {
       message = response.error!.message;
     } else if (response.candidates!.isNotEmpty) {
       message = response.candidates![0].content;
+    }
+    return [chatRole, message];
+  }
+
+  Future<List<String>> sendMessageByGeminiApi(String basicUrl, apiKey,
+      inputMessage, ConversationModel currentConversation) async {
+    String prompt = currentConversation.prompt;
+
+    List<GeminiMessageContent> contents =
+        getLastNContents(currentConversation.memeoryCount);
+
+    GeminiApiMessageReq req = GeminiApiMessageReq(
+      prompt: prompt,
+      modelName: currentConversation.modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
+      generationConfig: GeminiGenerationConfig(
+          temperature: 0.7, maxOutputTokens: 4096, topK: 1.0, topP: 1.0),
+      contents: contents,
+    );
+    final response = await GeminiApiService.getTextReponse(req);
+    var chatRole = roleAI;
+    var message = "";
+    if (response.error != null && response.error!.code != 0) {
+      chatRole = roleSys;
+      message = response.error!.message;
+    } else if (response.candidates!.isNotEmpty) {
+      message = response.candidates![0].content!.parts[0].text!;
     }
     return [chatRole, message];
   }
@@ -310,6 +369,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
             basicUrl, apiKey, trimmedText, currentConversation);
         chatRole = result[0];
         message = result[1];
+      } else if (currentConversation.modelName ==
+          palmModelsMap[PalmModels.geminiProModel]) {
+        result = await sendMessageByGeminiApi(
+            basicUrl, apiKey, trimmedText, currentConversation);
+        chatRole = result[0];
+        message = result[1];
       }
 
       ConversationMessageModel aiMessage = await ConversationMessageRepo()
@@ -326,4 +391,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
       });
     }
   }
+}
+
+// Define getRole function based on your specific role logic
+String getRole(ConversationMessageModel message) {
+  if (message.role == roleAI) return "model";
+  return roleUser;
 }

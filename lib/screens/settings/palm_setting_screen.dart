@@ -36,8 +36,8 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
 
   late TextEditingController basicUrlController;
   late TextEditingController apiKeyController;
-  final palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
   final themeDarkMode = ValueNotifier<DarkModes>(DarkModes.darkModeSystem);
+  var palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
 
   Map<String, ConfigModel> _configMap = {};
 
@@ -70,6 +70,13 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
       basicUrl = palmConfig.basicUrl;
       apiKey = palmConfig.apiKey;
       modelName = palmConfig.modelName;
+      if (modelName == palmModelsMap[PalmModels.textModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.textModel);
+      } else if (modelName == palmModelsMap[PalmModels.chatModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.chatModel);
+      } else if (modelName == palmModelsMap[PalmModels.geminiProModel]) {
+        palmModel = ValueNotifier<PalmModels>(PalmModels.geminiProModel);
+      }
     }
     setState(() {
       basicUrlController = TextEditingController(text: basicUrl);

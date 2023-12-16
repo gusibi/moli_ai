@@ -1,4 +1,5 @@
 import 'package:moli_ai/constants/constants.dart';
+import 'package:moli_ai/dto/gemini_dto.dart';
 
 import '../models/conversation_model.dart';
 import 'azure_openai_dto.dart';
@@ -49,6 +50,26 @@ class TextAIMessageReq {
         temperature: temperature,
         maxOutputTokens: maxOutputTokens);
     return palmReq;
+  }
+
+  GeminiApiMessageReq toGeminiReq() {
+    List<Parts> parts = [Parts(text: prompt)];
+    List<GeminiMessageContent> contents = [
+      GeminiMessageContent(parts: parts, role: roleUser)
+    ];
+    final req = GeminiApiMessageReq(
+      prompt: prompt,
+      modelName: modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
+      generationConfig: GeminiGenerationConfig(
+          temperature: temperature,
+          maxOutputTokens: maxOutputTokens,
+          topK: 1.0,
+          topP: 1.0),
+      contents: contents,
+    );
+    return req;
   }
 
   AzureOpenAIMessageReq toAzureReq() {
@@ -141,6 +162,18 @@ class TextMessageResp {
     List<MessageCandidate>? choices = resp.candidates?.map((e) {
       return MessageCandidate(
         message: Message(content: e.output!, role: roleAI),
+      );
+    }).toList();
+    return TextMessageResp(
+      candidates: choices,
+      error: resp.error,
+    );
+  }
+
+  factory TextMessageResp.fromGeminiResp(GeminiApiMessageResp resp) {
+    List<MessageCandidate>? choices = resp.candidates?.map((e) {
+      return MessageCandidate(
+        message: Message(content: e.content!.parts[0].text!, role: roleAI),
       );
     }).toList();
     return TextMessageResp(
