@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'markdown_view_widget.dart';
+import 'flutter_markdown_view_widget.dart';
+// import 'markdown_widget.dart';
 
 class PromptTextMessageWidget extends StatelessWidget {
   const PromptTextMessageWidget({
