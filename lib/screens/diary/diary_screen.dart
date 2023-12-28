@@ -127,11 +127,28 @@ class _DiaryScreenState extends State<DiaryScreen> {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
+  /*这段代码的作用是将滚动条滚动到 ScrollController 的最底部位置。
+  具体来说，它使用 animateTo() 方法来滚动到指定位置。
+  _scrollController.position.maxScrollExtent 表示滚动条的最大位置，即最底部位置。
+  duration 属性表示滚动的持续时间，这里设置为 const Duration(milliseconds: 1)，表示在 1 毫秒内完成滚动。
+  curve 属性表示滚动的动画曲线，这里使用 Curves.easeOut，表示使用缓出的动画效果。
+  */
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 1),
+      curve: Curves.linear,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     late final colorScheme = Theme.of(context).colorScheme;
     late final backgroundColor = Color.alphaBlend(
         _colorScheme.primary.withOpacity(0.14), colorScheme.surface);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 4,

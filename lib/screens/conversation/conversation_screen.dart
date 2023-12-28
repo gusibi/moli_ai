@@ -276,11 +276,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Parts(text: messageList[i].message),
           ];
           lastContent = GeminiMessageContent(role: role, parts: parts);
-          contents.insert(0, lastContent); // Add new content for new role
+          contents.insert(0, lastContent); // add new content for new role
         }
         count += 1;
       }
-      if (count == n) {
+      if (count >= n && contents[0].role == roleUser) {
         break;
       }
     }

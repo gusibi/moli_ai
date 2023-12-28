@@ -39,7 +39,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
     });
     List<ConversationModel> diaryList =
         await ConversationReop().getAllDiaryConversations();
-    log("conversationList $diaryList");
+    // log("conversationList---: $diaryList");
     if (diaryList.isNotEmpty) {
       setState(() {
         _diaryList = diaryList;

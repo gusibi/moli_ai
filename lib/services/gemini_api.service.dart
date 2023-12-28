@@ -26,10 +26,10 @@ class GeminiApiService {
     try {
       // log("start, model: $currentModel, prompt: $prompt");
       var url = "$baseURL/models/$currentModel:generateContent?key=$apiKey";
-      log(url);
+      log("URL: $url");
       var headers = {'Content-Type': 'application/json'};
       var request = http.Request('POST', Uri.parse(url));
-      request.body = json.encode({
+      var body = json.encode({
         "contents": req.contents,
         "generationConfig": {
           "temperature": req.generationConfig.temperature,
@@ -57,7 +57,8 @@ class GeminiApiService {
           }
         ]
       });
-      // log("request: $request.body");
+      request.body = body;
+      log("request: $body");
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
@@ -115,7 +116,7 @@ class GeminiApiService {
         var resp = await response.stream.bytesToString();
         // log("resp $resp");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
-        // log("jsonResponse $jsonResponse");
+        log("jsonResponse $jsonResponse");
         return PalmChatMessageResp.fromJson(jsonResponse);
       } else {
         return PalmChatMessageResp(

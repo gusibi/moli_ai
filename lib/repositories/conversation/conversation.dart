@@ -35,7 +35,7 @@ class ConversationReop {
         await db.query(tableName, where: 'convType = ?', whereArgs: ["chat"]);
 
     return List.generate(maps.length, (i) {
-      log("$maps[i]");
+      // log("getAllChatConversations: $maps[i]");
       return ConversationModel(
         id: maps[i]['id'],
         title: maps[i]['title'],
@@ -62,7 +62,7 @@ class ConversationReop {
     );
 
     return List.generate(maps.length, (i) {
-      log("$maps[i]");
+      // log("dairy conversation: $maps[i]");
       return ConversationModel(
         id: maps[i]['id'],
         title: maps[i]['title'],

@@ -214,28 +214,31 @@ class _PromptMessageInputFormWidgetState
                     if (event is RawKeyUpEvent) {
                       if (event.logicalKey == LogicalKeyboardKey.enter) {
                         if (event.isShiftPressed) {
+                          final text = widget.textController.text.trim();
+                          if (text.isEmpty) {
+                            // 处理回车事件
+                            widget.textController.clear();
+                          }
+                          log('Enter: $text');
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            widget.sendOnPressed();
+                          }
+                        } else {
                           // 获取当前行的文本内容
                           final text = widget.textController.value.text;
                           final cursorPosition =
                               widget.textController.selection.baseOffset;
                           String textBefore = text.substring(0, cursorPosition);
                           textBefore = textBefore.trimRight();
+                          var offset = textBefore.length + 1;
+                          if (text.length == textBefore.length) {
+                            offset = textBefore.length;
+                          }
                           widget.textController.value = TextEditingValue(
                             text: text,
-                            selection: TextSelection.collapsed(
-                                offset: textBefore.length + 1),
+                            selection: TextSelection.collapsed(offset: offset),
                           );
-                        } else {
-                          final text = widget.textController.text.trim();
-                          if (text.isEmpty) {
-                            // 处理回车事件
-                            log('Enter: $text');
-                            widget.textController.clear();
-                          }
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            widget.sendOnPressed();
-                          }
                         }
                       }
                     }
