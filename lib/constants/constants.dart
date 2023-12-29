@@ -72,6 +72,7 @@ const String roleUser = "user";
 const String roleAI = "ai";
 const String roleAssistant = "assistant";
 const String roleSys = "system";
+const String roleContext = "context";
 
 const maxInt = 9223372036854775807;
 const queyMessageLimit = 100;

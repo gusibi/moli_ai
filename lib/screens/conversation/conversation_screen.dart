@@ -72,7 +72,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           modelName: widget.conversationData.modelName,
           rank: 0,
           lastTime: 0);
-      log("cnv $cnv");
+      // log("cnv $cnv");
       int id = await ConversationReop().createConversation(cnv);
       cnv.id = id;
       currentConversation = cnv;
@@ -190,6 +190,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 PromptMessageInputFormWidget(
                     textController: textEditingController,
                     leftOnPressed: () {
+                      resetConversationMessage(context);
                       _hideKeyboard(context);
                     },
                     sendOnPressed: () {
@@ -207,6 +208,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
             )),
       ),
     );
+  }
+
+  Future<void> resetConversationMessage(BuildContext context) async {
+    if (messageList.isNotEmpty && messageList.last.role != roleContext) {
+      ConversationMessageModel sysMessage = await ConversationMessageRepo()
+          .createContextMessage("上下文已清除", currentConversation.id);
+      setState(() {
+        messageList.add(sysMessage);
+        _isTyping = false;
+        textEditingController.clear();
+      });
+    }
   }
 
   void _navigateToConversationSettingScreen() {
@@ -246,6 +259,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
     List<PalmChatReqMessageData> messages = [];
     var count = 0;
     for (var i = messageList.length - 1; i >= 0; i--) {
+      if (messageList[i].role == roleContext) {
+        break;
+      }
       if (messageList[i].role != roleSys) {
         count += 1;
         messages.insert(
@@ -263,6 +279,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
     var count = 0;
     GeminiMessageContent? lastContent;
     for (var i = messageList.length - 1; i >= 0; i--) {
+      if (messageList[i].role == roleContext) {
+        break;
+      }
       if (messageList[i].role != roleSys) {
         var role = getRole(messageList[i]); // Get role based on your logic
         List<Parts> parts;

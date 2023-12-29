@@ -50,11 +50,12 @@ async function fetchAndApply(request) {
     }
 
     url.host = upstream_domain;
-    if (url.pathname == '/') {
-        url.pathname = upstream_path;
+    if (url.pathname.includes("gemini-pro")) {
+        url.pathname = upstream_path + "v1beta" + url.pathname
     } else {
-        url.pathname = upstream_path + url.pathname;
+        url.pathname = upstream_path + "v1beta2" + url.pathname
     }
+
 
     if (blocked_region.includes(region)) {
         response = new Response('Access denied: WorkersProxy is not available in your region yet.', {

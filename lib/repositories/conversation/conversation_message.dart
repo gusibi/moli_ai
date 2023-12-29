@@ -48,6 +48,11 @@ class ConversationMessageRepo {
     return createMessageWithRole(roleSys, message, conversationId, 0);
   }
 
+  Future<ConversationMessageModel> createContextMessage(
+      String message, int conversationId) async {
+    return createMessageWithRole(roleContext, message, conversationId, 0);
+  }
+
   Future<ConversationMessageModel> createAIMessage(
       String message, int conversationId, int replyId) async {
     return createMessageWithRole(roleUser, message, conversationId, replyId);
@@ -58,13 +63,16 @@ class ConversationMessageRepo {
     if (lastId == 0) {
       lastId = maxInt;
     }
+    // 倒序查最后的数据
     final Database db = dbClient.get();
     final List<Map<String, dynamic>> maps = await db.query(tableName,
         where: 'id < ? AND conversationId = ?',
         whereArgs: [lastId, conversationId],
-        orderBy: 'id ASC',
+        orderBy: 'id DESC',
         limit: queyMessageLimit);
-    return List.generate(maps.length, (i) {
+    // 将message 转成正序
+    final List<ConversationMessageModel> messageList =
+        List.generate(maps.length, (i) {
       return ConversationMessageModel(
         id: maps[i]['id'],
         role: maps[i]['role'],
@@ -75,5 +83,6 @@ class ConversationMessageRepo {
         ctime: maps[i]['ctime'],
       );
     });
+    return messageList.reversed.toList();
   }
 }
