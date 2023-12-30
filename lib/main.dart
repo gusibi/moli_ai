@@ -1,6 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:flutter/material.dart';
+import 'package:moli_ai/animations/bar_animations.dart';
 import 'package:moli_ai/constants/color_constants.dart';
 import 'package:moli_ai/providers/default_privider.dart';
 import 'package:moli_ai/providers/diary_privider.dart';
@@ -21,7 +24,24 @@ import 'widgets/navigation/disappearing_navigation_rail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // initialize the database
+  // Must add this line.
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(1000, 800),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    WindowManager.instance.setMinimumSize(const Size(500, 1000));
+    WindowManager.instance.setMaximumSize(const Size(12000, 6000));
+  }
   await dbClient.init();
   runApp(const MoliAIApp());
 }
@@ -128,8 +148,18 @@ class RootPage extends StatefulWidget {
   State<RootPage> createState() => _RootPageState();
 }
 
-class _RootPageState extends State<RootPage> {
+class _RootPageState extends State<RootPage>
+    with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
+  late final _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      reverseDuration: const Duration(milliseconds: 1250),
+      value: 0,
+      vsync: this);
+
+  late final _railAnimation = RailAnimation(parent: _controller);
+  late final _railFabAnimation = RailFabAnimation(parent: _controller);
+  late final _barAnimation = BarAnimation(parent: _controller);
 
   static const List<Widget> _widgetOptions = <Widget>[
     ConversationListScreen(),
@@ -139,13 +169,35 @@ class _RootPageState extends State<RootPage> {
   ];
 
   bool wideScreen = false;
+  bool controllerInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     final double width = MediaQuery.of(context).size.width;
-    wideScreen = width > 600;
+    final AnimationStatus status = _controller.status;
+    if (width > 600) {
+      if (status != AnimationStatus.forward &&
+          status != AnimationStatus.completed) {
+        _controller.forward();
+      }
+    } else {
+      if (status != AnimationStatus.reverse &&
+          status != AnimationStatus.dismissed) {
+        _controller.reverse();
+      }
+    }
+    if (!controllerInitialized) {
+      controllerInitialized = true;
+      _controller.value = width > 600 ? 1 : 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -158,15 +210,16 @@ class _RootPageState extends State<RootPage> {
     return Scaffold(
       body: Row(
         children: [
-          if (wideScreen)
-            DisappearingNavigationRail(
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-            ),
+          DisappearingNavigationRail(
+            railAnimation: _railAnimation,
+            railFabAnimation: _railFabAnimation,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
+          ),
           Expanded(
             child: Container(
               child: _widgetOptions.elementAt(selectedIndex),
@@ -186,6 +239,7 @@ class _RootPageState extends State<RootPage> {
       bottomNavigationBar: wideScreen
           ? null
           : DisappearingBottomNavigationBar(
+              barAnimation: _barAnimation,
               selectedIndex: selectedIndex,
               onDestinationSelected: (index) {
                 setState(() {

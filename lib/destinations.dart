@@ -7,7 +7,7 @@ class Destination {
 }
 
 const List<Destination> destinations = <Destination>[
-  Destination(Icons.chat, 'Chat'),
+  Destination(Icons.emoji_objects_outlined, 'Chat'),
   Destination(Icons.note_alt, 'Diary'),
   Destination(Icons.tune, 'Settings'),
 ];

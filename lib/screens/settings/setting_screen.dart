@@ -175,10 +175,6 @@ class _SettingScreenState extends State<SettingScreen> {
                         ],
                         onOptionSelected: handleDiaryAISelected,
                         selectedOption: selectedDiaryAI),
-                    ThemesDropDownWidget(
-                      onOptionSelected: handleThemeSelected,
-                      selectedOption: selectedTheme,
-                    ),
                   ]),
                   const SizedBox(height: 8),
                   FormSection(title: "主题选择", children: [
