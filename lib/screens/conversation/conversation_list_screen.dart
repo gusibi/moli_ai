@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moli_ai/constants/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/conversation_model.dart';
@@ -47,49 +48,71 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ListView(
-        children: [
-          const SizedBox(height: 18),
-          ...List.generate(
-            _conversationList.length,
-            (index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 1.0),
-                child: Dismissible(
-                  key: UniqueKey(),
-                  direction: DismissDirection.startToEnd,
-                  onDismissed: (direction) {
-                    ConversationModel conv = _conversationList[index];
-                    ConversationReop().deleteConversationById(conv.id);
-                    setState(() {
-                      _conversationList.removeAt(index);
-                    });
-                  },
-                  background: Container(
-                    color: _colorScheme.error,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(Icons.delete, color: _colorScheme.onError),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView(
+          children: [
+            const SizedBox(height: 18),
+            ...List.generate(
+              _conversationList.length,
+              (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.startToEnd,
+                    onDismissed: (direction) {
+                      ConversationModel conv = _conversationList[index];
+                      ConversationReop().deleteConversationById(conv.id);
+                      setState(() {
+                        _conversationList.removeAt(index);
+                      });
+                    },
+                    background: Container(
+                      color: _colorScheme.error,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child:
+                              Icon(Icons.delete, color: _colorScheme.onError),
+                        ),
                       ),
                     ),
+                    child: ConversationCardWidget(
+                      conversation: _conversationList[index],
+                      id: _conversationList[index].id,
+                      index: index,
+                      onSelected: () {
+                        _navigateToConversationScreen(_conversationList[index]);
+                      },
+                    ),
                   ),
-                  child: ConversationCardWidget(
-                    conversation: _conversationList[index],
-                    id: _conversationList[index].id,
-                    index: index,
-                    onSelected: () {
-                      _navigateToConversationScreen(_conversationList[index]);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: "newConversation",
+        onPressed: () {
+          _navigateToCreateNewConversation();
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _navigateToCreateNewConversation() {
+    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
+    palmProvider.setCurrentConversationInfo(newConversation);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ConversationScreen(
+          conversationData: newConversation,
+        ),
       ),
     );
   }

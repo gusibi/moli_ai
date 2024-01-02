@@ -28,19 +28,29 @@ class AzureOpenAIApiService {
       // log("start, model: $currentModel, prompt: $context");
       log("$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion");
       var headers = {'Content-Type': 'application/json', "api-key": apiKey};
+      log(apiKey);
       var request = http.Request(
           'POST',
           Uri.parse(
               "$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion"));
+      var message = '';
+      for (var i = 0; i < req.messages.length; i++) {
+        if (req.messages[i].role == roleAI) {
+          continue;
+        }
+        message += "${req.messages[i].content}\n";
+      }
+      var messageLength = utf8.encode(message).length;
       request.body = json.encode({
         "messages": req.messages,
         "temperature": 0.7,
         "top_p": 0.95,
         "frequency_penalty": 0,
         "presence_penalty": 0,
-        "max_tokens": req.maxTokens,
+        "max_tokens": 4096 - messageLength * 2,
         "stop": null
       });
+      log(request.body);
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
@@ -48,7 +58,7 @@ class AzureOpenAIApiService {
           response.statusCode == 400 ||
           response.statusCode == 404) {
         var resp = await response.stream.bytesToString();
-        // log("resp $resp");
+        log("resp >> $resp <<");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
         // log("jsonResponse $jsonResponse");
         return AzureOpenAIChatMessageResp.fromJson(jsonResponse);

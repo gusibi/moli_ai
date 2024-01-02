@@ -75,12 +75,14 @@ class PalmTextMessageReq {
 
 class PalmChatReqMessageData {
   final String content;
+  final String role;
 
-  PalmChatReqMessageData({required this.content});
+  PalmChatReqMessageData({required this.content, required this.role});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['content'] = content;
+    data['role'] = role;
     return data;
   }
 }

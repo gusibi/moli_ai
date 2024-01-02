@@ -153,3 +153,14 @@ Here is my thoughts: {%s}
 
 Thanks!
 ''';
+
+final PalmModel azureGPT35Model = PalmModel(
+    modelName: "GPT35", modelDesc: """Generates text in a conversational format.
+Optimized for dialog language tasks such as implementation of chat bots or AI agents.
+Can handle zero, one, and few-shot tasks.""");
+
+enum AzureModels { azureGPT35Model }
+
+final Map<AzureModels, String> azureModelsMap = {
+  AzureModels.azureGPT35Model: azureGPT35Model.modelName,
+};

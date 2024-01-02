@@ -130,6 +130,7 @@ class _SettingScreenState extends State<SettingScreen> {
       // backgroundColor: _backgroundColor,
       body: Center(
         child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: GestureDetector(
             onTap: () => _hideKeyboard(context),
@@ -165,7 +166,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ]),
                   const SizedBox(height: 8),
-                  FormSection(title: "默认模型选择", children: [
+                  FormSection(title: "Diary 模型选择", children: [
                     DefaultAIDropDownWidget(
                         labelText: "Diary AI",
                         options: const [

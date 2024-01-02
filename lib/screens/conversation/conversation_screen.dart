@@ -3,10 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:moli_ai/constants/api_constants.dart';
+import 'package:moli_ai/dto/ai_service_dto.dart';
+import 'package:moli_ai/dto/azure_openai_dto.dart';
 import 'package:moli_ai/dto/gemini_dto.dart';
+import 'package:moli_ai/services/azure_openai_service.dart';
 
 import 'package:moli_ai/services/palm_api_service.dart';
 import 'package:moli_ai/services/gemini_api.service.dart';
+import 'package:moli_ai/services/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/constants.dart';
@@ -265,7 +270,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
       if (messageList[i].role != roleSys) {
         count += 1;
         messages.insert(
-            0, PalmChatReqMessageData(content: messageList[i].message));
+            0,
+            PalmChatReqMessageData(
+                content: messageList[i].message, role: messageList[i].role));
       }
       if (count == n) {
         break;
@@ -361,6 +368,43 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return [chatRole, message];
   }
 
+  Future<List<String>> sendMessageByAzureApi(String basicUrl, apiKey,
+      inputMessage, ConversationModel currentConversation) async {
+    String prompt = currentConversation.prompt;
+    final aiSettingProvider =
+        Provider.of<AISettingProvider>(context, listen: false);
+    List<PalmChatReqMessageData> contents =
+        getLastNMessages(currentConversation.memeoryCount);
+
+    List<AzureOpenAIChatReqMessageData> ms = contents.map((m) {
+      var role = m.role;
+      if (role == roleAI) {
+        role = roleAssistant;
+      }
+      return AzureOpenAIChatReqMessageData(content: m.content, role: role);
+    }).toList();
+    AzureOpenAIMessageReq azureReq = AzureOpenAIMessageReq(
+      messages: ms,
+      modelName: currentConversation.modelName,
+      basicUrl: basicUrl,
+      apiKey: apiKey,
+      temperature: 0.7,
+      apiVersion: aiSettingProvider.getAuzreOpenAIConfig.apiVersion,
+      maxTokens: 4096 - prompt.length,
+    );
+    final resp = await AzureOpenAIApiService.getChatReponse(azureReq);
+    TextMessageResp response = TextMessageResp.fromAzureResp(resp);
+    var chatRole = roleAI;
+    var message = "";
+    if (response.error != null && response.error!.code != 0) {
+      chatRole = roleSys;
+      message = response.error!.message;
+    } else if (response.candidates!.isNotEmpty) {
+      message = response.candidates![0].message!.content;
+    }
+    return [chatRole, message];
+  }
+
   Future<void> sendMessageByApi(
       BuildContext context, String basicUrl, apiKey) async {
     String text = textEditingController.text;
@@ -391,6 +435,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
       } else if (currentConversation.modelName ==
           palmModelsMap[PalmModels.geminiProModel]) {
         result = await sendMessageByGeminiApi(
+            basicUrl, apiKey, trimmedText, currentConversation);
+        chatRole = result[0];
+        message = result[1];
+      } else if (currentConversation.modelName == azureGPT35Model.modelName) {
+        result = await sendMessageByAzureApi(
             basicUrl, apiKey, trimmedText, currentConversation);
         chatRole = result[0];
         message = result[1];

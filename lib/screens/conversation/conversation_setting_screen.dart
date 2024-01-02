@@ -36,6 +36,8 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
   late final _buttonTextColor = Color.alphaBlend(
       _colorScheme.primary.withOpacity(0.14), _colorScheme.onPrimary);
 
+  String selectedModel = geminiProModel.modelName;
+
   final _formKey = GlobalKey<FormState>();
   late TextEditingController titleController;
   late TextEditingController descController;
@@ -66,8 +68,16 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
           palmModelsMap[PalmModels.geminiProModel]) {
         palmModel = ValueNotifier<PalmModels>(PalmModels.geminiProModel);
       }
+      selectedModel = widget.conversationData.modelName;
     });
     super.initState();
+  }
+
+  void handleModelSelected(String value) {
+    setState(() {
+      selectedModel = value;
+    });
+    // _saveDefaultAIConfig();
   }
 
   @override
@@ -97,7 +107,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
       backgroundColor: _backgroundColor,
       body: Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: const BoxConstraints(maxWidth: 800),
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: GestureDetector(
             onTap: () => _hideKeyboard(context),
@@ -109,8 +119,20 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                   ConversationDescFormWidget(controller: descController),
                   ConversationPromptFormWidget(controller: promptController),
                 ]),
-                FormSection(title: "选择模型", children: [
-                  PalmModelRadioListTile(notifier: palmModel),
+                // FormSection(title: "选择模型", children: [
+                //   PalmModelRadioListTile(notifier: palmModel),
+                // ]),
+                FormSection(title: "模型选择", children: [
+                  DefaultAIDropDownWidget(
+                      labelText: "Diary AI",
+                      options: [
+                        textModel.modelName,
+                        chatModel.modelName,
+                        geminiProModel.modelName,
+                        azureGPT35Model.modelName,
+                      ],
+                      onOptionSelected: handleModelSelected,
+                      selectedOption: selectedModel),
                 ]),
                 const SizedBox(height: 8),
                 Padding(
@@ -130,6 +152,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                         conversationInfo.desc = descController.text;
                         conversationInfo.modelName =
                             palmModelsMap[palmModel.value]!;
+                        conversationInfo.modelName = selectedModel;
                         palmProvider
                             .setCurrentConversationInfo(conversationInfo);
                         ConversationModel conv = ConversationModel(

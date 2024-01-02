@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
+// import 'package:window_size/window_size.dart';
 
 import 'package:flutter/material.dart';
 import 'package:moli_ai/animations/bar_animations.dart';
@@ -24,22 +25,25 @@ import 'widgets/navigation/disappearing_navigation_rail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Must add this line.
-  await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(1000, 800),
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.hidden,
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
+  if (!Platform.isAndroid) {
+    // Must add this line.
+    await windowManager.ensureInitialized();
+  }
+
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    WindowManager.instance.setMinimumSize(const Size(500, 1000));
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(800, 1000),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.hidden,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+    WindowManager.instance.setMinimumSize(const Size(650, 700));
     WindowManager.instance.setMaximumSize(const Size(12000, 6000));
   }
   await dbClient.init();
@@ -162,8 +166,8 @@ class _RootPageState extends State<RootPage>
   late final _barAnimation = BarAnimation(parent: _controller);
 
   static const List<Widget> _widgetOptions = <Widget>[
-    ConversationListScreen(),
     DiaryistScreen(),
+    ConversationListScreen(),
     // PalmSettingScreen(),
     SettingScreen(),
   ];
@@ -227,15 +231,6 @@ class _RootPageState extends State<RootPage>
           ),
         ],
       ),
-      floatingActionButton: wideScreen || selectedIndex != 0
-          ? null
-          : FloatingActionButton(
-              heroTag: "newConversation",
-              onPressed: () {
-                _navigateToCreateNewConversation();
-              },
-              child: const Icon(Icons.add),
-            ),
       bottomNavigationBar: wideScreen
           ? null
           : DisappearingBottomNavigationBar(
