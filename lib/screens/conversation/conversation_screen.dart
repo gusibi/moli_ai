@@ -106,6 +106,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
       palmProvider.setPalmApiKey(palmConfig.apiKey);
       palmProvider.setCurrentPalmModel(palmConfig.modelName);
     }
+    conf = configMap[azureConfigname];
+    if (conf != null) {
+      final azureConfig = conf.toAzureConfig();
+      palmProvider.setAzureOpenAIConfig(azureConfig);
+    }
   }
 
   void _queryConversationMessages() async {
@@ -439,6 +444,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
         chatRole = result[0];
         message = result[1];
       } else if (currentConversation.modelName == azureGPT35Model.modelName) {
+        final aiSettingProvider =
+            Provider.of<AISettingProvider>(context, listen: false);
+        basicUrl = aiSettingProvider.getAuzreOpenAIConfig.basicUrl;
+        apiKey = aiSettingProvider.getAuzreOpenAIConfig.apiKey;
         result = await sendMessageByAzureApi(
             basicUrl, apiKey, trimmedText, currentConversation);
         chatRole = result[0];

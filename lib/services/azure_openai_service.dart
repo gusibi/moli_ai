@@ -26,13 +26,13 @@ class AzureOpenAIApiService {
     var apiVersion = req.apiVersion;
     try {
       // log("start, model: $currentModel, prompt: $context");
-      log("$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion");
+      var url =
+          "$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion";
+      log(url);
       var headers = {'Content-Type': 'application/json', "api-key": apiKey};
+      log("$headers");
       log(apiKey);
-      var request = http.Request(
-          'POST',
-          Uri.parse(
-              "$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion"));
+      var request = http.Request('POST', Uri.parse(url));
       var message = '';
       for (var i = 0; i < req.messages.length; i++) {
         if (req.messages[i].role == roleAI) {

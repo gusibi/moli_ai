@@ -162,9 +162,11 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                             prompt: promptController.text,
                             icon: conversationInfo.icon,
                             desc: conversationInfo.desc,
-                            modelName: palmModelsMap[palmModel.value]!,
+                            modelName: conversationInfo.modelName,
                             rank: 0,
                             lastTime: timestampNow());
+                        log("{{$conv.id}}");
+                        log(conv.modelName);
                         ConversationReop().updateConversation(conv);
                         Navigator.pop(context);
                       }
