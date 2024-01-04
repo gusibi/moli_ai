@@ -39,7 +39,7 @@ jobs:
         run: flutter pub get
 
       - name: Start build apk
-        run: flutter build apk
+        run: flutter build apk --no-tree-shake-icons
       # Runs a set of commands using the runners shell
       - name: Start release build
         run: flutter build appbundle
