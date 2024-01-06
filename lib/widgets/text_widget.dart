@@ -61,11 +61,8 @@ class ConversationMessageReplyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Expanded(
-        flex: 1,
-        child: MarkdownView(
-          markdown: message,
-        ),
+      child: MarkdownView(
+        markdown: message,
       ),
       onLongPress: () {
         ClipboardData data = ClipboardData(text: message);

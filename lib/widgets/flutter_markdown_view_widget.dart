@@ -7,7 +7,7 @@ import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 
-class CodeElementBuilder extends MarkdownElementBuilder {
+class CodeHighlightElementBuilder extends MarkdownElementBuilder {
   @override
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     var language = '';
@@ -22,28 +22,69 @@ class CodeElementBuilder extends MarkdownElementBuilder {
     if (width > 800) {
       width = 800;
     }
-    return SizedBox(
-      // width: width,
-      child: HighlightView(
-        // The original code to be highlighted
-        element.textContent,
-        // Specify language
-        // It is recommended to give it a value for performance
-        language: language,
-        // Specify highlight theme
-        // All available themes are listed in `themes` folder
-        theme: MediaQueryData.fromView(
-                        WidgetsBinding.instance.platformDispatcher.views.single)
-                    .platformBrightness ==
-                Brightness.light
-            ? atomOneLightTheme
-            : atomOneDarkTheme,
-        // Specify padding
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-        // Specify text style
-        textStyle: GoogleFonts.robotoMono(),
-      ),
+    return HighlightView(
+      // The original code to be highlighted
+      element.textContent,
+      // Specify language
+      // It is recommended to give it a value for performance
+      language: language,
+      // Specify highlight theme
+      // All available themes are listed in `themes` folder
+      theme: MediaQueryData.fromView(
+                      WidgetsBinding.instance.platformDispatcher.views.single)
+                  .platformBrightness ==
+              Brightness.light
+          ? atomOneLightTheme
+          : atomOneDarkTheme,
+      // Specify padding
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+      // Specify text style
+      textStyle: GoogleFonts.robotoMono(),
     );
+  }
+}
+
+class CodeElementBuilder extends MarkdownElementBuilder {
+  bool isCodeBlock(md.Element element) {
+    if (element.attributes['class'] != null) {
+      return true;
+    } else if (element.textContent.contains("\n")) {
+      return true;
+    }
+
+    return false;
+  }
+
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    if (!isCodeBlock(element)) {
+      return Container(
+        // decoration: BoxDecoration(
+        //   border: Border.all(color: Colors.blue),
+        // ),
+        padding: const EdgeInsets.all(2),
+        // color: preferredStyle?.backgroundColor,
+        child: Text(
+          element.textContent,
+          style: TextStyle(
+              fontSize: 16,
+              fontStyle: FontStyle.italic,
+              color: preferredStyle!.color),
+          // backgroundColor: preferredStyle!.backgroundColor),
+        ),
+      );
+    } else {
+      return Container(
+        margin: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+            // border: Border.all(color: Colors.blue),
+            ),
+        child: Text(
+          element.textContent,
+          style: const TextStyle(fontSize: 16),
+        ),
+      );
+    }
   }
 }
 
@@ -72,8 +113,8 @@ class MarkdownView extends StatelessWidget {
           [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
         ),
         builders: {
+          // 'code': CodeHighlightElementBuilder(),
           'code': CodeElementBuilder(),
-          // 'pre': CodeElementBuilder(),
           // 'inlines': CodeElementBuilder(),
         },
         styleSheet: MarkdownStyleSheet(
@@ -125,7 +166,10 @@ class MarkdownView extends StatelessWidget {
               color: colors.surfaceVariant,
               borderRadius: BorderRadius.circular(4),
             ),
-            code: const TextStyle(fontFamily: 'monospace'),
+            code: GoogleFonts.robotoMono(
+                color: colors.error,
+                backgroundColor: colors.surfaceVariant,
+                fontStyle: FontStyle.italic),
             tableHead:
                 const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             tableBody:
