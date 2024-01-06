@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moli_ai/widgets/markdown_viewer.dart';
+import 'package:moli_ai/widgets/markdown_widget.dart';
 
 import 'flutter_markdown_view_widget.dart';
 // import 'markdown_widget.dart';
@@ -59,8 +61,11 @@ class ConversationMessageReplyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: MarkdownView(
-        markdown: message,
+      child: Expanded(
+        flex: 1,
+        child: MarkdownView(
+          markdown: message,
+        ),
       ),
       onLongPress: () {
         ClipboardData data = ClipboardData(text: message);
