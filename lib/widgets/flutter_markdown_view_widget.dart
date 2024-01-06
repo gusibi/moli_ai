@@ -167,7 +167,7 @@ class MarkdownView extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             code: GoogleFonts.robotoMono(
-                color: colors.error,
+                color: colors.tertiary,
                 backgroundColor: colors.surfaceVariant,
                 fontStyle: FontStyle.italic),
             tableHead:
