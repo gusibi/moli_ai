@@ -113,12 +113,24 @@ class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.conversation.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w500),
+                    Row(
+                      children: [
+                        Text(
+                          widget.conversation.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.conversation.modelName.toString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.w400),
+                        ),
+                      ],
                     ),
                     Text(
                       widget.conversation.desc.toString(),

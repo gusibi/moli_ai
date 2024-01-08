@@ -100,7 +100,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
             // color: _colorScheme.onPrimary,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           },
         ),
       ),

@@ -89,8 +89,13 @@ class AISettingProvider with ChangeNotifier {
     return conversationList;
   }
 
-  void setConversationList(List<ConversationModel> newConvs) {
-    conversationList = newConvs;
+  void setConversationList(List<ConversationModel> convsList) {
+    conversationList = convsList;
+    notifyListeners();
+  }
+
+  void addNewConversationToList(ConversationModel conv) {
+    conversationList.insert(0, conv);
     notifyListeners();
   }
 

@@ -31,8 +31,12 @@ class ConversationReop {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
-    final List<Map<String, dynamic>> maps =
-        await db.query(tableName, where: 'convType = ?', whereArgs: ["chat"]);
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'convType = ?',
+      whereArgs: ["chat"],
+      orderBy: 'id DESC',
+    );
 
     return List.generate(maps.length, (i) {
       // log("getAllChatConversations: $maps[i]");

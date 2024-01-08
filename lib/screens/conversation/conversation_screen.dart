@@ -82,6 +82,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       cnv.id = id;
       currentConversation = cnv;
       palmProvider.setCurrentConversationInfo(currentConversation);
+      palmProvider.addNewConversationToList(currentConversation);
     } else {
       ConversationModel? cnv =
           await ConversationReop().getConversationById(currentConversation.id);

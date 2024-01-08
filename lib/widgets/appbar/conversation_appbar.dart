@@ -32,7 +32,7 @@ class ConversationAppBarWidget extends StatelessWidget
             children: <Widget>[
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 },
                 icon: const Icon(
                   Icons.arrow_back,

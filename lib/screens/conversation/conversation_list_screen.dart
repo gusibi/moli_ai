@@ -42,6 +42,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
     if (conversationList.isNotEmpty) {
       setState(() {
         _conversationList = conversationList;
+        palmProvider.setConversationList(_conversationList);
       });
     }
   }
