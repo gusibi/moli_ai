@@ -4,24 +4,24 @@ import 'package:window_manager/window_manager.dart';
 // import 'package:window_size/window_size.dart';
 
 import 'package:flutter/material.dart';
-import 'package:moli_ai/animations/bar_animations.dart';
-import 'package:moli_ai/constants/color_constants.dart';
-import 'package:moli_ai/providers/default_privider.dart';
-import 'package:moli_ai/providers/diary_privider.dart';
-import 'package:moli_ai/screens/diary/diary_list_screen.dart';
+import 'package:moli_ai/core/animations/bar_animations.dart';
+import 'package:moli_ai/core/constants/color_constants.dart';
+import 'package:moli_ai/core/providers/default_privider.dart';
+import 'package:moli_ai/core/providers/diary_privider.dart';
+import 'package:moli_ai/presentation/diary/diary_list_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'package:moli_ai/constants/constants.dart';
+import 'package:moli_ai/core/constants/constants.dart';
 
-import 'models/config_model.dart';
-import 'repositories/configretion/config_repo.dart';
-import 'repositories/datebase/client.dart';
-import 'providers/palm_priovider.dart';
-import 'screens/conversation/conversation_screen.dart';
-import 'screens/conversation/conversation_list_screen.dart';
-import 'screens/settings/setting_screen.dart';
-import 'widgets/navigation/disappearing_bottom_navigation_bar.dart';
-import 'widgets/navigation/disappearing_navigation_rail.dart';
+import 'data/models/config_model.dart';
+import 'data/repositories/configretion/config_repo.dart';
+import 'data/repositories/datebase/client.dart';
+import 'core/providers/palm_priovider.dart';
+import 'presentation/conversation/conversation_screen.dart';
+import 'presentation/conversation/conversation_list_screen.dart';
+import 'presentation/settings/setting_screen.dart';
+import 'core/widgets/navigation/disappearing_bottom_navigation_bar.dart';
+import 'core/widgets/navigation/disappearing_navigation_rail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
