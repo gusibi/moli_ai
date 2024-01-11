@@ -1,14 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:moli_ai/domain/entities/conversation_entity.dart';
 
 import '../../data/models/conversation_model.dart';
-import '../utils/color.dart';
-import '../utils/icon.dart';
+import '../../core/utils/color.dart';
+import '../../core/utils/icon.dart';
 
-class ConversationCardWidget extends StatefulWidget {
-  const ConversationCardWidget({
+class ChatCardWidget extends StatefulWidget {
+  const ChatCardWidget({
     super.key,
-    required this.conversation,
+    required this.chatEntity,
     this.isPreview = true,
     this.index = 0,
     this.id = 0,
@@ -16,16 +17,16 @@ class ConversationCardWidget extends StatefulWidget {
   });
 
   final int index;
-  final ConversationModel conversation;
+  final ChatEntity chatEntity;
   final int id;
   final bool isPreview;
   final void Function()? onSelected;
 
   @override
-  State<ConversationCardWidget> createState() => _ConversationCardWidgetState();
+  State<ChatCardWidget> createState() => _ChatCardWidgetState();
 }
 
-class _ConversationCardWidgetState extends State<ConversationCardWidget> {
+class _ChatCardWidgetState extends State<ChatCardWidget> {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late Color unselectedColor = Color.alphaBlend(
     _colorScheme.primary.withOpacity(0.08),
@@ -64,9 +65,9 @@ class _ConversationCardWidgetState extends State<ConversationCardWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ConversationCardHeadline(
+              ChatCardHeadline(
                   index: widget.index,
-                  conversation: widget.conversation,
+                  conversation: widget.chatEntity,
                   isSelected: _isSelected)
             ],
           ),
@@ -76,24 +77,23 @@ class _ConversationCardWidgetState extends State<ConversationCardWidget> {
   }
 }
 
-class ConversationCardHeadline extends StatefulWidget {
-  const ConversationCardHeadline({
+class ChatCardHeadline extends StatefulWidget {
+  const ChatCardHeadline({
     super.key,
     required this.index,
     required this.conversation,
     required this.isSelected,
   });
 
-  final ConversationModel conversation;
+  final ChatEntity conversation;
   final bool isSelected;
   final int index;
 
   @override
-  State<ConversationCardHeadline> createState() =>
-      _ConversationCardHeadlineState();
+  State<ChatCardHeadline> createState() => _ChatCardHeadlineState();
 }
 
-class _ConversationCardHeadlineState extends State<ConversationCardHeadline> {
+class _ChatCardHeadlineState extends State<ChatCardHeadline> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {

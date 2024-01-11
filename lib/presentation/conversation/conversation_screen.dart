@@ -12,6 +12,7 @@ import 'package:moli_ai/data/services/azure_openai_service.dart';
 import 'package:moli_ai/data/services/palm_api_service.dart';
 import 'package:moli_ai/data/services/gemini_api.service.dart';
 import 'package:moli_ai/data/services/services.dart';
+import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/constants.dart';
@@ -20,11 +21,11 @@ import '../../data/models/conversation_model.dart';
 import '../../data/dto/palm_text_dto.dart';
 import '../../core/providers/palm_priovider.dart';
 import '../../data/repositories/configretion/config_repo.dart';
-import '../../data/repositories/conversation/conversation_repo_impl.dart';
-import '../../data/repositories/conversation/conversation_message.dart';
-import '../../core/widgets/appbar/conversation_appbar.dart';
-import '../../core/widgets/conversation_widget.dart';
-import '../../core/widgets/form/form_widget.dart';
+import '../../data/repositories/chat/chat_repo_impl.dart';
+import '../../data/repositories/chat/conversation_message.dart';
+import '../widgets/appbar/conversation_appbar.dart';
+import '../widgets/conversation_widget.dart';
+import '../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class ConversationScreen extends StatefulWidget {
     required this.conversationData,
   });
 
-  final ConversationModel conversationData;
+  final ChatModel conversationData;
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -45,7 +46,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   late final _colorScheme = Theme.of(context).colorScheme;
 
   late TextEditingController textEditingController;
-  late ConversationModel currentConversation;
+  late ChatModel currentConversation;
   late int minMessageId;
   late bool allMessageloaed = false;
   final _scrollController = ScrollController();
@@ -67,7 +68,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (currentConversation.id == 0) {
       // create new
       // print(palmProvider.getSqliteClient());
-      ConversationModel cnv = ConversationModel(
+      ChatModel cnv = ChatModel(
           id: 0,
           title: currentConversation.title,
           prompt: "prompt",
@@ -84,7 +85,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       palmProvider.setCurrentConversationInfo(currentConversation);
       palmProvider.addNewConversationToList(currentConversation);
     } else {
-      ConversationModel? cnv =
+      ChatModel? cnv =
           await ConversationReop().getConversationById(currentConversation.id);
       if (cnv != null) {
         palmProvider.setCurrentPalmModel(cnv.modelName);
@@ -243,7 +244,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<List<String>> sendMessageByTextApi(String basicUrl, apiKey,
-      inputMessage, ConversationModel currentConversation) async {
+      inputMessage, ChatModel currentConversation) async {
     String prompt = currentConversation.prompt;
     prompt = "$prompt:{$inputMessage}";
     PalmTextMessageReq req = PalmTextMessageReq(
@@ -320,7 +321,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<List<String>> sendMessageByChatApi(String basicUrl, apiKey,
-      inputMessage, ConversationModel currentConversation) async {
+      inputMessage, ChatModel currentConversation) async {
     String prompt = currentConversation.prompt;
     List<PalmChatReqMessageData> messages =
         getLastNMessages(currentConversation.memeoryCount);
@@ -347,7 +348,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<List<String>> sendMessageByGeminiApi(String basicUrl, apiKey,
-      inputMessage, ConversationModel currentConversation) async {
+      inputMessage, ChatModel currentConversation) async {
     String prompt = currentConversation.prompt;
 
     List<GeminiMessageContent> contents =
@@ -375,7 +376,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   Future<List<String>> sendMessageByAzureApi(String basicUrl, apiKey,
-      inputMessage, ConversationModel currentConversation) async {
+      inputMessage, ChatModel currentConversation) async {
     String prompt = currentConversation.prompt;
     final aiSettingProvider =
         Provider.of<AISettingProvider>(context, listen: false);

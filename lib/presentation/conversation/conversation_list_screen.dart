@@ -3,33 +3,39 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
+import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:moli_ai/domain/inputs/conversation_input.dart';
-import 'package:moli_ai/domain/usecases/get_conversations_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_delete_usecase.dart';
+import 'package:moli_ai/domain/usecases/get_chat_usecase.dart';
+import 'package:moli_ai/presentation/widgets/chat_card_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/models/conversation_model.dart';
 import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/conversation/conversation_repo_impl.dart';
-import '../../core/widgets/chat_card_widget.dart';
+import '../../data/repositories/chat/chat_repo_impl.dart';
+import '../widgets/conversation_card_widget.dart';
 import 'conversation_screen.dart';
 
-class ConversationListScreen extends StatefulWidget {
-  final ValueChanged<ConversationModel>? onSelected;
-  final GetConversationListUseCase _getConversationListUseCase;
+class ChatListScreen extends StatefulWidget {
+  final ValueChanged<ChatEntity>? onSelected;
+  final GetChatListUseCase _getChatListUseCase;
+  final ChatDeleteUseCase _deleteChatUseCase;
 
-  const ConversationListScreen({
+  const ChatListScreen({
     super.key,
     this.onSelected,
-    required GetConversationListUseCase conversationUseCase,
-  }) : _getConversationListUseCase = conversationUseCase;
+    required GetChatListUseCase chatListUseCase,
+    required ChatDeleteUseCase deleteChatUseCase,
+  })  : _getChatListUseCase = chatListUseCase,
+        _deleteChatUseCase = deleteChatUseCase;
 
   @override
-  State<ConversationListScreen> createState() => _ConversationListScreenState();
+  State<ChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ConversationListScreenState extends State<ConversationListScreen> {
-  late List<ConversationEntity> _conversationList = [];
+class _ChatListScreenState extends State<ChatListScreen> {
+  late List<ChatEntity> _chatList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
   @override
@@ -39,19 +45,17 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   }
 
   void _query() async {
-    final convProvider =
-        Provider.of<ConversationProvider>(context, listen: false);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     setState(() {
-      _conversationList = convProvider.getConversationList;
+      _chatList = chatProvider.getChatList;
     });
-    List<ConversationEntity> conversationList = await widget
-        ._getConversationListUseCase
-        .call(ConversationListInput(pageSize: 20, pageNum: 1));
+    List<ChatEntity> chatList = await widget._getChatListUseCase
+        .call(ChatListInput(pageSize: 20, pageNum: 1));
     // log("conversationList ----$conversationList");
-    if (conversationList.isNotEmpty) {
+    if (chatList.isNotEmpty) {
       setState(() {
-        _conversationList = conversationList;
-        convProvider.setConversationList(_conversationList);
+        _chatList = chatList;
+        chatProvider.setChatList(_chatList);
       });
     }
   }
@@ -65,7 +69,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
           children: [
             const SizedBox(height: 18),
             ...List.generate(
-              _conversationList.length,
+              _chatList.length,
               (index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
@@ -73,10 +77,11 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                     key: UniqueKey(),
                     direction: DismissDirection.startToEnd,
                     onDismissed: (direction) {
-                      ConversationModel conv = _conversationList[index];
-                      ConversationReop().deleteConversationById(conv.id);
+                      ChatEntity chat = _chatList[index];
+                      widget._deleteChatUseCase
+                          .call(ChatDeleteInput(chatId: chat.id));
                       setState(() {
-                        _conversationList.removeAt(index);
+                        _chatList.removeAt(index);
                       });
                     },
                     background: Container(
@@ -90,12 +95,12 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                         ),
                       ),
                     ),
-                    child: ConversationCardWidget(
-                      conversation: _conversationList[index],
-                      id: _conversationList[index].id,
+                    child: ChatCardWidget(
+                      chatEntity: _chatList[index],
+                      id: _chatList[index].id,
                       index: index,
                       onSelected: () {
-                        _navigateToConversationScreen(_conversationList[index]);
+                        _navigateToConversationScreen(_chatList[index]);
                       },
                     ),
                   ),
@@ -116,20 +121,20 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
   }
 
   void _navigateToCreateNewConversation() {
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    palmProvider.setCurrentConversationInfo(newConversation);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.setCurrentChatInfo(defaultChatEntity);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ConversationScreen(
-          conversationData: newConversation,
+          conversationData: defaultChatEntity,
         ),
       ),
     );
   }
 
-  void _navigateToConversationScreen(ConversationModel conv) {
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    palmProvider.setCurrentConversationInfo(conv);
+  void _navigateToConversationScreen(ChatEntity conv) {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.setCurrentChatInfo(conv);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ConversationScreen(conversationData: conv),

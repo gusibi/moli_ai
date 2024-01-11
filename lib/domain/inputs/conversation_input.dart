@@ -1,8 +1,8 @@
-class ConversationListInput {
+class ChatListInput {
   int pageSize;
   int pageNum;
 
-  ConversationListInput({
+  ChatListInput({
     required this.pageSize,
     required this.pageNum,
   });
@@ -14,10 +14,30 @@ class ConversationListInput {
     };
   }
 
-  ConversationListInput copy() {
-    return ConversationListInput(
+  ChatListInput copy() {
+    return ChatListInput(
       pageNum: pageNum,
       pageSize: pageSize,
+    );
+  }
+}
+
+class ChatDeleteInput {
+  int chatId;
+
+  ChatDeleteInput({
+    required this.chatId,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      "chatId": chatId,
+    };
+  }
+
+  ChatDeleteInput copy() {
+    return ChatDeleteInput(
+      chatId: chatId,
     );
   }
 }

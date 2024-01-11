@@ -30,7 +30,7 @@ class ConversationMessageModel {
   }
 }
 
-class ConversationModel {
+class ChatModel {
   int id;
   String title;
   String convType;
@@ -43,7 +43,7 @@ class ConversationModel {
   int lastTime;
   int memeoryCount;
 
-  ConversationModel(
+  ChatModel(
       {required this.id,
       required this.title,
       required this.prompt,
@@ -71,8 +71,8 @@ class ConversationModel {
     };
   }
 
-  ConversationModel copy() {
-    return ConversationModel(
+  ChatModel copy() {
+    return ChatModel(
       id: id,
       title: title,
       convType: convType,

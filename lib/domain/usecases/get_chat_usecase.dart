@@ -5,14 +5,13 @@ import 'package:moli_ai/domain/inputs/conversation_input.dart';
 import 'package:moli_ai/domain/repositories/conversation_repo.dart';
 
 // 一个 usecase 是一个单独的业务操作
-class GetConversationListUseCase
-    implements UseCase<List<ConversationEntity>, ConversationListInput> {
-  final ConversationRepository repository;
+class GetChatListUseCase implements UseCase<List<ChatEntity>, ChatListInput> {
+  final ChatRepository repository;
 
-  GetConversationListUseCase(this.repository);
+  GetChatListUseCase(this.repository);
 
   @override
-  Future<List<ConversationEntity>> call(ConversationListInput listInput) async {
-    return repository.conversationList(listInput);
+  Future<List<ChatEntity>> call(ChatListInput listInput) async {
+    return repository.chatList(listInput);
   }
 }

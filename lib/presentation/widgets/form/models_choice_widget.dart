@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/constants/color_constants.dart';
 
-import '../../constants/constants.dart';
+import '../../../core/constants/constants.dart';
 
 class PalmModelRadioListTile extends StatefulWidget {
   const PalmModelRadioListTile({super.key, required this.notifier});

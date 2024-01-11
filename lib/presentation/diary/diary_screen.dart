@@ -15,14 +15,14 @@ import '../../data/models/config_model.dart';
 import '../../data/models/conversation_model.dart';
 import '../../core/providers/palm_priovider.dart';
 import '../../data/repositories/configretion/config_repo.dart';
-import '../../data/repositories/conversation/conversation_repo_impl.dart';
-import '../../data/repositories/conversation/conversation_message.dart';
+import '../../data/repositories/chat/chat_repo_impl.dart';
+import '../../data/repositories/chat/conversation_message.dart';
 import '../../core/utils/color.dart';
-import '../../core/widgets/conversation_widget.dart';
-import '../../core/widgets/form/form_widget.dart';
+import '../widgets/conversation_widget.dart';
+import '../widgets/form/form_widget.dart';
 
 class DiaryScreen extends StatefulWidget {
-  final ConversationModel diaryData;
+  final ChatModel diaryData;
 
   const DiaryScreen({
     super.key,
@@ -39,7 +39,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   late TextEditingController textEditingController;
   final _scrollController = ScrollController();
-  late ConversationModel currentDiary;
+  late ChatModel currentDiary;
   late String currentDay = '${DateTime.now().day}';
   List<ConversationMessageModel> _messageList = [];
   bool _isTyping = false;
@@ -85,11 +85,11 @@ class _DiaryScreenState extends State<DiaryScreen> {
       final title =
           '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
       // get diary by title
-      ConversationModel? cnv =
+      ChatModel? cnv =
           await ConversationReop().getConversationById(currentDiary.id);
       if (cnv == null) {
         // create new
-        ConversationModel cnv = newDiaryConversation;
+        ChatModel cnv = newDiaryConversation;
         log("cnv $cnv");
         cnv.title = title;
         int id = await ConversationReop().createConversation(cnv);
@@ -100,7 +100,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       }
       diaryProvider.setCurrentDiaryInfo(currentDiary);
     } else {
-      ConversationModel? cnv =
+      ChatModel? cnv =
           await ConversationReop().getConversationById(currentDiary.id);
       if (cnv != null) {
         currentDiary = cnv;
@@ -242,7 +242,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   Future<List<String>> sendMessageByTextApi(
-      String diaryMessage, ConversationModel currentConversation) async {
+      String diaryMessage, ChatModel currentConversation) async {
     final aiSettingProvider =
         Provider.of<AISettingProvider>(context, listen: false);
     String prompt = sprintf(diaryPrompt, [diaryMessage]);

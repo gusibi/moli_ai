@@ -10,7 +10,7 @@ import '../../models/conversation_model.dart';
 
 class ConversationReop {
   final tableName = "conversation_tab";
-  Future<int> createConversation(ConversationModel conv) async {
+  Future<int> createConversation(ChatModel conv) async {
     final Database db = dbClient.get();
     DateTime now = DateTime.now();
     int timestamp = now.second;
@@ -30,7 +30,7 @@ class ConversationReop {
     );
   }
 
-  Future<List<ConversationModel>> getAllChatConversations() async {
+  Future<List<ChatModel>> getAllChatConversations() async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
@@ -43,7 +43,7 @@ class ConversationReop {
 
     return List.generate(maps.length, (i) {
       // log("getAllChatConversations: $maps[i]");
-      return ConversationModel(
+      return ChatModel(
         id: maps[i]['id'],
         title: maps[i]['title'],
         prompt: maps[i]['prompt'],
@@ -57,7 +57,7 @@ class ConversationReop {
     });
   }
 
-  Future<List<ConversationModel>> getAllDiaryConversations() async {
+  Future<List<ChatModel>> getAllDiaryConversations() async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
@@ -70,7 +70,7 @@ class ConversationReop {
 
     return List.generate(maps.length, (i) {
       // log("dairy conversation: $maps[i]");
-      return ConversationModel(
+      return ChatModel(
         id: maps[i]['id'],
         title: maps[i]['title'],
         prompt: maps[i]['prompt'],
@@ -84,7 +84,7 @@ class ConversationReop {
     });
   }
 
-  Future<ConversationModel?> getConversationById(int id) async {
+  Future<ChatModel?> getConversationById(int id) async {
     final Database db = dbClient.get();
 
     final List<Map<String, dynamic>> maps = await db.query(
@@ -93,7 +93,7 @@ class ConversationReop {
       whereArgs: [id],
     );
     if (maps.length == 1) {
-      return ConversationModel(
+      return ChatModel(
         id: maps[0]['id'],
         title: maps[0]['title'],
         prompt: maps[0]['prompt'],
@@ -108,7 +108,7 @@ class ConversationReop {
     return null;
   }
 
-  Future<void> updateConversation(ConversationModel conv) async {
+  Future<void> updateConversation(ChatModel conv) async {
     // Get a reference to the database.
     final Database db = dbClient.get();
 
@@ -121,11 +121,11 @@ class ConversationReop {
     );
   }
 
-  Future<void> deleteConversationById(int id) async {
+  Future<int> deleteConversationById(int id) async {
     final Database db = dbClient.get();
 
     // Remove the conversation from the database.
-    await db.delete(
+    return await db.delete(
       tableName,
       // Use a `where` clause to delete a specific conversation.
       where: 'id = ?',
@@ -135,18 +135,16 @@ class ConversationReop {
   }
 }
 
-class ConversationRepoImpl implements ConversationRepository {
+class ChatRepoImpl implements ChatRepository {
   final ConversationReop _sqliteStorage;
 
-  ConversationRepoImpl(this._sqliteStorage);
+  ChatRepoImpl(this._sqliteStorage);
 
   @override
-  Future<List<ConversationEntity>> conversationList(
-      ConversationListInput input) async {
-    List<ConversationModel> list =
-        await _sqliteStorage.getAllChatConversations();
+  Future<List<ChatEntity>> chatList(ChatListInput input) async {
+    List<ChatModel> list = await _sqliteStorage.getAllChatConversations();
     return List.generate(list.length, (i) {
-      return ConversationEntity(
+      return ChatEntity(
         id: list[i].id,
         title: list[i].title,
         prompt: list[i].prompt,
@@ -161,9 +159,9 @@ class ConversationRepoImpl implements ConversationRepository {
   }
 
   @override
-  Future<ConversationEntity> conversationDetail(int cid) async {
-    ConversationModel? detail = await _sqliteStorage.getConversationById(cid);
-    return ConversationEntity(
+  Future<ChatEntity> chatDetail(int cid) async {
+    ChatModel? detail = await _sqliteStorage.getConversationById(cid);
+    return ChatEntity(
         id: detail!.id,
         title: detail.title,
         prompt: detail.prompt,
@@ -173,5 +171,10 @@ class ConversationRepoImpl implements ConversationRepository {
         rank: detail.rank,
         modelName: detail.modelName,
         lastTime: detail.lastTime);
+  }
+
+  @override
+  Future<int> chatDelete(ChatDeleteInput input) async {
+    return await _sqliteStorage.deleteConversationById(input.chatId);
   }
 }

@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/conversation_model.dart';
 import '../../core/providers/diary_privider.dart';
-import '../../data/repositories/conversation/conversation_repo_impl.dart';
-import '../../core/widgets/chat_card_widget.dart';
+import '../../data/repositories/chat/chat_repo_impl.dart';
+import '../widgets/conversation_card_widget.dart';
 import 'diary_screen.dart';
 
 class DiaryistScreen extends StatefulWidget {
@@ -15,14 +15,14 @@ class DiaryistScreen extends StatefulWidget {
     super.key,
     this.onSelected,
   });
-  final ValueChanged<ConversationModel>? onSelected;
+  final ValueChanged<ChatModel>? onSelected;
 
   @override
   State<DiaryistScreen> createState() => _DiaryListScreenState();
 }
 
 class _DiaryListScreenState extends State<DiaryistScreen> {
-  late List<ConversationModel> _diaryList = [];
+  late List<ChatModel> _diaryList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
   bool wideScreen = false;
 
@@ -37,7 +37,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
     setState(() {
       _diaryList = diaryProvider.getDiaryList;
     });
-    List<ConversationModel> diaryList =
+    List<ChatModel> diaryList =
         await ConversationReop().getAllDiaryConversations();
     // log("conversationList---: $diaryList");
     if (diaryList.isNotEmpty) {
@@ -64,7 +64,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
                     key: UniqueKey(),
                     direction: DismissDirection.startToEnd,
                     onDismissed: (direction) {
-                      ConversationModel conv = _diaryList[index];
+                      ChatModel conv = _diaryList[index];
                       ConversationReop().deleteConversationById(conv.id);
                       setState(() {
                         _diaryList.removeAt(index);
@@ -120,7 +120,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
     );
   }
 
-  void _navigateToDiaryScreen(ConversationModel diary) {
+  void _navigateToDiaryScreen(ChatModel diary) {
     final diaryProvider = Provider.of<DiaryProvider>(context, listen: false);
     diaryProvider.setCurrentDiaryInfo(diary);
     Navigator.of(context).push(

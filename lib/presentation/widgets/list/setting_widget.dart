@@ -1,35 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/color.dart';
+import '../../../core/utils/color.dart';
 
-class SettingListTile extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Widget? trailing;
-  final GestureTapCallback? onTap;
-  const SettingListTile(
-      {Key? key,
-      required this.title,
-      required this.icon,
-      this.trailing,
-      this.onTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      leading: Icon(icon),
-      trailing: trailing,
-      onTap: onTap,
-    );
-  }
-}
-
-class ListTileSection extends StatelessWidget {
+class FormSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
-  const ListTileSection({
+  const FormSection({
     Key? key,
     required this.title,
     required this.children,
@@ -53,7 +29,8 @@ class ListTileSection extends StatelessWidget {
         ),
         // const SizedBox(height: 8),
         Container(
-          padding: const EdgeInsets.all(8.0),
+          padding:
+              const EdgeInsets.only(left: 14, right: 14, top: 20, bottom: 2),
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -68,7 +45,15 @@ class ListTileSection extends StatelessWidget {
             ],
           ),
           child: Column(
-            children: children,
+            children: List.generate(
+              children.length,
+              (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: children[index],
+                );
+              },
+            ),
           ),
         ),
       ],

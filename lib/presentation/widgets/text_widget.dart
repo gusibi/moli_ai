@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:moli_ai/core/widgets/markdown_viewer.dart';
-import 'package:moli_ai/core/widgets/markdown_widget.dart';
+import 'package:moli_ai/presentation/widgets/markdown_viewer.dart';
+import 'package:moli_ai/presentation/widgets/markdown_widget.dart';
 
 import 'flutter_markdown_view_widget.dart';
 // import 'markdown_widget.dart';

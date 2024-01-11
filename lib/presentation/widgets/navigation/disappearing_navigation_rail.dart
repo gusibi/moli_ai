@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:moli_ai/core/constants/constants.dart';
 
 import '../../../destinations.dart';
-import '../../providers/palm_priovider.dart';
-import '../../../presentation/conversation/conversation_screen.dart';
+import '../../../core/providers/palm_priovider.dart';
+import '../../conversation/conversation_screen.dart';
 
 class DisappearingNavigationRail extends StatefulWidget {
   const DisappearingNavigationRail({

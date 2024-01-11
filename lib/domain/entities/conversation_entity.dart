@@ -30,7 +30,7 @@ class ConversationMessageEntity {
   }
 }
 
-class ConversationEntity {
+class ChatEntity {
   int id;
   String title;
   String convType;
@@ -43,7 +43,7 @@ class ConversationEntity {
   int lastTime;
   int memeoryCount;
 
-  ConversationEntity(
+  ChatEntity(
       {required this.id,
       required this.title,
       required this.prompt,
@@ -71,8 +71,8 @@ class ConversationEntity {
     };
   }
 
-  ConversationEntity copy() {
-    return ConversationEntity(
+  ChatEntity copy() {
+    return ChatEntity(
       id: id,
       title: title,
       convType: convType,

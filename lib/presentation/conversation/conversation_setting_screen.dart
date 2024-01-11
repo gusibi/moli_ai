@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/conversation_model.dart';
 import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/conversation/conversation_repo_impl.dart';
+import '../../data/repositories/chat/chat_repo_impl.dart';
 import '../../core/utils/color.dart';
 import '../../core/utils/time.dart';
-import '../../core/widgets/form/form_widget.dart';
-import '../../core/widgets/form/models_choice_widget.dart';
-import '../../core/widgets/list/setting_widget.dart';
+import '../widgets/form/form_widget.dart';
+import '../widgets/form/models_choice_widget.dart';
+import '../widgets/list/setting_widget.dart';
 
 class ConversationSettingScreen extends StatefulWidget {
   const ConversationSettingScreen({
@@ -20,7 +20,7 @@ class ConversationSettingScreen extends StatefulWidget {
     required this.conversationData,
   });
 
-  final ConversationModel conversationData;
+  final ChatModel conversationData;
 
   @override
   State<ConversationSettingScreen> createState() =>
@@ -155,7 +155,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                         conversationInfo.modelName = selectedModel;
                         palmProvider
                             .setCurrentConversationInfo(conversationInfo);
-                        ConversationModel conv = ConversationModel(
+                        ChatModel conv = ChatModel(
                             id: conversationInfo.id,
                             title: titleController.text,
                             convType: "chat",

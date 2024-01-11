@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/palm_priovider.dart';
+import '../../../core/providers/palm_priovider.dart';
 
 class TextFormWidget extends StatefulWidget {
   const TextFormWidget({

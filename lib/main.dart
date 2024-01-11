@@ -1,5 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:moli_ai/data/providers/conversation_privider.dart';
+import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
+import 'package:moli_ai/domain/entities/constants.dart';
+import 'package:moli_ai/domain/usecases/chat_delete_usecase.dart';
+import 'package:moli_ai/domain/usecases/get_chat_usecase.dart';
 import 'package:window_manager/window_manager.dart';
 // import 'package:window_size/window_size.dart';
 
@@ -20,8 +25,8 @@ import 'core/providers/palm_priovider.dart';
 import 'presentation/conversation/conversation_screen.dart';
 import 'presentation/conversation/conversation_list_screen.dart';
 import 'presentation/settings/setting_screen.dart';
-import 'core/widgets/navigation/disappearing_bottom_navigation_bar.dart';
-import 'core/widgets/navigation/disappearing_navigation_rail.dart';
+import 'presentation/widgets/navigation/disappearing_bottom_navigation_bar.dart';
+import 'presentation/widgets/navigation/disappearing_navigation_rail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -165,11 +170,13 @@ class _RootPageState extends State<RootPage>
   late final _railFabAnimation = RailFabAnimation(parent: _controller);
   late final _barAnimation = BarAnimation(parent: _controller);
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    DiaryistScreen(),
-    ConversationListScreen(),
+  static final List<Widget> _widgetOptions = <Widget>[
+    const DiaryistScreen(),
+    ChatListScreen(
+        chatListUseCase: GetChatListUseCase(ChatRepoImpl(ConversationReop())),
+        deleteChatUseCase: ChatDeleteUseCase(ChatRepoImpl(ConversationReop()))),
     // PalmSettingScreen(),
-    SettingScreen(),
+    const SettingScreen(),
   ];
 
   bool wideScreen = false;
@@ -245,15 +252,15 @@ class _RootPageState extends State<RootPage>
     );
   }
 
-  void _navigateToCreateNewConversation() {
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    palmProvider.setCurrentConversationInfo(newConversation);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ConversationScreen(
-          conversationData: newConversation,
-        ),
-      ),
-    );
-  }
+  // void _navigateToCreateNewConversation() {
+  //   final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+  //   chatProvider.setCurrentChatInfo(defaultChatEntity);
+  //   Navigator.of(context).push(
+  //     MaterialPageRoute(
+  //       builder: (context) => ConversationScreen(
+  //         conversationData: defaultChatEntity,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

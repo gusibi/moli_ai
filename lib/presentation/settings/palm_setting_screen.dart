@@ -8,9 +8,9 @@ import '../../core/constants/color_constants.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/config_model.dart';
 import '../../data/repositories/configretion/config_repo.dart';
-import '../../core/widgets/form/models_choice_widget.dart';
-import '../../core/widgets/form/form_widget.dart';
-import '../../core/widgets/list/setting_widget.dart';
+import '../widgets/form/models_choice_widget.dart';
+import '../widgets/form/form_widget.dart';
+import '../widgets/list/setting_widget.dart';
 
 class PalmSettingScreen extends StatefulWidget {
   const PalmSettingScreen({super.key});

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:moli_ai/core/utils/icon.dart';
 
 import '../../../data/models/conversation_model.dart';
-import '../../utils/color.dart';
+import '../../../core/utils/color.dart';
 
 class ConversationAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
-  final ConversationModel currentConversation;
+  final ChatModel currentConversation;
   final VoidCallback onPressSetting;
 
   const ConversationAppBarWidget(

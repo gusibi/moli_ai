@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/utils/color.dart';
 
-import '../constants/constants.dart';
+import '../../core/constants/constants.dart';
 import '../../data/models/conversation_model.dart';
 import 'text_widget.dart';
 

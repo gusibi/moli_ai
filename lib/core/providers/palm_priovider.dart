@@ -72,29 +72,29 @@ class AISettingProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  ConversationModel currentConversationInfo = defaultConversation;
+  ChatModel currentConversationInfo = defaultConversation;
 
-  ConversationModel get getCurrentConversationInfo {
+  ChatModel get getCurrentConversationInfo {
     return currentConversationInfo;
   }
 
-  void setCurrentConversationInfo(ConversationModel newConversation) {
+  void setCurrentConversationInfo(ChatModel newConversation) {
     currentConversationInfo = newConversation;
     notifyListeners();
   }
 
-  List<ConversationModel> conversationList = [defaultConversation];
+  List<ChatModel> conversationList = [defaultConversation];
 
-  List<ConversationModel> get getConversationList {
+  List<ChatModel> get getConversationList {
     return conversationList;
   }
 
-  void setConversationList(List<ConversationModel> convsList) {
+  void setConversationList(List<ChatModel> convsList) {
     conversationList = convsList;
     notifyListeners();
   }
 
-  void addNewConversationToList(ConversationModel conv) {
+  void addNewConversationToList(ChatModel conv) {
     conversationList.insert(0, conv);
     notifyListeners();
   }
