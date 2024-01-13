@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moli_ai/core/constants/api_constants.dart';
-import 'package:moli_ai/data/dto/ai_service_dto.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
+import 'package:moli_ai/domain/dto/ai_service_dto.dart';
 import 'package:moli_ai/data/services/services.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -16,7 +17,7 @@ import '../../data/models/conversation_model.dart';
 import '../../core/providers/palm_priovider.dart';
 import '../../data/repositories/configretion/config_repo.dart';
 import '../../data/repositories/chat/chat_repo_impl.dart';
-import '../../data/repositories/chat/conversation_message.dart';
+import '../../data/datasources/sqlite_chat_message_source.dart';
 import '../../core/utils/color.dart';
 import '../widgets/conversation_widget.dart';
 import '../widgets/form/form_widget.dart';
@@ -46,7 +47,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   void _queryConversationMessages() async {
     _messageList =
-        await ConversationMessageRepo().getMessages(currentDiary.id, 0);
+        await ConversationMessageDBSource().getMessages(currentDiary.id, 0);
     setState(() {
       _messageList = _messageList;
     });
@@ -86,13 +87,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
           '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}';
       // get diary by title
       ChatModel? cnv =
-          await ConversationReop().getConversationById(currentDiary.id);
+          await ConversationDBSource().getConversationById(currentDiary.id);
       if (cnv == null) {
         // create new
         ChatModel cnv = newDiaryConversation;
         log("cnv $cnv");
         cnv.title = title;
-        int id = await ConversationReop().createConversation(cnv);
+        int id = await ConversationDBSource().createConversation(cnv);
         cnv.id = id;
         currentDiary = cnv;
       } else {
@@ -101,7 +102,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       diaryProvider.setCurrentDiaryInfo(currentDiary);
     } else {
       ChatModel? cnv =
-          await ConversationReop().getConversationById(currentDiary.id);
+          await ConversationDBSource().getConversationById(currentDiary.id);
       if (cnv != null) {
         currentDiary = cnv;
       }
@@ -294,7 +295,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     // get diary message
     try {
       List<ConversationMessageModel> messageList =
-          await ConversationMessageRepo().getMessages(currentDiary.id, 0);
+          await ConversationMessageDBSource().getMessages(currentDiary.id, 0);
       var message = '';
       for (var i = 0; i < messageList.length; i++) {
         if (messageList[i].role == roleAI) {
@@ -313,7 +314,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       result = await sendMessageByTextApi(message, currentDiary);
       chatRole = result[0];
       message = result[1];
-      ConversationMessageModel aiMessage = await ConversationMessageRepo()
+      ConversationMessageModel aiMessage = await ConversationMessageDBSource()
           .createMessageWithRole(chatRole, message, currentDiary.id, 0);
       setState(() {
         messageList.add(aiMessage);
@@ -332,7 +333,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   Future<void> saveNoteMessage(BuildContext context) async {
     String text = textEditingController.text;
     String trimmedText = text.trimRight();
-    ConversationMessageModel userMessage = await ConversationMessageRepo()
+    ConversationMessageModel userMessage = await ConversationMessageDBSource()
         .createUserMessage(trimmedText, currentDiary.id);
     setState(() {
       _messageList.add(userMessage);
@@ -342,7 +343,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   Future<void> resetDiaryMessage(BuildContext context) async {
-    ConversationMessageModel sysMessage = await ConversationMessageRepo()
+    ConversationMessageModel sysMessage = await ConversationMessageDBSource()
         .createSysMessage("diary reset", currentDiary.id);
     setState(() {
       _messageList.add(sysMessage);

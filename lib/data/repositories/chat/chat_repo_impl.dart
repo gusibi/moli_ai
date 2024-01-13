@@ -1,142 +1,12 @@
-import 'dart:developer';
-
-import 'package:moli_ai/data/repositories/datebase/client.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
-import 'package:moli_ai/domain/inputs/conversation_input.dart';
-import 'package:moli_ai/domain/repositories/conversation_repo.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:moli_ai/domain/inputs/chat_info_input.dart';
+import 'package:moli_ai/domain/repositories/chat_repo.dart';
 
 import '../../models/conversation_model.dart';
 
-class ConversationReop {
-  final tableName = "conversation_tab";
-  Future<int> createConversation(ChatModel conv) async {
-    final Database db = dbClient.get();
-    DateTime now = DateTime.now();
-    int timestamp = now.second;
-    return await db.insert(
-      tableName,
-      {
-        'title': conv.title,
-        'prompt': conv.prompt,
-        'convType': conv.convType,
-        "desc": conv.desc,
-        "icon": conv.icon,
-        "rank": 0,
-        "modelName": conv.modelName,
-        "lastTime": timestamp
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<ChatModel>> getAllChatConversations() async {
-    // Get a reference to the database.
-    final Database db = dbClient.get();
-
-    final List<Map<String, dynamic>> maps = await db.query(
-      tableName,
-      where: 'convType = ?',
-      whereArgs: ["chat"],
-      orderBy: 'id DESC',
-    );
-
-    return List.generate(maps.length, (i) {
-      // log("getAllChatConversations: $maps[i]");
-      return ChatModel(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        prompt: maps[i]['prompt'],
-        convType: maps[i]['convType'],
-        desc: maps[i]['desc'],
-        icon: maps[i]['icon'],
-        rank: maps[i]['rank'],
-        modelName: maps[i]['modelName'],
-        lastTime: maps[i]['lastTime'],
-      );
-    });
-  }
-
-  Future<List<ChatModel>> getAllDiaryConversations() async {
-    // Get a reference to the database.
-    final Database db = dbClient.get();
-
-    final List<Map<String, dynamic>> maps = await db.query(
-      tableName,
-      where: 'convType = ?',
-      whereArgs: ["diary"],
-      orderBy: 'id DESC',
-    );
-
-    return List.generate(maps.length, (i) {
-      // log("dairy conversation: $maps[i]");
-      return ChatModel(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        prompt: maps[i]['prompt'],
-        convType: maps[i]['convType'],
-        desc: maps[i]['desc'],
-        icon: maps[i]['icon'],
-        rank: maps[i]['rank'],
-        modelName: maps[i]['modelName'],
-        lastTime: maps[i]['lastTime'],
-      );
-    });
-  }
-
-  Future<ChatModel?> getConversationById(int id) async {
-    final Database db = dbClient.get();
-
-    final List<Map<String, dynamic>> maps = await db.query(
-      tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.length == 1) {
-      return ChatModel(
-        id: maps[0]['id'],
-        title: maps[0]['title'],
-        prompt: maps[0]['prompt'],
-        convType: maps[0]["convType"],
-        desc: maps[0]['desc'],
-        icon: maps[0]['icon'],
-        rank: maps[0]['rank'],
-        modelName: maps[0]['modelName'],
-        lastTime: maps[0]['lastTime'],
-      );
-    }
-    return null;
-  }
-
-  Future<void> updateConversation(ChatModel conv) async {
-    // Get a reference to the database.
-    final Database db = dbClient.get();
-
-    // Update the given Dog.
-    await db.update(
-      tableName,
-      conv.toMap(),
-      where: 'id = ?',
-      whereArgs: [conv.id],
-    );
-  }
-
-  Future<int> deleteConversationById(int id) async {
-    final Database db = dbClient.get();
-
-    // Remove the conversation from the database.
-    return await db.delete(
-      tableName,
-      // Use a `where` clause to delete a specific conversation.
-      where: 'id = ?',
-      // Pass the conversation's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
-    );
-  }
-}
-
 class ChatRepoImpl implements ChatRepository {
-  final ConversationReop _sqliteStorage;
+  final ConversationDBSource _sqliteStorage;
 
   ChatRepoImpl(this._sqliteStorage);
 
@@ -159,8 +29,8 @@ class ChatRepoImpl implements ChatRepository {
   }
 
   @override
-  Future<ChatEntity> chatDetail(int cid) async {
-    ChatModel? detail = await _sqliteStorage.getConversationById(cid);
+  Future<ChatEntity> chatDetail(ChatDetailInput input) async {
+    ChatModel? detail = await _sqliteStorage.getConversationById(input.chatId);
     return ChatEntity(
         id: detail!.id,
         title: detail.title,
@@ -176,5 +46,31 @@ class ChatRepoImpl implements ChatRepository {
   @override
   Future<int> chatDelete(ChatDeleteInput input) async {
     return await _sqliteStorage.deleteConversationById(input.chatId);
+  }
+
+  @override
+  Future<ChatEntity> chatCreate(ChatCreateInput input) async {
+    ChatModel model = ChatModel(
+        id: 0,
+        title: input.title,
+        prompt: input.prompt,
+        convType: input.convType,
+        desc: input.desc,
+        icon: input.icon,
+        modelName: input.modelName,
+        rank: 0,
+        lastTime: 0);
+    int id = await _sqliteStorage.createConversation(model);
+    model.id = id;
+    return ChatEntity(
+        id: id,
+        title: model.title,
+        prompt: model.prompt,
+        convType: model.convType,
+        desc: model.desc,
+        icon: model.icon,
+        rank: model.rank,
+        modelName: model.modelName,
+        lastTime: model.lastTime);
   }
 }

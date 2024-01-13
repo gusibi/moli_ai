@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/constants.dart';
@@ -38,7 +39,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
       _diaryList = diaryProvider.getDiaryList;
     });
     List<ChatModel> diaryList =
-        await ConversationReop().getAllDiaryConversations();
+        await ConversationDBSource().getAllDiaryConversations();
     // log("conversationList---: $diaryList");
     if (diaryList.isNotEmpty) {
       setState(() {
@@ -65,7 +66,7 @@ class _DiaryListScreenState extends State<DiaryistScreen> {
                     direction: DismissDirection.startToEnd,
                     onDismissed: (direction) {
                       ChatModel conv = _diaryList[index];
-                      ConversationReop().deleteConversationById(conv.id);
+                      ConversationDBSource().deleteConversationById(conv.id);
                       setState(() {
                         _diaryList.removeAt(index);
                       });

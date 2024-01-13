@@ -73,7 +73,7 @@ class _DisappearingNavigationRailState
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ConversationScreen(
-          conversationData: newConversation,
+          chatInfo: newConversation,
         ),
       ),
     );

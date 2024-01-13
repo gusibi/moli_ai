@@ -3,10 +3,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import "package:http/http.dart" as http;
+import 'package:moli_ai/data/models/error_resp.dart';
 
 import '../../core/constants/constants.dart';
-import '../dto/azure_openai_dto.dart';
-import '../dto/palm_text_dto.dart';
+import '../../domain/dto/azure_openai_dto.dart';
+import '../../domain/dto/palm_text_dto.dart';
 
 class AzureOpenAIApiService {
   static List<String> getModels() {

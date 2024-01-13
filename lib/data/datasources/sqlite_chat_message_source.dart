@@ -1,10 +1,10 @@
 import 'package:moli_ai/core/constants/constants.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../models/conversation_model.dart';
-import '../datebase/client.dart';
+import '../models/conversation_model.dart';
+import '../repositories/datebase/client.dart';
 
-class ConversationMessageRepo {
+class ConversationMessageDBSource {
   final tableName = "conversation_message_tab";
   Future<int> insert(ConversationMessageModel message) async {
     final Database db = dbClient.get();

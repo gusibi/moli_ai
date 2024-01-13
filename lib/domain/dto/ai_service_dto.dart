@@ -1,7 +1,8 @@
 import 'package:moli_ai/core/constants/constants.dart';
-import 'package:moli_ai/data/dto/gemini_dto.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
+import 'package:moli_ai/data/models/gemini_api_message_req.dart';
 
-import '../models/conversation_model.dart';
+import '../../data/models/conversation_model.dart';
 import 'azure_openai_dto.dart';
 import 'palm_text_dto.dart';
 

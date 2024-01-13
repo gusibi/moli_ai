@@ -1,6 +1,7 @@
 import 'dart:developer';
 
-import 'package:moli_ai/data/dto/palm_text_dto.dart';
+import 'package:moli_ai/domain/dto/palm_text_dto.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
 
 class AzureOpenAIChatReqMessageData {
   final String content;

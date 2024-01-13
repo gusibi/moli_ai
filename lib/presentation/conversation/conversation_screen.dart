@@ -3,38 +3,56 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:moli_ai/core/constants/api_constants.dart';
-import 'package:moli_ai/data/dto/ai_service_dto.dart';
-import 'package:moli_ai/data/dto/azure_openai_dto.dart';
-import 'package:moli_ai/data/dto/gemini_dto.dart';
+import 'package:moli_ai/domain/dto/ai_service_dto.dart';
+import 'package:moli_ai/domain/dto/azure_openai_dto.dart';
+import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/data/services/azure_openai_service.dart';
 
 import 'package:moli_ai/data/services/palm_api_service.dart';
-import 'package:moli_ai/data/services/gemini_api.service.dart';
-import 'package:moli_ai/data/services/services.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
+import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
+import 'package:moli_ai/domain/inputs/chat_info_input.dart';
+import 'package:moli_ai/domain/inputs/chat_messages_input.dart';
+import 'package:moli_ai/domain/usecases/ai_chat_completion_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_create_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_detail_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_message_create_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_messages_get_usecase.dart';
+import 'package:moli_ai/presentation/widgets/chat_message_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/constants.dart';
 import '../../data/models/config_model.dart';
 import '../../data/models/conversation_model.dart';
-import '../../data/dto/palm_text_dto.dart';
+import '../../domain/dto/palm_text_dto.dart';
 import '../../core/providers/palm_priovider.dart';
 import '../../data/repositories/configretion/config_repo.dart';
-import '../../data/repositories/chat/chat_repo_impl.dart';
-import '../../data/repositories/chat/conversation_message.dart';
+import '../../data/datasources/sqlite_chat_message_source.dart';
 import '../widgets/appbar/conversation_appbar.dart';
-import '../widgets/conversation_widget.dart';
 import '../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({
     super.key,
-    required this.conversationData,
-  });
+    required this.chatInfo,
+    required ChatCreateUseCase createChatUseCase,
+    required ChatDetailUseCase chatDetailUseCase,
+    required GetChatMessagesUseCase chatMessagesListUseCase,
+    required ChatMessageCreateUseCase chatMessagesCreateUseCase,
+    required AiChatCompletionUseCase aiChatCompletionUseCase,
+  })  : _createChatUseCase = createChatUseCase,
+        _chatDetailUseCase = chatDetailUseCase,
+        _chatMessagesListUseCase = chatMessagesListUseCase,
+        _chatMessagesCreateUseCase = chatMessagesCreateUseCase,
+        _aiChatCompletionUseCase = aiChatCompletionUseCase;
 
-  final ChatModel conversationData;
+  final ChatEntity chatInfo;
+  final ChatCreateUseCase _createChatUseCase;
+  final ChatDetailUseCase _chatDetailUseCase;
+  final GetChatMessagesUseCase _chatMessagesListUseCase;
+  final ChatMessageCreateUseCase _chatMessagesCreateUseCase;
+  final AiChatCompletionUseCase _aiChatCompletionUseCase;
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -42,11 +60,11 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   bool _isTyping = false;
-  List<ConversationMessageModel> messageList = [];
+  List<ChatMessageEntity> messageList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
   late TextEditingController textEditingController;
-  late ChatModel currentConversation;
+  late ChatEntity currentChat;
   late int minMessageId;
   late bool allMessageloaed = false;
   final _scrollController = ScrollController();
@@ -62,38 +80,31 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> _initConversation() async {
     setState(() {
-      currentConversation = widget.conversationData.copy();
+      currentChat = widget.chatInfo.copy();
     });
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    if (currentConversation.id == 0) {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    if (currentChat.id == 0) {
       // create new
-      // print(palmProvider.getSqliteClient());
-      ChatModel cnv = ChatModel(
-          id: 0,
-          title: currentConversation.title,
+      ChatCreateInput chatCreate = ChatCreateInput(
+          title: currentChat.title,
           prompt: "prompt",
           convType: "chat",
           desc: "desc",
-          icon: currentConversation.icon,
-          modelName: widget.conversationData.modelName,
-          rank: 0,
-          lastTime: 0);
+          icon: currentChat.icon,
+          modelName: widget.chatInfo.modelName);
       // log("cnv $cnv");
-      int id = await ConversationReop().createConversation(cnv);
-      cnv.id = id;
-      currentConversation = cnv;
-      palmProvider.setCurrentConversationInfo(currentConversation);
-      palmProvider.addNewConversationToList(currentConversation);
+      ChatEntity chatEntity = await widget._createChatUseCase.call(chatCreate);
+      currentChat = chatEntity;
+      chatProvider.setCurrentChatInfo(currentChat);
+      chatProvider.addNewChatToList(currentChat);
     } else {
-      ChatModel? cnv =
-          await ConversationReop().getConversationById(currentConversation.id);
-      if (cnv != null) {
-        palmProvider.setCurrentPalmModel(cnv.modelName);
-        currentConversation = cnv;
-      }
+      ChatEntity? cnv = await widget._chatDetailUseCase
+          .call(ChatDetailInput(chatId: currentChat.id));
+      chatProvider.setCurrentModel(cnv.modelName);
+      currentChat = cnv;
     }
     setState(() {
-      currentConversation = currentConversation;
+      currentChat = currentChat;
     });
   }
 
@@ -116,8 +127,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   void _queryConversationMessages() async {
-    messageList =
-        await ConversationMessageRepo().getMessages(currentConversation.id, 0);
+    messageList = await widget._chatMessagesListUseCase.call(
+        ChatMessageListInput(
+            chatId: currentChat.id, pageNum: 1, pageSize: 100));
     if (messageList.isNotEmpty) {
       minMessageId = messageList[0].id;
       if (messageList.length < queyMessageLimit) {
@@ -172,7 +184,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         Provider.of<AISettingProvider>(context, listen: false);
     return Scaffold(
       appBar: ConversationAppBarWidget(
-          currentConversation: currentConversation,
+          currentChat: currentChat,
           onPressSetting: _navigateToConversationSettingScreen),
       backgroundColor: backgroundColor,
       body: GestureDetector(
@@ -186,7 +198,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     controller: _scrollController,
                     itemCount: messageList.length,
                     itemBuilder: (context, index) {
-                      return ConversationMessageWidget(
+                      return ChatMessageWidget(
                           conversation: messageList[index]);
                     },
                   ),
@@ -224,8 +236,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> resetConversationMessage(BuildContext context) async {
     if (messageList.isNotEmpty && messageList.last.role != roleContext) {
-      ConversationMessageModel sysMessage = await ConversationMessageRepo()
-          .createContextMessage("上下文已清除", currentConversation.id);
+      ChatMessageEntity sysMessage = await widget._chatMessagesCreateUseCase
+          .call(ChatMessageCreateInput(
+              chatId: currentChat.id, message: "上下文已清除", role: roleSys));
       setState(() {
         messageList.add(sysMessage);
         _isTyping = false;
@@ -238,7 +251,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            ConversationSettingScreen(conversationData: currentConversation),
+            ConversationSettingScreen(conversationData: currentChat),
       ),
     );
   }
@@ -288,38 +301,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return messages;
   }
 
-  List<GeminiMessageContent> getLastNContents(int n) {
-    List<GeminiMessageContent> contents = [];
-    var count = 0;
-    GeminiMessageContent? lastContent;
-    for (var i = messageList.length - 1; i >= 0; i--) {
-      if (messageList[i].role == roleContext) {
-        break;
-      }
-      if (messageList[i].role != roleSys) {
-        var role = getRole(messageList[i]); // Get role based on your logic
-        List<Parts> parts;
-        if (lastContent != null && role == lastContent.role) {
-          // lastContent.parts.insert(0, {"text": messageList[i].message});
-          lastContent.parts.insert(0, Parts(text: messageList[i].message));
-          parts = lastContent.parts;
-          contents[0] = lastContent; // Add existing content with updated parts
-        } else {
-          parts = [
-            Parts(text: messageList[i].message),
-          ];
-          lastContent = GeminiMessageContent(role: role, parts: parts);
-          contents.insert(0, lastContent); // add new content for new role
-        }
-        count += 1;
-      }
-      if (count >= n && contents[0].role == roleUser) {
-        break;
-      }
-    }
-    return contents;
-  }
-
   Future<List<String>> sendMessageByChatApi(String basicUrl, apiKey,
       inputMessage, ChatModel currentConversation) async {
     String prompt = currentConversation.prompt;
@@ -343,34 +324,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       message = response.error!.message;
     } else if (response.candidates!.isNotEmpty) {
       message = response.candidates![0].content;
-    }
-    return [chatRole, message];
-  }
-
-  Future<List<String>> sendMessageByGeminiApi(String basicUrl, apiKey,
-      inputMessage, ChatModel currentConversation) async {
-    String prompt = currentConversation.prompt;
-
-    List<GeminiMessageContent> contents =
-        getLastNContents(currentConversation.memeoryCount);
-
-    GeminiApiMessageReq req = GeminiApiMessageReq(
-      prompt: prompt,
-      modelName: currentConversation.modelName,
-      basicUrl: basicUrl,
-      apiKey: apiKey,
-      generationConfig: GeminiGenerationConfig(
-          temperature: 0.7, maxOutputTokens: 4096, topK: 1.0, topP: 1.0),
-      contents: contents,
-    );
-    final response = await GeminiApiService.getTextReponse(req);
-    var chatRole = roleAI;
-    var message = "";
-    if (response.error != null && response.error!.code != 0) {
-      chatRole = roleSys;
-      message = response.error!.message;
-    } else if (response.candidates!.isNotEmpty) {
-      message = response.candidates![0].content!.parts[0].text!;
     }
     return [chatRole, message];
   }
@@ -416,52 +369,59 @@ class _ConversationScreenState extends State<ConversationScreen> {
       BuildContext context, String basicUrl, apiKey) async {
     String text = textEditingController.text;
     String trimmedText = text.trimRight();
-    ConversationMessageModel userMessage = await ConversationMessageRepo()
-        .createUserMessage(trimmedText, currentConversation.id);
+
+    ChatMessageEntity userMessage = await widget._chatMessagesCreateUseCase
+        .call(ChatMessageCreateInput(
+            chatId: currentChat.id, message: trimmedText, role: roleUser));
     setState(() {
       messageList.add(userMessage);
       _isTyping = true;
       textEditingController.clear();
     });
     try {
-      List<String> result;
-      var chatRole = roleAI;
-      var message = "";
-      if (currentConversation.modelName ==
-          palmModelsMap[PalmModels.textModel]) {
-        result = await sendMessageByTextApi(
-            basicUrl, apiKey, trimmedText, currentConversation);
-        chatRole = result[0];
-        message = result[1];
-      } else if (currentConversation.modelName ==
-          palmModelsMap[PalmModels.chatModel]) {
-        result = await sendMessageByChatApi(
-            basicUrl, apiKey, trimmedText, currentConversation);
-        chatRole = result[0];
-        message = result[1];
-      } else if (currentConversation.modelName ==
-          palmModelsMap[PalmModels.geminiProModel]) {
-        result = await sendMessageByGeminiApi(
-            basicUrl, apiKey, trimmedText, currentConversation);
-        chatRole = result[0];
-        message = result[1];
-      } else if (currentConversation.modelName == azureGPT35Model.modelName) {
-        final aiSettingProvider =
-            Provider.of<AISettingProvider>(context, listen: false);
-        basicUrl = aiSettingProvider.getAuzreOpenAIConfig.basicUrl;
-        apiKey = aiSettingProvider.getAuzreOpenAIConfig.apiKey;
-        result = await sendMessageByAzureApi(
-            basicUrl, apiKey, trimmedText, currentConversation);
-        chatRole = result[0];
-        message = result[1];
-      }
+      // widget._aiChatCompletionUseCase(AIChatCompletionInput(
+      //     model: currentChat.modelName, messages: messages));
+      // widget._aiChatCompletionUseCase(AiChatCompletionUseCase(
+      //     newGoogleGeminiRepoImpl(
+      //         GeminiApiConfig(apiKey: apiKey, basicUrl: basicUrl))));
+      widget._aiChatCompletionUseCase.call(
+          ChatCompletionInput(chatInfo: currentChat, messageList: messageList));
+      // List<String> result;
+      // var chatRole = roleAI;
+      // var message = "";
+      // if (currentChat.modelName == palmModelsMap[PalmModels.textModel]) {
+      //   result = await sendMessageByTextApi(
+      //       basicUrl, apiKey, trimmedText, currentChat);
+      //   chatRole = result[0];
+      //   message = result[1];
+      // } else if (currentChat.modelName == palmModelsMap[PalmModels.chatModel]) {
+      //   result = await sendMessageByChatApi(
+      //       basicUrl, apiKey, trimmedText, currentChat);
+      //   chatRole = result[0];
+      //   message = result[1];
+      // } else if (currentChat.modelName ==
+      //     palmModelsMap[PalmModels.geminiProModel]) {
+      //   result = await sendMessageByGeminiApi(
+      //       basicUrl, apiKey, trimmedText, currentChat);
+      //   chatRole = result[0];
+      //   message = result[1];
+      // } else if (currentChat.modelName == azureGPT35Model.modelName) {
+      //   final aiSettingProvider =
+      //       Provider.of<AISettingProvider>(context, listen: false);
+      //   basicUrl = aiSettingProvider.getAuzreOpenAIConfig.basicUrl;
+      //   apiKey = aiSettingProvider.getAuzreOpenAIConfig.apiKey;
+      //   result = await sendMessageByAzureApi(
+      //       basicUrl, apiKey, trimmedText, currentChat);
+      //   chatRole = result[0];
+      //   message = result[1];
+      // }
 
-      ConversationMessageModel aiMessage = await ConversationMessageRepo()
-          .createMessageWithRole(
-              chatRole, message, currentConversation.id, userMessage.id);
-      setState(() {
-        messageList.add(aiMessage);
-      });
+      // ConversationMessageModel aiMessage = await ConversationMessageRepo()
+      //     .createMessageWithRole(
+      //         chatRole, message, currentChat.id, userMessage.id);
+      // setState(() {
+      //   messageList.add(aiMessage);
+      // });
     } catch (error) {
       log("error $error");
     } finally {

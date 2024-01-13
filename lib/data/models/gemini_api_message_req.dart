@@ -1,24 +1,20 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
-
-import 'package:moli_ai/data/dto/palm_text_dto.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
 
 class GeminiApiMessageReq {
-  final String prompt;
-  final String apiKey;
-  final String basicUrl;
+  final String? prompt;
+  final String? apiKey;
+  final String? basicUrl;
   final String modelName;
   final List<GeminiMessageContent> contents;
   final GeminiGenerationConfig generationConfig;
   List<SafetySetting>? safetySettings;
 
   GeminiApiMessageReq({
-    required this.prompt,
+    this.prompt,
+    this.apiKey,
+    this.basicUrl,
     required this.contents,
     required this.modelName,
-    required this.apiKey,
-    required this.basicUrl,
     required this.generationConfig,
   });
 }
@@ -153,6 +149,23 @@ class GeminiResCandidate {
   Map<String, dynamic> toJson() => {
         'content': content,
         'safetyRatings': safetyRatings?.map((e) => e.toJson()).toList(),
+      };
+}
+
+class SafetyRating {
+  String? category;
+  String? probability;
+
+  SafetyRating({this.category, this.probability});
+
+  factory SafetyRating.fromJson(Map<String, dynamic> json) => SafetyRating(
+        category: json['category'] as String?,
+        probability: json['probability'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'category': category,
+        'probability': probability,
       };
 }
 

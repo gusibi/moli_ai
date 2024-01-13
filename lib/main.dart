@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
 import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/usecases/chat_delete_usecase.dart';
-import 'package:moli_ai/domain/usecases/get_chat_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_get_usecase.dart';
 import 'package:window_manager/window_manager.dart';
 // import 'package:window_size/window_size.dart';
 
@@ -173,8 +174,10 @@ class _RootPageState extends State<RootPage>
   static final List<Widget> _widgetOptions = <Widget>[
     const DiaryistScreen(),
     ChatListScreen(
-        chatListUseCase: GetChatListUseCase(ChatRepoImpl(ConversationReop())),
-        deleteChatUseCase: ChatDeleteUseCase(ChatRepoImpl(ConversationReop()))),
+        chatListUseCase:
+            GetChatListUseCase(ChatRepoImpl(ConversationDBSource())),
+        deleteChatUseCase:
+            ChatDeleteUseCase(ChatRepoImpl(ConversationDBSource()))),
     // PalmSettingScreen(),
     const SettingScreen(),
   ];

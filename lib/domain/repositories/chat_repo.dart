@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
-import 'package:moli_ai/domain/inputs/conversation_input.dart';
+import 'package:moli_ai/domain/inputs/chat_info_input.dart';
 
 abstract class ChatRepository {
   Future<List<ChatEntity>> chatList(ChatListInput input) async {
@@ -8,12 +8,17 @@ abstract class ChatRepository {
     throw UnimplementedError();
   }
 
-  Future<ChatEntity> chatDetail(int cid) async {
+  Future<ChatEntity> chatDetail(ChatDetailInput input) async {
     // TODO: implement chatDetail
     throw UnimplementedError();
   }
 
   Future<int> chatDelete(ChatDeleteInput input) async {
+    // TODO: implement chatDetail
+    throw UnimplementedError();
+  }
+
+  Future<ChatEntity> chatCreate(ChatCreateInput input) async {
     // TODO: implement chatDetail
     throw UnimplementedError();
   }

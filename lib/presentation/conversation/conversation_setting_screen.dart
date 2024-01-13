@@ -2,12 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
+import 'package:moli_ai/data/providers/conversation_privider.dart';
+import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/constants.dart';
 import '../../data/models/conversation_model.dart';
-import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/chat/chat_repo_impl.dart';
 import '../../core/utils/color.dart';
 import '../../core/utils/time.dart';
 import '../widgets/form/form_widget.dart';
@@ -20,7 +21,7 @@ class ConversationSettingScreen extends StatefulWidget {
     required this.conversationData,
   });
 
-  final ChatModel conversationData;
+  final ChatEntity conversationData;
 
   @override
   State<ConversationSettingScreen> createState() =>
@@ -82,7 +83,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
     var conversationInfo = widget.conversationData;
 
     return Scaffold(
@@ -153,8 +154,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                         conversationInfo.modelName =
                             palmModelsMap[palmModel.value]!;
                         conversationInfo.modelName = selectedModel;
-                        palmProvider
-                            .setCurrentConversationInfo(conversationInfo);
+                        chatProvider.setCurrentChatInfo(conversationInfo);
                         ChatModel conv = ChatModel(
                             id: conversationInfo.id,
                             title: titleController.text,
@@ -167,7 +167,7 @@ class _ConversationSettingScreenState extends State<ConversationSettingScreen> {
                             lastTime: timestampNow());
                         log("{{$conv.id}}");
                         log(conv.modelName);
-                        ConversationReop().updateConversation(conv);
+                        ConversationDBSource().updateConversation(conv);
                         Navigator.pop(context);
                       }
                     },

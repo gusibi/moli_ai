@@ -1,20 +1,20 @@
-class ConversationMessageEntity {
+class ChatMessageEntity {
   int id;
+  String message;
   final int conversationId;
   final String role;
-  final String message;
   final int replyId;
   final int vote;
   final String ctime;
 
-  ConversationMessageEntity({
+  ChatMessageEntity({
     required this.id,
     required this.conversationId,
     required this.role,
-    required this.message,
     required this.replyId,
     required this.vote,
     required this.ctime,
+    required this.message,
   });
 
   Map<String, dynamic> toMap() {
@@ -27,6 +27,18 @@ class ConversationMessageEntity {
       "vote": vote,
       "ctime": ctime
     };
+  }
+
+  ChatMessageEntity copy() {
+    return ChatMessageEntity(
+      id: id,
+      conversationId: conversationId,
+      role: role,
+      message: message,
+      replyId: replyId,
+      vote: vote,
+      ctime: ctime,
+    );
   }
 }
 

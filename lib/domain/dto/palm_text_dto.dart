@@ -1,19 +1,5 @@
-class SafetyRating {
-  String? category;
-  String? probability;
-
-  SafetyRating({this.category, this.probability});
-
-  factory SafetyRating.fromJson(Map<String, dynamic> json) => SafetyRating(
-        category: json['category'] as String?,
-        probability: json['probability'] as String?,
-      );
-
-  Map<String, dynamic> toJson() => {
-        'category': category,
-        'probability': probability,
-      };
-}
+import 'package:moli_ai/data/models/error_resp.dart';
+import 'package:moli_ai/data/models/gemini_api_message_req.dart';
 
 class Candidate {
   String? output;
@@ -171,36 +157,5 @@ class PalmChatRespMessageData {
     data['author'] = author;
     data['content'] = content;
     return data;
-  }
-}
-
-class ErrorResp {
-  final int code;
-  final String message;
-  final String status;
-
-  ErrorResp({required this.code, required this.message, required this.status});
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['message'] = message;
-    data['status'] = status;
-    data['code'] = code;
-    return data;
-  }
-
-  factory ErrorResp.fromJson(Map<String, dynamic> json) {
-    return ErrorResp(
-      code: json['code'] as int,
-      message: json['message'] as String,
-      status: json['status'] as String,
-    );
-  }
-  factory ErrorResp.fromAzureJson(Map<String, dynamic> json) {
-    return ErrorResp(
-      code: -1,
-      message: json['message'] as String,
-      status: json['code'] as String,
-    );
   }
 }

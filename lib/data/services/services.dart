@@ -4,12 +4,13 @@ import 'dart:io';
 
 import "package:http/http.dart" as http;
 import 'package:moli_ai/core/constants/api_constants.dart';
-import 'package:moli_ai/data/dto/ai_service_dto.dart';
+import 'package:moli_ai/domain/dto/ai_service_dto.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/data/services/azure_openai_service.dart';
 import 'package:moli_ai/data/services/gemini_api.service.dart';
 
 import '../../core/constants/constants.dart';
-import '../dto/palm_text_dto.dart';
+import '../../domain/dto/palm_text_dto.dart';
 import 'palm_api_service.dart';
 
 class AIApiService {

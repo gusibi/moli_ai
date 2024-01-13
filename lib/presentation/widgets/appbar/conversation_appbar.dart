@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/utils/icon.dart';
+import 'package:moli_ai/domain/entities/conversation_entity.dart';
 
 import '../../../data/models/conversation_model.dart';
 import '../../../core/utils/color.dart';
 
 class ConversationAppBarWidget extends StatelessWidget
     implements PreferredSizeWidget {
-  final ChatModel currentConversation;
+  final ChatEntity currentChat;
   final VoidCallback onPressSetting;
 
   const ConversationAppBarWidget(
-      {super.key,
-      required this.currentConversation,
-      required this.onPressSetting});
+      {super.key, required this.currentChat, required this.onPressSetting});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -43,7 +42,7 @@ class ConversationAppBarWidget extends StatelessWidget
                 width: 2,
               ),
               CircleAvatar(
-                child: Icon(convertCodeToIconData(currentConversation.icon)),
+                child: Icon(convertCodeToIconData(currentChat.icon)),
               ),
               const SizedBox(
                 width: 12,
@@ -54,7 +53,7 @@ class ConversationAppBarWidget extends StatelessWidget
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      currentConversation.title,
+                      currentChat.title,
                       style: const TextStyle(
                           // color: colorScheme.onPrimary,
                           fontSize: 14),
@@ -63,7 +62,7 @@ class ConversationAppBarWidget extends StatelessWidget
                       height: 6,
                     ),
                     Text(
-                      currentConversation.desc,
+                      currentChat.desc,
                       style: const TextStyle(
                           // color: colorScheme.onSecondary,
                           fontSize: 12),

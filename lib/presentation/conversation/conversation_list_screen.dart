@@ -5,9 +5,9 @@ import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
-import 'package:moli_ai/domain/inputs/conversation_input.dart';
+import 'package:moli_ai/domain/inputs/chat_info_input.dart';
 import 'package:moli_ai/domain/usecases/chat_delete_usecase.dart';
-import 'package:moli_ai/domain/usecases/get_chat_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_get_usecase.dart';
 import 'package:moli_ai/presentation/widgets/chat_card_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -126,7 +126,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ConversationScreen(
-          conversationData: defaultChatEntity,
+          chatInfo: defaultChatEntity,
         ),
       ),
     );
@@ -137,7 +137,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     chatProvider.setCurrentChatInfo(conv);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ConversationScreen(conversationData: conv),
+        builder: (context) => ConversationScreen(chatInfo: conv),
       ),
     );
   }
