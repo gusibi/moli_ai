@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:sqflite/sqflite.dart';
 
-import '../../../core/constants/constants.dart';
-import '../../models/config_model.dart';
-import '../datebase/client.dart';
+import '../../core/constants/constants.dart';
+import '../models/config_model.dart';
+import '../repositories/datebase/client.dart';
 
-class ConfigReop {
+class ConfigDBSource {
   Future<int> createConfig(ConfigModel config) async {
     final Database db = dbClient.get();
     return await db.insert(

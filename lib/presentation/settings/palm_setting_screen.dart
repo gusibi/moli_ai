@@ -7,7 +7,7 @@ import '../../core/constants/api_constants.dart';
 import '../../core/constants/color_constants.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/config_model.dart';
-import '../../data/repositories/configretion/config_repo.dart';
+import '../../data/datasources/sqlite_config_source.dart';
 import '../widgets/form/models_choice_widget.dart';
 import '../widgets/form/form_widget.dart';
 import '../widgets/list/setting_widget.dart';
@@ -62,7 +62,7 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
   }
 
   void _initConfig() async {
-    _configMap = await ConfigReop().getAllConfigsMap();
+    _configMap = await ConfigDBSource().getAllConfigsMap();
     ConfigModel? palmConf = _configMap[palmConfigname];
 
     if (palmConf != null) {
@@ -172,6 +172,6 @@ class _PlamSettingScreenState extends State<PalmSettingScreen> {
   }
 
   _saveConfig(PalmConfig palmConf) async {
-    await ConfigReop().createOrUpdatePalmConfig(palmConf);
+    await ConfigDBSource().createOrUpdatePalmConfig(palmConf);
   }
 }

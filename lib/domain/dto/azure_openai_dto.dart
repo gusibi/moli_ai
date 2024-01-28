@@ -1,7 +1,7 @@
-import 'dart:developer';
-
-import 'package:moli_ai/domain/dto/palm_text_dto.dart';
+import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/data/models/error_resp.dart';
+import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
+import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
 
 class AzureOpenAIChatReqMessageData {
   final String content;
@@ -143,4 +143,47 @@ class Usage {
     data['total_tokens'] = totalTokens;
     return data;
   }
+}
+
+AzureOpenAIMessageReq azureOpenAIApiMessageReqFromReq(
+    AIChatCompletionInput req) {
+  List<AzureOpenAIChatReqMessageData> messages = [];
+  for (int i = 0; i < req.messages.length; i++) {
+    AzureOpenAIChatReqMessageData content = AzureOpenAIChatReqMessageData(
+        content: req.messages[i].content, role: req.messages[i].role);
+    messages.add(content);
+  }
+  AzureOpenAIMessageReq geminiReq = AzureOpenAIMessageReq(
+    modelName: req.model,
+    messages: messages,
+    basicUrl: "",
+    apiKey: "",
+    temperature: 0.7,
+    apiVersion: "",
+    maxTokens: 4096,
+  );
+  return geminiReq;
+}
+
+AIChatCompletionOutput azureOpenAIRespToAIChatCompletionOutput(
+    AzureOpenAIChatMessageResp resp) {
+  List<ChoiceOutput> choices = [];
+  for (int i = 0; i < resp.choices!.length; i++) {
+    ChoiceOutput choice = ChoiceOutput(
+        index: resp.choices![i].index,
+        message: MessageOutput(
+            content: resp.choices![i].message.content,
+            role: resp.choices![i].message.role),
+        finishReason: resp.choices![i].finishReason);
+    choices.add(choice);
+  }
+  AIChatCompletionOutput output = AIChatCompletionOutput(
+      id: resp.id!,
+      object: resp.object!,
+      created: resp.created!,
+      model: resp.model!,
+      systemFingerprint: "",
+      choices: choices,
+      usage: null);
+  return output;
 }

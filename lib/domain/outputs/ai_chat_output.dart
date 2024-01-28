@@ -16,7 +16,7 @@ class AIChatCompletionOutput {
   int created;
   String model;
   String systemFingerprint;
-  List<Choice> choices;
+  List<ChoiceOutput> choices;
   Usage? usage;
 
   AIChatCompletionOutput({
@@ -36,8 +36,8 @@ class AIChatCompletionOutput {
         created: json["created"],
         model: json["model"],
         systemFingerprint: json["system_fingerprint"],
-        choices:
-            List<Choice>.from(json["choices"].map((x) => Choice.fromJson(x))),
+        choices: List<ChoiceOutput>.from(
+            json["choices"].map((x) => ChoiceOutput.fromJson(x))),
         usage: Usage.fromJson(json["usage"]),
       );
 
@@ -52,22 +52,22 @@ class AIChatCompletionOutput {
       };
 }
 
-class Choice {
+class ChoiceOutput {
   int index;
-  Message message;
+  MessageOutput message;
   dynamic logprobs;
   String finishReason;
 
-  Choice({
+  ChoiceOutput({
     required this.index,
     required this.message,
-    required this.logprobs,
     required this.finishReason,
+    this.logprobs,
   });
 
-  factory Choice.fromJson(Map<String, dynamic> json) => Choice(
+  factory ChoiceOutput.fromJson(Map<String, dynamic> json) => ChoiceOutput(
         index: json["index"],
-        message: Message.fromJson(json["message"]),
+        message: MessageOutput.fromJson(json["message"]),
         logprobs: json["logprobs"],
         finishReason: json["finish_reason"],
       );
@@ -80,16 +80,16 @@ class Choice {
       };
 }
 
-class Message {
+class MessageOutput {
   String role;
   String content;
 
-  Message({
+  MessageOutput({
     required this.role,
     required this.content,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) => Message(
+  factory MessageOutput.fromJson(Map<String, dynamic> json) => MessageOutput(
         role: json["role"],
         content: json["content"],
       );

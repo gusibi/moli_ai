@@ -1,24 +1,81 @@
 // 一个 usecase 是一个单独的业务操作
+import 'package:dartz/dartz.dart';
 import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/core/usecases/usecase.dart';
+import 'package:moli_ai/data/models/config_model.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
+import 'package:moli_ai/data/repositories/ai_chat/azure_gpt_repo_impl.dart';
+import 'package:moli_ai/data/repositories/ai_chat/google_gemini_repo_impl.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
+import 'package:moli_ai/domain/inputs/ai_config_input.dart';
 import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
-import 'package:moli_ai/domain/outputs.dart/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/config_output.dart';
 import 'package:moli_ai/domain/repositories/ai_chat_repo.dart';
+import 'package:moli_ai/domain/repositories/config_repo.dart';
 
 class AiChatCompletionUseCase
-    implements UseCase<AIChatCompletionOutput, ChatCompletionInput> {
-  final AiChatRepository repository;
+    implements
+        UseCase<Either<ErrorResp, AIChatCompletionOutput>,
+            ChatCompletionInput> {
+  final ConfigRepository configRepository;
+  AIChatRepository? _aiServiceRepo;
 
-  AiChatCompletionUseCase(this.repository);
+  AiChatCompletionUseCase(this.configRepository);
+
+  Future<Either<ErrorResp, AIChatRepository>> initAIServiceRepo(
+      ChatCompletionInput input) async {
+    if (_aiServiceRepo != null) {
+      return Right(_aiServiceRepo!);
+    }
+    ConfigsOutput configs = await configRepository.getAllConfigsMap();
+
+    if (isGemini(input.chatInfo.modelName) ||
+        isPalmGPT(input.chatInfo.modelName)) {
+      ConfigModel? conf = configs.configMap[palmConfigname];
+      if (conf != null) {
+        final palmConfig = conf.toPalmConfig();
+        AIChatRepository aiServiceRepo =
+            newGoogleGeminiRepoImpl(AIApiConfigInput(
+          basicUrl: palmConfig.basicUrl,
+          apiKey: palmConfig.apiKey,
+          prompt: input.chatInfo.prompt,
+          modelName: palmConfig.modelName,
+        ));
+        return Right(aiServiceRepo);
+      }
+    }
+    if (isAzureGPT(input.chatInfo.modelName)) {
+      ConfigModel? conf = configs.configMap[azureConfigname];
+      if (conf != null) {
+        final azureConfig = conf.toAzureConfig();
+        AIChatRepository aiServiceRepo = newAzureGPTRepoImpl(AIApiConfigInput(
+          basicUrl: azureConfig.basicUrl,
+          apiKey: azureConfig.apiKey,
+          prompt: input.chatInfo.prompt,
+          modelName: azureConfig.modelName,
+        ));
+        return Right(aiServiceRepo);
+      }
+    }
+    return Left(
+        ErrorResp(code: -1, message: "ai api not support", status: "error"));
+  }
 
   @override
-  Future<AIChatCompletionOutput> call(ChatCompletionInput input) async {
+  Future<Either<ErrorResp, AIChatCompletionOutput>> call(
+      ChatCompletionInput input) async {
     List<AIChatCompletionMessage> messages = getLastNContents(input);
     AIChatCompletionInput aiInput = AIChatCompletionInput(
         model: input.chatInfo.modelName, messages: messages);
-    return repository.completion(aiInput);
+    Either<ErrorResp, AIChatRepository> result = await initAIServiceRepo(input);
+    result.fold((error) {
+      return Left(error);
+    }, (repo) {
+      return Right(repo.completion(aiInput));
+    });
+    return Left(ErrorResp(code: -1, message: "unknow error", status: "error"));
   }
 
   List<AIChatCompletionMessage> getLastNContents(ChatCompletionInput input) {

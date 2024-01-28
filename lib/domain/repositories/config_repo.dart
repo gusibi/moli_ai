@@ -1,8 +1,7 @@
-import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
-import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/config_output.dart';
 
-abstract class AIChatRepository {
-  Future<AIChatCompletionOutput> completion(AIChatCompletionInput input) async {
+abstract class ConfigRepository {
+  Future<ConfigsOutput> getAllConfigsMap() async {
     // TODO: implement chatList
     throw UnimplementedError();
   }

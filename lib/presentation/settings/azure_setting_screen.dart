@@ -8,7 +8,7 @@ import '../../core/constants/api_constants.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/config_model.dart';
 import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/configretion/config_repo.dart';
+import '../../data/datasources/sqlite_config_source.dart';
 import '../widgets/form/form_widget.dart';
 import '../widgets/list/setting_widget.dart';
 
@@ -65,7 +65,7 @@ class _AzureOpenAISettingScreenState extends State<AzureOpenAISettingScreen> {
   }
 
   void _initConfig() async {
-    _configMap = await ConfigReop().getAllConfigsMap();
+    _configMap = await ConfigDBSource().getAllConfigsMap();
     ConfigModel? azureConf = _configMap[azureConfigname];
 
     log(azureConf.toString());
@@ -174,6 +174,6 @@ class _AzureOpenAISettingScreenState extends State<AzureOpenAISettingScreen> {
     final modelSettingProvider =
         Provider.of<AISettingProvider>(context, listen: false);
     modelSettingProvider.setAzureOpenAIConfig(azureConf);
-    await ConfigReop().createOrUpdateAzureOpenAIConfig(azureConf);
+    await ConfigDBSource().createOrUpdateAzureOpenAIConfig(azureConf);
   }
 }

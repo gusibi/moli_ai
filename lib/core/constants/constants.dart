@@ -77,22 +77,22 @@ const String roleContext = "context";
 const maxInt = 9223372036854775807;
 const queyMessageLimit = 100;
 
-class PalmModel {
+class GPTModel {
   final String modelName;
   final String modelDesc;
 
-  PalmModel({required this.modelName, required this.modelDesc});
+  GPTModel({required this.modelName, required this.modelDesc});
 }
 
-final PalmModel geminiProModel = PalmModel(
+final GPTModel geminiProModel = GPTModel(
     modelName: "gemini-pro",
     modelDesc:
         """Gemini is a family of generative AI models that lets developers generate content and solve problems. 
         These models are designed and trained to handle both text and images as input. 
         This guide provides information about each model variant to help you decide which is the best fit for your use case.""");
 
-final PalmModel textModel =
-    PalmModel(modelName: "text-bison-001", modelDesc: """Generates text.
+final GPTModel textModel =
+    GPTModel(modelName: "text-bison-001", modelDesc: """Generates text.
 Optimized for language tasks such as:
 Code generation
 Text generation
@@ -104,7 +104,7 @@ Data extraction or generation
 AI agent
 Can handle zero, one, and few-shot tasks.""");
 
-final PalmModel chatModel = PalmModel(
+final GPTModel chatModel = GPTModel(
     modelName: "chat-bison-001",
     modelDesc: """Generates text in a conversational format.
 Optimized for dialog language tasks such as implementation of chat bots or AI agents.
@@ -154,7 +154,7 @@ Here is my thoughts: {%s}
 Thanks!
 ''';
 
-final PalmModel azureGPT35Model = PalmModel(
+final GPTModel azureGPT35Model = GPTModel(
     modelName: "GPT35", modelDesc: """Generates text in a conversational format.
 Optimized for dialog language tasks such as implementation of chat bots or AI agents.
 Can handle zero, one, and few-shot tasks.""");
@@ -164,3 +164,24 @@ enum AzureModels { azureGPT35Model }
 final Map<AzureModels, String> azureModelsMap = {
   AzureModels.azureGPT35Model: azureGPT35Model.modelName,
 };
+
+bool isGemini(String modelName) {
+  if (modelName == geminiProModel.modelName) {
+    return true;
+  }
+  return false;
+}
+
+bool isAzureGPT(String modelName) {
+  if (modelName == azureGPT35Model.modelName) {
+    return true;
+  }
+  return false;
+}
+
+bool isPalmGPT(String modelName) {
+  if (modelName == chatModel.modelName || modelName == textModel.modelName) {
+    return true;
+  }
+  return false;
+}

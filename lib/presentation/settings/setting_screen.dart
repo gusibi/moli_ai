@@ -11,7 +11,7 @@ import '../../core/constants/color_constants.dart';
 import '../../core/constants/constants.dart';
 import '../../data/models/config_model.dart';
 import '../../core/providers/default_privider.dart';
-import '../../data/repositories/configretion/config_repo.dart';
+import '../../data/datasources/sqlite_config_source.dart';
 import '../widgets/form/models_choice_widget.dart';
 import '../widgets/form/themes_choice_widget.dart';
 import '../widgets/list/setting_list_widget.dart';
@@ -63,7 +63,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _initConfig() async {
-    _configMap = await ConfigReop().getAllConfigsMap();
+    _configMap = await ConfigDBSource().getAllConfigsMap();
     ConfigModel? palmConf = _configMap[palmConfigname];
 
     if (palmConf != null) {
@@ -213,7 +213,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   _saveConfig() async {
-    await ConfigReop().createOrUpdateThemeConfig(ThemeConfig(
+    await ConfigDBSource().createOrUpdateThemeConfig(ThemeConfig(
       darkMode: selectedDarkMode,
       themeName: selectedTheme,
     ));
@@ -221,7 +221,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   _saveDefaultAIConfig() async {
-    await ConfigReop().createOrUpdateDefaultAIConfig(DefaultAIConfig(
+    await ConfigDBSource().createOrUpdateDefaultAIConfig(DefaultAIConfig(
       diaryAI: selectedDiaryAI,
       chatAI: selectedDiaryAI,
     ));

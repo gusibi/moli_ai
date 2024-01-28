@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/animations/bar_animations.dart';
 import 'package:moli_ai/core/animations/transitions/nav_rail_transition.dart';
+import 'package:moli_ai/data/providers/conversation_privider.dart';
+import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:provider/provider.dart';
 
 import 'package:moli_ai/core/constants/constants.dart';
@@ -68,13 +70,11 @@ class _DisappearingNavigationRailState
   }
 
   void _navigateToCreateNewConversation() {
-    final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    palmProvider.setCurrentConversationInfo(newConversation);
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.setCurrentChatInfo(defaultChatEntity);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ConversationScreen(
-          chatInfo: newConversation,
-        ),
+        builder: (context) => newConversationScreen(defaultChatEntity),
       ),
     );
   }

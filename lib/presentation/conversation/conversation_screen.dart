@@ -3,12 +3,18 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_message_source.dart';
+import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
+import 'package:moli_ai/data/repositories/chat/chat_message_repo_impl.dart';
+import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
+import 'package:moli_ai/data/repositories/configretion/config_repo_impl.dart';
 import 'package:moli_ai/domain/dto/ai_service_dto.dart';
 import 'package:moli_ai/domain/dto/azure_openai_dto.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/data/services/azure_openai_service.dart';
 
 import 'package:moli_ai/data/services/palm_api_service.dart';
+import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
 import 'package:moli_ai/domain/inputs/chat_info_input.dart';
@@ -26,11 +32,24 @@ import '../../data/models/config_model.dart';
 import '../../data/models/conversation_model.dart';
 import '../../domain/dto/palm_text_dto.dart';
 import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/configretion/config_repo.dart';
-import '../../data/datasources/sqlite_chat_message_source.dart';
+import '../../data/datasources/sqlite_config_source.dart';
 import '../widgets/appbar/conversation_appbar.dart';
 import '../widgets/form/form_widget.dart';
 import 'conversation_setting_screen.dart';
+
+ConversationScreen newConversationScreen(ChatEntity chatInfo) {
+  return ConversationScreen(
+    createChatUseCase: ChatCreateUseCase(ChatRepoImpl(ConversationDBSource())),
+    chatDetailUseCase: ChatDetailUseCase(ChatRepoImpl(ConversationDBSource())),
+    chatMessagesListUseCase: GetChatMessagesUseCase(
+        ChatMessageRepoImpl(ConversationMessageDBSource())),
+    chatMessagesCreateUseCase: ChatMessageCreateUseCase(
+        ChatMessageRepoImpl(ConversationMessageDBSource())),
+    aiChatCompletionUseCase:
+        AiChatCompletionUseCase(ConfigRepoImpl(ConfigDBSource())),
+    chatInfo: chatInfo,
+  );
+}
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({
@@ -110,7 +129,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   void _initDefaultConfig() async {
     final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    var configMap = await ConfigReop().getAllConfigsMap();
+    var configMap = await ConfigDBSource().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
     if (conf != null) {

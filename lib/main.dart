@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
-import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/usecases/chat_delete_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_get_usecase.dart';
 import 'package:window_manager/window_manager.dart';
@@ -20,10 +19,9 @@ import 'package:provider/provider.dart';
 import 'package:moli_ai/core/constants/constants.dart';
 
 import 'data/models/config_model.dart';
-import 'data/repositories/configretion/config_repo.dart';
+import 'data/datasources/sqlite_config_source.dart';
 import 'data/repositories/datebase/client.dart';
 import 'core/providers/palm_priovider.dart';
-import 'presentation/conversation/conversation_screen.dart';
 import 'presentation/conversation/conversation_list_screen.dart';
 import 'presentation/settings/setting_screen.dart';
 import 'presentation/widgets/navigation/disappearing_bottom_navigation_bar.dart';
@@ -108,7 +106,7 @@ class _MoliAIAppState extends State<MoliAIApp> {
   }
 
   void _initConfig() async {
-    _configMap = await ConfigReop().getAllConfigsMap();
+    _configMap = await ConfigDBSource().getAllConfigsMap();
 
     ConfigModel? themeConf = _configMap[themeConfigname];
     if (themeConf != null) {
@@ -132,6 +130,7 @@ class _MoliAIAppState extends State<MoliAIApp> {
           create: (context) => AISettingProvider(),
         ),
         ChangeNotifierProvider(create: (context) => DiaryProvider()),
+        ChangeNotifierProvider(create: (context) => ChatProvider()),
         ChangeNotifierProvider(create: (context) => DefaultSettingProvider()),
       ],
       child: Consumer<DefaultSettingProvider>(

@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 import '../../data/models/config_model.dart';
 import '../../data/models/conversation_model.dart';
 import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/configretion/config_repo.dart';
+import '../../data/datasources/sqlite_config_source.dart';
 import '../../data/repositories/chat/chat_repo_impl.dart';
 import '../../data/datasources/sqlite_chat_message_source.dart';
 import '../../core/utils/color.dart';
@@ -55,7 +55,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   void _initDefaultConfig() async {
     final palmProvider = Provider.of<AISettingProvider>(context, listen: false);
-    var configMap = await ConfigReop().getAllConfigsMap();
+    var configMap = await ConfigDBSource().getAllConfigsMap();
     ConfigModel? conf = configMap[palmConfigname];
 
     if (conf != null) {

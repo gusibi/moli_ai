@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
@@ -11,10 +10,6 @@ import 'package:moli_ai/domain/usecases/chat_get_usecase.dart';
 import 'package:moli_ai/presentation/widgets/chat_card_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/models/conversation_model.dart';
-import '../../core/providers/palm_priovider.dart';
-import '../../data/repositories/chat/chat_repo_impl.dart';
-import '../widgets/conversation_card_widget.dart';
 import 'conversation_screen.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -125,9 +120,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     chatProvider.setCurrentChatInfo(defaultChatEntity);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ConversationScreen(
-          chatInfo: defaultChatEntity,
-        ),
+        builder: (context) => newConversationScreen(defaultChatEntity),
       ),
     );
   }
@@ -137,7 +130,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     chatProvider.setCurrentChatInfo(conv);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ConversationScreen(chatInfo: conv),
+        builder: (context) => newConversationScreen(conv),
       ),
     );
   }

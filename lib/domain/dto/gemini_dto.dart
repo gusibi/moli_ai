@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:moli_ai/core/utils/time.dart';
 import 'package:moli_ai/data/models/gemini_api_message_req.dart';
 import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
-import 'package:moli_ai/domain/outputs.dart/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
 
-GeminiApiMessageReq geminiApiMessageReqFromGeminiReq(
-    AIChatCompletionInput req) {
+GeminiApiMessageReq geminiApiMessageReqFromReq(AIChatCompletionInput req) {
   List<GeminiMessageContent> contents = [];
   for (int i = 0; i < req.messages.length; i++) {
     GeminiMessageContent content = GeminiMessageContent(parts: [], role: '');
@@ -22,15 +20,16 @@ GeminiApiMessageReq geminiApiMessageReqFromGeminiReq(
 
 AIChatCompletionOutput geminiRespApiToAIChatCompletionOutput(
     GeminiApiMessageResp resp) {
-  List<Choice> choices = [];
+  List<ChoiceOutput> choices = [];
   for (int i = 0; i < resp.candidates!.length; i++) {
     GeminiResCandidate candidate = resp.candidates![i];
     String content = "";
     for (int j = 0; j < candidate.content!.parts.length; j++) {
       content = candidate.content!.parts[j].text!;
     }
-    Message message = Message(role: candidate.content!.role, content: content);
-    choices.add(Choice(
+    MessageOutput message =
+        MessageOutput(role: candidate.content!.role, content: content);
+    choices.add(ChoiceOutput(
         index: candidate.index!,
         message: message,
         logprobs: null,
