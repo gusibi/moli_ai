@@ -1,3 +1,4 @@
+import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/core/utils/time.dart';
 import 'package:moli_ai/data/models/gemini_api_message_req.dart';
 import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
@@ -6,7 +7,9 @@ import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
 GeminiApiMessageReq geminiApiMessageReqFromReq(AIChatCompletionInput req) {
   List<GeminiMessageContent> contents = [];
   for (int i = 0; i < req.messages.length; i++) {
-    GeminiMessageContent content = GeminiMessageContent(parts: [], role: '');
+    GeminiMessageContent content = GeminiMessageContent(
+        parts: [Parts(text: req.messages[i].content)],
+        role: req.messages[i].role);
     contents.add(content);
   }
   GeminiApiMessageReq geminiReq = GeminiApiMessageReq(
@@ -20,6 +23,21 @@ GeminiApiMessageReq geminiApiMessageReqFromReq(AIChatCompletionInput req) {
 
 AIChatCompletionOutput geminiRespApiToAIChatCompletionOutput(
     GeminiApiMessageResp resp) {
+  if (resp.error != null) {
+    List<ChoiceOutput> choices = [
+      ChoiceOutput(
+          index: 2,
+          message: MessageOutput(role: roleSys, content: resp.error!.message),
+          finishReason: "sysError")
+    ];
+    return AIChatCompletionOutput(
+        id: "aiError",
+        object: "aiError",
+        created: timestampNow(),
+        model: "",
+        systemFingerprint: "aiError",
+        choices: choices);
+  }
   List<ChoiceOutput> choices = [];
   for (int i = 0; i < resp.candidates!.length; i++) {
     GeminiResCandidate candidate = resp.candidates![i];

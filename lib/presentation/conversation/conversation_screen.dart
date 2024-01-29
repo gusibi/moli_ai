@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai/data/datasources/sqlite_chat_message_source.dart';
 import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/data/repositories/chat/chat_message_repo_impl.dart';
 import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
 import 'package:moli_ai/data/repositories/configretion/config_repo_impl.dart';
@@ -19,6 +20,7 @@ import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
 import 'package:moli_ai/domain/inputs/chat_info_input.dart';
 import 'package:moli_ai/domain/inputs/chat_messages_input.dart';
+import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
 import 'package:moli_ai/domain/usecases/ai_chat_completion_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_create_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_detail_usecase.dart';
@@ -403,8 +405,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
       // widget._aiChatCompletionUseCase(AiChatCompletionUseCase(
       //     newGoogleGeminiRepoImpl(
       //         GeminiApiConfig(apiKey: apiKey, basicUrl: basicUrl))));
-      widget._aiChatCompletionUseCase.call(
-          ChatCompletionInput(chatInfo: currentChat, messageList: messageList));
+
+      AIChatCompletionOutput result = await widget._aiChatCompletionUseCase
+          .call(ChatCompletionInput(
+              chatInfo: currentChat, messageList: messageList));
+      // ConversationMessageModel aiMessage = await ConversationMessageRepo()
+      //     .createMessageWithRole(
+      //         chatRole, message, currentChat.id, userMessage.id);
+      // setState(() {
+      //   messageList.add(aiMessage);
+      // });
       // List<String> result;
       // var chatRole = roleAI;
       // var message = "";

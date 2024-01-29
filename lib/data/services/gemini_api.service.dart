@@ -134,7 +134,7 @@ class GeminiApiService {
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200 || response.statusCode == 400) {
         var resp = await response.stream.bytesToString();
-        // log("resp $resp");
+        log("resp $resp");
         Map<String, dynamic> jsonResponse = jsonDecode(resp);
         // log(jsonEncode(jsonResponse));
         return GeminiApiMessageResp.fromJson(jsonResponse);

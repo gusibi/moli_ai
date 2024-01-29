@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:moli_ai/core/constants/constants.dart';
 import 'package:moli_ai/core/usecases/usecase.dart';
+import 'package:moli_ai/core/utils/time.dart';
 import 'package:moli_ai/data/models/config_model.dart';
 import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/data/repositories/ai_chat/azure_gpt_repo_impl.dart';
@@ -16,9 +17,7 @@ import 'package:moli_ai/domain/repositories/ai_chat_repo.dart';
 import 'package:moli_ai/domain/repositories/config_repo.dart';
 
 class AiChatCompletionUseCase
-    implements
-        UseCase<Either<ErrorResp, AIChatCompletionOutput>,
-            ChatCompletionInput> {
+    implements UseCase<AIChatCompletionOutput, ChatCompletionInput> {
   final ConfigRepository configRepository;
   AIChatRepository? _aiServiceRepo;
 
@@ -64,18 +63,29 @@ class AiChatCompletionUseCase
   }
 
   @override
-  Future<Either<ErrorResp, AIChatCompletionOutput>> call(
-      ChatCompletionInput input) async {
+  Future<AIChatCompletionOutput> call(ChatCompletionInput input) async {
     List<AIChatCompletionMessage> messages = getLastNContents(input);
     AIChatCompletionInput aiInput = AIChatCompletionInput(
         model: input.chatInfo.modelName, messages: messages);
     Either<ErrorResp, AIChatRepository> result = await initAIServiceRepo(input);
     result.fold((error) {
-      return Left(error);
+      // pass
     }, (repo) {
-      return Right(repo.completion(aiInput));
+      return repo.completion(aiInput);
     });
-    return Left(ErrorResp(code: -1, message: "unknow error", status: "error"));
+    List<ChoiceOutput> choices = [
+      ChoiceOutput(
+          index: 2,
+          message: MessageOutput(role: roleSys, content: "unknow error"),
+          finishReason: "sysError")
+    ];
+    return AIChatCompletionOutput(
+        id: "sysError",
+        object: "sysError",
+        created: timestampNow(),
+        model: input.chatInfo.modelName,
+        systemFingerprint: "sysError",
+        choices: choices);
   }
 
   List<AIChatCompletionMessage> getLastNContents(ChatCompletionInput input) {

@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/domain/dto/gemini_dto.dart';
 import 'package:moli_ai/data/models/gemini_api_message_req.dart';
 import 'package:moli_ai/data/services/gemini_api.service.dart';
