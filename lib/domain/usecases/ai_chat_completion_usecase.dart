@@ -12,6 +12,7 @@ import 'package:moli_ai/domain/inputs/ai_chat_input.dart';
 import 'package:moli_ai/domain/inputs/ai_config_input.dart';
 import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
 import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/chat_message_output.dart';
 import 'package:moli_ai/domain/outputs/config_output.dart';
 import 'package:moli_ai/domain/repositories/ai_chat_repo.dart';
 import 'package:moli_ai/domain/repositories/config_repo.dart';
@@ -68,11 +69,18 @@ class AiChatCompletionUseCase
     AIChatCompletionInput aiInput = AIChatCompletionInput(
         model: input.chatInfo.modelName, messages: messages);
     Either<ErrorResp, AIChatRepository> result = await initAIServiceRepo(input);
+    bool initSuccess = false;
+    late AIChatRepository aiChatRepo;
     result.fold((error) {
       // pass
     }, (repo) {
-      return repo.completion(aiInput);
+      initSuccess = true;
+      aiChatRepo = repo;
     });
+    if (initSuccess) {
+      return aiChatRepo.completion(aiInput);
+    }
+
     List<ChoiceOutput> choices = [
       ChoiceOutput(
           index: 2,
@@ -89,12 +97,12 @@ class AiChatCompletionUseCase
   }
 
   List<AIChatCompletionMessage> getLastNContents(ChatCompletionInput input) {
-    List<ChatMessageEntity> chatMessageList = input.messageList;
+    List<ChatMessageOutput> chatMessageList = input.messageList;
     AIChatCompletionMessage? lastMessage;
     List<AIChatCompletionMessage> messages = [];
     int count = 0;
     for (var i = chatMessageList.length - 1; i >= 0; i--) {
-      ChatMessageEntity chatMessage = chatMessageList[i].copy();
+      ChatMessageOutput chatMessage = chatMessageList[i].copy();
       if (chatMessage.role == roleContext) {
         break;
       }

@@ -149,8 +149,12 @@ AzureOpenAIMessageReq azureOpenAIApiMessageReqFromReq(
     AIChatCompletionInput req) {
   List<AzureOpenAIChatReqMessageData> messages = [];
   for (int i = 0; i < req.messages.length; i++) {
+    String role = req.messages[i].role;
+    if (role == roleAI) {
+      role = roleAssistant;
+    }
     AzureOpenAIChatReqMessageData content = AzureOpenAIChatReqMessageData(
-        content: req.messages[i].content, role: req.messages[i].role);
+        content: req.messages[i].content, role: role);
     messages.add(content);
   }
   AzureOpenAIMessageReq geminiReq = AzureOpenAIMessageReq(
@@ -172,8 +176,7 @@ AIChatCompletionOutput azureOpenAIRespToAIChatCompletionOutput(
     ChoiceOutput choice = ChoiceOutput(
         index: resp.choices![i].index,
         message: MessageOutput(
-            content: resp.choices![i].message.content,
-            role: resp.choices![i].message.role),
+            content: resp.choices![i].message.content, role: roleAI),
         finishReason: resp.choices![i].finishReason);
     choices.add(choice);
   }

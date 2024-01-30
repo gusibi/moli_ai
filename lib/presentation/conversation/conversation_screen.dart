@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:moli_ai/data/datasources/sqlite_chat_message_source.dart';
 import 'package:moli_ai/data/datasources/sqlite_chat_source.dart';
-import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/data/repositories/chat/chat_message_repo_impl.dart';
 import 'package:moli_ai/data/repositories/chat/chat_repo_impl.dart';
 import 'package:moli_ai/data/repositories/configretion/config_repo_impl.dart';
@@ -15,13 +14,13 @@ import 'package:moli_ai/data/providers/conversation_privider.dart';
 import 'package:moli_ai/data/services/azure_openai_service.dart';
 
 import 'package:moli_ai/data/services/palm_api_service.dart';
-import 'package:moli_ai/domain/entities/constants.dart';
 import 'package:moli_ai/domain/entities/conversation_entity.dart';
 import 'package:moli_ai/domain/inputs/chat_completion_input.dart';
 import 'package:moli_ai/domain/inputs/chat_info_input.dart';
 import 'package:moli_ai/domain/inputs/chat_messages_input.dart';
-import 'package:moli_ai/domain/outputs/ai_chat_output.dart';
+import 'package:moli_ai/domain/outputs/chat_message_output.dart';
 import 'package:moli_ai/domain/usecases/ai_chat_completion_usecase.dart';
+import 'package:moli_ai/domain/usecases/chat_completion_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_create_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_detail_usecase.dart';
 import 'package:moli_ai/domain/usecases/chat_message_create_usecase.dart';
@@ -47,8 +46,9 @@ ConversationScreen newConversationScreen(ChatEntity chatInfo) {
         ChatMessageRepoImpl(ConversationMessageDBSource())),
     chatMessagesCreateUseCase: ChatMessageCreateUseCase(
         ChatMessageRepoImpl(ConversationMessageDBSource())),
-    aiChatCompletionUseCase:
-        AiChatCompletionUseCase(ConfigRepoImpl(ConfigDBSource())),
+    aiChatCompletionUseCase: ChatCompletionUseCase(
+        ChatMessageRepoImpl(ConversationMessageDBSource()),
+        AiChatCompletionUseCase(ConfigRepoImpl(ConfigDBSource()))),
     chatInfo: chatInfo,
   );
 }
@@ -61,7 +61,7 @@ class ConversationScreen extends StatefulWidget {
     required ChatDetailUseCase chatDetailUseCase,
     required GetChatMessagesUseCase chatMessagesListUseCase,
     required ChatMessageCreateUseCase chatMessagesCreateUseCase,
-    required AiChatCompletionUseCase aiChatCompletionUseCase,
+    required ChatCompletionUseCase aiChatCompletionUseCase,
   })  : _createChatUseCase = createChatUseCase,
         _chatDetailUseCase = chatDetailUseCase,
         _chatMessagesListUseCase = chatMessagesListUseCase,
@@ -73,7 +73,7 @@ class ConversationScreen extends StatefulWidget {
   final ChatDetailUseCase _chatDetailUseCase;
   final GetChatMessagesUseCase _chatMessagesListUseCase;
   final ChatMessageCreateUseCase _chatMessagesCreateUseCase;
-  final AiChatCompletionUseCase _aiChatCompletionUseCase;
+  final ChatCompletionUseCase _aiChatCompletionUseCase;
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -81,7 +81,7 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   bool _isTyping = false;
-  List<ChatMessageEntity> messageList = [];
+  List<ChatMessageOutput> messageList = [];
   late final _colorScheme = Theme.of(context).colorScheme;
 
   late TextEditingController textEditingController;
@@ -219,8 +219,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     controller: _scrollController,
                     itemCount: messageList.length,
                     itemBuilder: (context, index) {
-                      return ChatMessageWidget(
-                          conversation: messageList[index]);
+                      return ChatMessageWidget(message: messageList[index]);
                     },
                   ),
                 ),
@@ -257,7 +256,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> resetConversationMessage(BuildContext context) async {
     if (messageList.isNotEmpty && messageList.last.role != roleContext) {
-      ChatMessageEntity sysMessage = await widget._chatMessagesCreateUseCase
+      ChatMessageOutput sysMessage = await widget._chatMessagesCreateUseCase
           .call(ChatMessageCreateInput(
               chatId: currentChat.id, message: "上下文已清除", role: roleSys));
       setState(() {
@@ -391,7 +390,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     String text = textEditingController.text;
     String trimmedText = text.trimRight();
 
-    ChatMessageEntity userMessage = await widget._chatMessagesCreateUseCase
+    ChatMessageOutput userMessage = await widget._chatMessagesCreateUseCase
         .call(ChatMessageCreateInput(
             chatId: currentChat.id, message: trimmedText, role: roleUser));
     setState(() {
@@ -400,57 +399,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
       textEditingController.clear();
     });
     try {
-      // widget._aiChatCompletionUseCase(AIChatCompletionInput(
-      //     model: currentChat.modelName, messages: messages));
-      // widget._aiChatCompletionUseCase(AiChatCompletionUseCase(
-      //     newGoogleGeminiRepoImpl(
-      //         GeminiApiConfig(apiKey: apiKey, basicUrl: basicUrl))));
-
-      AIChatCompletionOutput result = await widget._aiChatCompletionUseCase
-          .call(ChatCompletionInput(
+      ChatCompletionMessageOutput response =
+          await widget._aiChatCompletionUseCase.call(ChatCompletionInput(
               chatInfo: currentChat, messageList: messageList));
-      // ConversationMessageModel aiMessage = await ConversationMessageRepo()
-      //     .createMessageWithRole(
-      //         chatRole, message, currentChat.id, userMessage.id);
-      // setState(() {
-      //   messageList.add(aiMessage);
-      // });
-      // List<String> result;
-      // var chatRole = roleAI;
-      // var message = "";
-      // if (currentChat.modelName == palmModelsMap[PalmModels.textModel]) {
-      //   result = await sendMessageByTextApi(
-      //       basicUrl, apiKey, trimmedText, currentChat);
-      //   chatRole = result[0];
-      //   message = result[1];
-      // } else if (currentChat.modelName == palmModelsMap[PalmModels.chatModel]) {
-      //   result = await sendMessageByChatApi(
-      //       basicUrl, apiKey, trimmedText, currentChat);
-      //   chatRole = result[0];
-      //   message = result[1];
-      // } else if (currentChat.modelName ==
-      //     palmModelsMap[PalmModels.geminiProModel]) {
-      //   result = await sendMessageByGeminiApi(
-      //       basicUrl, apiKey, trimmedText, currentChat);
-      //   chatRole = result[0];
-      //   message = result[1];
-      // } else if (currentChat.modelName == azureGPT35Model.modelName) {
-      //   final aiSettingProvider =
-      //       Provider.of<AISettingProvider>(context, listen: false);
-      //   basicUrl = aiSettingProvider.getAuzreOpenAIConfig.basicUrl;
-      //   apiKey = aiSettingProvider.getAuzreOpenAIConfig.apiKey;
-      //   result = await sendMessageByAzureApi(
-      //       basicUrl, apiKey, trimmedText, currentChat);
-      //   chatRole = result[0];
-      //   message = result[1];
-      // }
 
-      // ConversationMessageModel aiMessage = await ConversationMessageRepo()
-      //     .createMessageWithRole(
-      //         chatRole, message, currentChat.id, userMessage.id);
-      // setState(() {
-      //   messageList.add(aiMessage);
-      // });
+      setState(() {
+        messageList.add(response.message);
+      });
     } catch (error) {
       log("error $error");
     } finally {

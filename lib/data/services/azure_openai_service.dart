@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import "package:http/http.dart" as http;
+import 'package:moli_ai/core/constants/api_constants.dart';
 import 'package:moli_ai/data/models/error_resp.dart';
 import 'package:moli_ai/domain/inputs/ai_config_input.dart';
 
@@ -85,21 +86,20 @@ class AzureOpenAIApiService {
     var currentModel = apiConfig.modelName;
     var baseURL = apiConfig.basicUrl;
     var apiKey = apiConfig.apiKey;
-    var apiVersion = apiConfig.apiVersion;
+    var apiVersion = AZURE_DEFAULT_API_VERSION;
     try {
       // log("start, model: $currentModel, prompt: $context");
       var url =
           "$baseURL/openai/deployments/$currentModel/chat/completions?api-version=$apiVersion";
       log(url);
       var headers = {'Content-Type': 'application/json', "api-key": apiKey};
-      log("$headers");
-      log(apiKey);
+      // log("$headers");
       var request = http.Request('POST', Uri.parse(url));
       var message = '';
       for (var i = 0; i < req.messages.length; i++) {
-        if (req.messages[i].role == roleAI) {
-          continue;
-        }
+        // if (req.messages[i].role == roleAI) {
+        //   continue;
+        // }
         message += "${req.messages[i].content}\n";
       }
       var messageLength = utf8.encode(message).length;
@@ -112,7 +112,7 @@ class AzureOpenAIApiService {
         "max_tokens": 4096 - messageLength * 2,
         "stop": null
       });
-      log(request.body);
+      // log(request.body);
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();

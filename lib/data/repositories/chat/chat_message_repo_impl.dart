@@ -29,8 +29,8 @@ class ChatMessageRepoImpl implements ChatMessagesRepository {
 
   @override
   Future<ChatMessageEntity> messageCreate(ChatMessageCreateInput input) async {
-    ConversationMessageModel messageModel =
-        await _sqliteStorage.createUserMessage(input.message, input.chatId);
+    ConversationMessageModel messageModel = await _sqliteStorage
+        .createMessageWithRole(input.role, input.message, input.chatId, 0);
     return ChatMessageEntity(
         id: messageModel.id,
         conversationId: messageModel.conversationId,

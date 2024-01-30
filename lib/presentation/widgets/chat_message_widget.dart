@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:moli_ai/core/constants/constants.dart';
-import 'package:moli_ai/domain/entities/conversation_entity.dart';
+import 'package:moli_ai/domain/outputs/chat_message_output.dart';
 import 'package:moli_ai/presentation/widgets/conversation_widget.dart';
 
 class ChatMessageWidget extends StatefulWidget {
   const ChatMessageWidget({
     super.key,
-    required this.conversation,
+    required this.message,
   });
 
-  final ChatMessageEntity conversation;
+  final ChatMessageOutput message;
 
   @override
   State<ChatMessageWidget> createState() => _ChatMessageWidgetState();
@@ -26,24 +26,24 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
   late final _sysMessageColor = _colorScheme.onSecondaryContainer;
   @override
   Widget build(BuildContext context) {
-    if (widget.conversation.role == roleUser) {
+    if (widget.message.role == roleUser) {
       return PromptMessageWidget(
-        message: widget.conversation.message,
-        role: widget.conversation.role,
+        message: widget.message.message,
+        role: widget.message.role,
         backgroundColor: _userMessageBackgroundColor,
         messageColor: _userMessageColor,
       );
-    } else if (widget.conversation.role == roleAI) {
+    } else if (widget.message.role == roleAI) {
       return AiResponseMessageWidget(
-        message: widget.conversation.message,
-        role: widget.conversation.role,
+        message: widget.message.message,
+        role: widget.message.role,
         backgroundColor: _aiMessageBackgroundColor,
         messageColor: _aiMessageColor,
       );
     } else {
       return SysResponseMessageWidget(
-        message: widget.conversation.message,
-        role: widget.conversation.role,
+        message: widget.message.message,
+        role: widget.message.role,
         messageColor: _sysMessageColor,
       );
     }

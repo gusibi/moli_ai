@@ -45,8 +45,7 @@ AIChatCompletionOutput geminiRespApiToAIChatCompletionOutput(
     for (int j = 0; j < candidate.content!.parts.length; j++) {
       content = candidate.content!.parts[j].text!;
     }
-    MessageOutput message =
-        MessageOutput(role: candidate.content!.role, content: content);
+    MessageOutput message = MessageOutput(role: roleAI, content: content);
     choices.add(ChoiceOutput(
         index: candidate.index!,
         message: message,
